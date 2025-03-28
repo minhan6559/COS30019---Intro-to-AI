@@ -139,3 +139,40 @@ class DijkstraSearch(SearchAlgorithmBase):
                         frontier.append(child)
         return None
 
+class IDAStarSearch(SearchAlgorithmBase):
+    def search(self, problem):
+        def search(node, g, bound, path, goal):
+            f = g + problem.h(node)
+            if f > bound:
+                return f
+            if problem.goal_test(node.state):
+                return path  # Goal found, return the path
+            min_bound = float('inf')
+
+            for child in node.expand(problem):
+                if child.state not in path:  # Avoid cycles
+                    path.append(child.state)
+                    temp = search(child, g + child.path_cost, bound, path, goal)
+                    if isinstance(temp, list):  # Goal found, return path
+                        return temp
+                    if temp < min_bound:
+                        min_bound = temp
+                    path.pop()
+            
+            return min_bound
+        
+        all_paths = {}
+        for goal in problem.goals:
+            bound = problem.h(problem.initial)  # Initial bound based on the heuristic
+            path = [problem.initial]
+            while True:
+                result = search(Node(problem.initial), 0, bound, path, goal)
+                if isinstance(result, list):  # Goal found
+                    all_paths[goal] = result
+                    break
+                if result == float('inf'):  # No path found
+                    all_paths[goal] = None
+                    break
+                bound = result
+        
+        return all_paths
