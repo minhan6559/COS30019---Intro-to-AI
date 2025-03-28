@@ -76,12 +76,66 @@ class BestFirstSearch(SearchAlgorithmBase):
         return None
 
 
-class GreedyBestFirstSearch(BestFirstSearch):
+class GreedyBestFirstSearch(SearchAlgorithmBase):
     def search(self, problem):
-        return super().search(self, problem, problem.h)
+        node = Node(problem.initial)
+        frontier = PriorityQueue("min", problem.h)  # Use the heuristic to prioritize
+        frontier.append(node)
+        explored = set()
+
+        while frontier:
+            node = frontier.pop()
+            if problem.goal_test(node.state):
+                return node
+            explored.add(node.state)
+            for child in node.expand(problem):
+                if child.state not in explored and child not in frontier:
+                    frontier.append(child)
+        return None
 
 
-class AStarSearch(BestFirstSearch):
+
+class AStarSearch(SearchAlgorithmBase):
     def search(self, problem):
         h = memoize(problem.h, "h")
-        return super().search(self, problem, lambda n: n.path_cost + h(n))
+        node = Node(problem.initial)
+        frontier = PriorityQueue("min", lambda n: n.path_cost + h(n))  # A* f(n) = g(n) + h(n)
+        frontier.append(node)
+        explored = set()
+
+        while frontier:
+            node = frontier.pop()
+            if problem.goal_test(node.state):
+                return node
+            explored.add(node.state)
+            for child in node.expand(problem):
+                if child.state not in explored and child not in frontier:
+                    frontier.append(child)
+                elif child in frontier:
+                    if (child.path_cost + h(child)) < frontier[child]:
+                        del frontier[child]
+                        frontier.append(child)
+        return None
+
+
+class DijkstraSearch(SearchAlgorithmBase):
+    def search(self, problem):
+        node = Node(problem.initial)
+        frontier = PriorityQueue("min", lambda n: n.path_cost)  # Dijkstra uses only g(n)
+        frontier.append(node)
+        explored = set()
+
+        while frontier:
+            node = frontier.pop()
+            if problem.goal_test(node.state):
+                return node
+            explored.add(node.state)
+            for child in node.expand(problem):
+                if child.state not in explored and child not in frontier:
+                    frontier.append(child)
+                elif child in frontier:
+                    if child.path_cost < frontier[child]:
+                        del frontier[child]
+                        frontier.append(child)
+        return None
+
