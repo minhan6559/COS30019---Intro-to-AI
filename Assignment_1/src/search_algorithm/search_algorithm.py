@@ -1,7 +1,7 @@
-from graph import Node
-from search_algorithm_base import SearchAlgorithmBase
+from src.graph.graph import Node
+from src.search_algorithm.search_algorithm_base import SearchAlgorithmBase
 from collections import deque
-from utils import *
+from src.utils.utils import memoize, PriorityQueue
 
 
 class DepthFirstSearch(SearchAlgorithmBase):
@@ -94,12 +94,13 @@ class GreedyBestFirstSearch(SearchAlgorithmBase):
         return None
 
 
-
 class AStarSearch(SearchAlgorithmBase):
     def search(self, problem):
         h = memoize(problem.h, "h")
         node = Node(problem.initial)
-        frontier = PriorityQueue("min", lambda n: n.path_cost + h(n))  # A* f(n) = g(n) + h(n)
+        frontier = PriorityQueue(
+            "min", lambda n: n.path_cost + h(n)
+        )  # A* f(n) = g(n) + h(n)
         frontier.append(node)
         explored = set()
 
@@ -121,7 +122,9 @@ class AStarSearch(SearchAlgorithmBase):
 class DijkstraSearch(SearchAlgorithmBase):
     def search(self, problem):
         node = Node(problem.initial)
-        frontier = PriorityQueue("min", lambda n: n.path_cost)  # Dijkstra uses only g(n)
+        frontier = PriorityQueue(
+            "min", lambda n: n.path_cost
+        )  # Dijkstra uses only g(n)
         frontier.append(node)
         explored = set()
 
@@ -139,6 +142,7 @@ class DijkstraSearch(SearchAlgorithmBase):
                         frontier.append(child)
         return None
 
+
 class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
         def search(node, g, bound, path, goal):
@@ -147,7 +151,7 @@ class IDAStarSearch(SearchAlgorithmBase):
                 return f
             if problem.goal_test(node.state):
                 return path  # Goal found, return the path
-            min_bound = float('inf')
+            min_bound = float("inf")
 
             for child in node.expand(problem):
                 if child.state not in path:  # Avoid cycles
@@ -158,9 +162,9 @@ class IDAStarSearch(SearchAlgorithmBase):
                     if temp < min_bound:
                         min_bound = temp
                     path.pop()
-            
+
             return min_bound
-        
+
         all_paths = {}
         for goal in problem.goals:
             bound = problem.h(problem.initial)  # Initial bound based on the heuristic
@@ -170,9 +174,9 @@ class IDAStarSearch(SearchAlgorithmBase):
                 if isinstance(result, list):  # Goal found
                     all_paths[goal] = result
                     break
-                if result == float('inf'):  # No path found
+                if result == float("inf"):  # No path found
                     all_paths[goal] = None
                     break
                 bound = result
-        
+
         return all_paths

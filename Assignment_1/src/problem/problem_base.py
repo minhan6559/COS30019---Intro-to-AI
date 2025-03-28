@@ -1,4 +1,4 @@
-from utils import is_in
+from src.utils import is_in
 
 
 class ProblemBase:

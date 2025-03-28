@@ -1,124 +1,54 @@
-def parse_graph_file(filename):
-    """
-    Parses a file containing graph data in the following format:
-    
-    Nodes:
-    1: (4,1)
-    2: (2,2)
-    ...
-    
-    Edges:
-    (2,1): 4
-    (3,1): 5
-    ...
-    
-    Origin:
-    2
-    
-    Destinations:
-    5; 4
-    
-    Returns:
-        nodes: A dictionary mapping node id to (x, y) coordinates.
-        graph: An adjacency list (dictionary) mapping each node to a list of (neighbor, weight) tuples.
-        origin: The starting node.
-        destinations: A list of destination nodes.
-    """
-    nodes = {}
-    graph = {}
-    origin = None
-    destinations = []
-    
-    section = None
-    with open(filename, 'r') as file:
-        for line in file:
-            line = line.strip()
-            if not line:
-                continue
-
-            # Identify the section headers
-            if line.startswith("Nodes:"):
-                section = "nodes"
-                continue
-            elif line.startswith("Edges:"):
-                section = "edges"
-                continue
-            elif line.startswith("Origin:"):
-                section = "origin"
-                continue
-            elif line.startswith("Destinations:"):
-                section = "destinations"
-                continue
-
-            # Process each section accordingly
-            if section == "nodes":
-                # Expected format: 1: (4,1)
-                try:
-                    node_id_str, coord_str = line.split(":")
-                    node_id = int(node_id_str.strip())
-                    coord_str = coord_str.strip().strip("()")
-                    x_str, y_str = coord_str.split(",")
-                    nodes[node_id] = (int(x_str.strip()),int(y_str.strip()))
-                except Exception as e:
-                    print(f"Error parsing node line: {line} -> {e}")
-
-            elif section == "edges":
-                # Expected fo
-                # rmat: (2,1): 4
-                try:
-                    left, weight_str = line.split(":")
-                    weight = int(weight_str.strip())
-                    left = left.strip().strip("()")
-                    src_str, dest_str = left.split(",")
-                    src = int(src_str.strip())
-                    dest = int(dest_str.strip())
-                    
-                    # Add the edge to the graph (directed edge)
-                    if src not in graph:
-                        graph[src] = []
-                    graph[src].append((dest, weight))
-                except Exception as e:
-                    print(f"Error parsing edge line: {line} -> {e}")
-
-            elif section == "origin":
-                # The origin should be a single number
-                try:
-                    origin = int(line)
-                except Exception as e:
-                    print(f"Error parsing origin: {line} -> {e}")
-
-            elif section == "destinations":
-                # Destinations might be separated by semicolons
-                for dest in line.split(";"):
-                    dest = dest.strip()
-                    if dest:
-                        try:
-                            destinations.append(int(dest))
-                        except Exception as e:
-                            print(f"Error parsing destination: {dest} -> {e}")
-
-    return nodes, graph, origin, destinations
+from src.parser.graph_parser import GraphParser, create_graph_problem_from_file
+import os
 
 
-# def main():
-#     filename = "PathFinder-test.txt"
-#     nodes, graph, origin, destinations = parse_graph_file(filename)
-    
-#     print("Parsed Graph Data:")
-#     print("------------------")
-#     print("Nodes (with coordinates):")
-#     for node, coords in nodes.items():
-#         print(f"{node}:{coords}")
-    
-#     print("\nGraph (Adjacency List):")
-#     for src, neighbours in graph.items():
-#         print(f"{src} -> {neighbours}")
-    
-#     print("\nOrigin:", origin)
-#     print("Destinations:", destinations)
-    
-#     return 0
+def main():
+    """Example usage of the GraphParser and helper functions"""
+
+    # You can now use different ways to specify the file path:
+
+    # 1. Just the filename (will be searched in multiple locations)
+    filename = "PathFinder-test.txt"
+
+    # 2. Absolute path
+    # filename = os.path.abspath("PathFinder-test.txt")
+
+    # 3. Path relative to testcases directory
+    # filename = os.path.join("testcases", "PathFinder-test.txt")
+
+    print(f"Attempting to parse graph file: {filename}")
+
+    # Using the OOP approach
+    print("\nUsing GraphParser class:")
+    print("------------------------")
+    parser = GraphParser()
+    parser.parse_file(filename)
+    graph = parser.create_graph()
+
+    print("Parsed Graph Data:")
+    print("------------------")
+    print("Nodes (with coordinates):")
+    for node, coords in parser.locations.items():
+        print(f"{node}: {coords}")
+
+    print("\nGraph Structure:")
+    for src, neighbors in graph.graph_dict.items():
+        print(f"{src} -> {neighbors}")
+
+    print("\nOrigin:", parser.origin)
+    print("Destinations:", parser.destinations)
+
+    # Using the helper function
+    print("\nUsing helper function:")
+    print("----------------------")
+    graph, origin, destinations, locations = create_graph_problem_from_file(filename)
+
+    print("Locations:", locations)
+    print("Origin:", origin)
+    print("Destinations:", destinations)
+
+    return 0
 
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == "__main__":
+    main()
