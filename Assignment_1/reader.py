@@ -20,7 +20,7 @@ def parse_graph_file(filename):
     
     Returns:
         nodes: A dictionary mapping node id to (x, y) coordinates.
-        graph: An adjacency list (dictionary) mapping each node to a list of (neighbor, weight) tuples.
+        graph: A dictionary of dictionaries mapping each node to a dictionary of {neighbor: weight}.
         origin: The starting node.
         destinations: A list of destination nodes.
     """
@@ -58,13 +58,12 @@ def parse_graph_file(filename):
                     node_id = int(node_id_str.strip())
                     coord_str = coord_str.strip().strip("()")
                     x_str, y_str = coord_str.split(",")
-                    nodes[node_id] = (int(x_str.strip()),int(y_str.strip()))
+                    nodes[node_id] = (int(x_str.strip()), int(y_str.strip()))
                 except Exception as e:
                     print(f"Error parsing node line: {line} -> {e}")
 
             elif section == "edges":
-                # Expected fo
-                # rmat: (2,1): 4
+                # Expected format: (2,1): 4
                 try:
                     left, weight_str = line.split(":")
                     weight = int(weight_str.strip())
@@ -73,10 +72,10 @@ def parse_graph_file(filename):
                     src = int(src_str.strip())
                     dest = int(dest_str.strip())
                     
-                    # Add the edge to the graph (directed edge)
+                    # Add the edge to the graph (directed edge) in dictionary form
                     if src not in graph:
-                        graph[src] = []
-                    graph[src].append((dest, weight))
+                        graph[src] = {}
+                    graph[src][dest] = weight
                 except Exception as e:
                     print(f"Error parsing edge line: {line} -> {e}")
 
@@ -98,6 +97,7 @@ def parse_graph_file(filename):
                             print(f"Error parsing destination: {dest} -> {e}")
 
     return nodes, graph, origin, destinations
+
 
 
 # def main():
