@@ -141,38 +141,35 @@ class DijkstraSearch(SearchAlgorithmBase):
 
 class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
-        def search(node, g, bound, path, goal):
+        def search(node, g, bound):
+            # Calculate f(n) = g(n) + h(n)
             f = g + problem.h(node)
-            if f > bound:
+            if f > bound:  # If the cost exceeds the current bound, return the value of f
                 return f
-            if problem.goal_test(node.state):
-                return path  # Goal found, return the path
+            if problem.goal_test(node.state):  # If goal is found, return the path
+                return node
             min_bound = float('inf')
-
-            for child in node.expand(problem):
-                if child.state not in path:  # Avoid cycles
-                    path.append(child.state)
-                    temp = search(child, g + child.path_cost, bound, path, goal)
-                    if isinstance(temp, list):  # Goal found, return path
-                        return temp
-                    if temp < min_bound:
-                        min_bound = temp
-                    path.pop()
             
-            return min_bound
-        
-        all_paths = {}
-        for goal in problem.goals:
-            bound = problem.h(problem.initial)  # Initial bound based on the heuristic
-            path = [problem.initial]
-            while True:
-                result = search(Node(problem.initial), 0, bound, path, goal)
-                if isinstance(result, list):  # Goal found
-                    all_paths[goal] = result
-                    break
-                if result == float('inf'):  # No path found
-                    all_paths[goal] = None
-                    break
-                bound = result
-        
-        return all_paths
+            # Expand all children of the current node
+            for child in node.expand(problem):
+                if child.state not in explored:  # Avoid cycles
+                    explored.add(child.state)
+                    temp = search(child, g + child.path_cost, bound)
+                    if isinstance(temp, Node):  # Goal found, return the path
+                        return temp
+                    min_bound = min(min_bound, temp)  # Update the minimum bound
+                    explored.remove(child.state)
+            
+            return min_bound  # Return the minimum bound for this path
+
+        bound = problem.h(problem.initial)  # Initial bound is just the heuristic of the start node
+        explored = set()
+        node = Node(problem.initial)
+
+        while True:
+            result = search(node, 0, bound)  # Start search with cost 0 and current bound
+            if isinstance(result, Node):  # Goal found, return the path
+                return result
+            if result == float('inf'):
+                return None
+            bound = result  # Increase the bound for the next iteration
