@@ -80,38 +80,20 @@ class BestFirstSearch(SearchAlgorithmBase):
 class GreedyBestFirstSearch(BestFirstSearch):
     def search(self, problem):
         f = problem.h
-        return super().search(self, problem, f)
+        return super().search(problem, f)
 
 
 class AStarSearch(BestFirstSearch):
     def search(self, problem):
         h = memoize(problem.h, "h")
         f = lambda n: n.path_cost + h(n)  # f(n) = g(n) + h(n)
-        return super().search(self, problem, f)
+        return super().search(problem, f)
 
 
-class DijkstraSearch(SearchAlgorithmBase):
+class DijkstraSearch(BestFirstSearch):
     def search(self, problem):
-        node = Node(problem.initial)
-        frontier = PriorityQueue(
-            "min", lambda n: n.path_cost
-        )  # Dijkstra uses only g(n)
-        frontier.append(node)
-        explored = set()
-
-        while frontier:
-            node = frontier.pop()
-            if problem.goal_test(node.state):
-                return node
-            explored.add(node.state)
-            for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
-                    frontier.append(child)
-                elif child in frontier:
-                    if child.path_cost < frontier[child]:
-                        del frontier[child]
-                        frontier.append(child)
-        return None
+        f = lambda n: n.path_cost
+        return super().search(problem, f)
 
 
 class IDAStarSearch(SearchAlgorithmBase):
@@ -137,7 +119,7 @@ class IDAStarSearch(SearchAlgorithmBase):
             return min_bound
 
         all_paths = {}
-        for goal in problem.goals:
+        for goal in problem.goal:
             bound = problem.h(problem.initial)  # Initial bound based on the heuristic
             path = [problem.initial]
             while True:

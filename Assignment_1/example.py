@@ -13,9 +13,7 @@ def main():
     """Example of using the parser with search algorithms"""
 
     # Example of different ways to specify the graph file
-    graph_file = (
-        "PathFinder-test.txt"  # Simple filename, will be searched in multiple locations
-    )
+    graph_file = "testcases/testcase10.txt"  # Simple filename, will be searched in multiple locations
 
     # Alternative ways to specify the path:
     # - Absolute path
