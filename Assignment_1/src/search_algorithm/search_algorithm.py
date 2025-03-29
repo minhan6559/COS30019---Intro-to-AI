@@ -1,7 +1,8 @@
-from graph import Node
-from search_algorithm_base import SearchAlgorithmBase
+from src.graph.graph import Node
+from src.search_algorithm.search_algorithm_base import SearchAlgorithmBase
+from src.utils.utils import memoize, PriorityQueue
+
 from collections import deque
-from utils import *
 
 
 class DepthFirstSearch(SearchAlgorithmBase):
@@ -76,52 +77,25 @@ class BestFirstSearch(SearchAlgorithmBase):
         return None
 
 
-class GreedyBestFirstSearch(SearchAlgorithmBase):
+class GreedyBestFirstSearch(BestFirstSearch):
     def search(self, problem):
-        node = Node(problem.initial)
-        frontier = PriorityQueue("min", problem.h)  # Use the heuristic to prioritize
-        frontier.append(node)
-        explored = set()
-
-        while frontier:
-            node = frontier.pop()
-            if problem.goal_test(node.state):
-                return node
-            explored.add(node.state)
-            for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
-                    frontier.append(child)
-        return None
+        f = problem.h
+        return super().search(self, problem, f)
 
 
-
-class AStarSearch(SearchAlgorithmBase):
+class AStarSearch(BestFirstSearch):
     def search(self, problem):
         h = memoize(problem.h, "h")
-        node = Node(problem.initial)
-        frontier = PriorityQueue("min", lambda n: n.path_cost + h(n))  # A* f(n) = g(n) + h(n)
-        frontier.append(node)
-        explored = set()
-
-        while frontier:
-            node = frontier.pop()
-            if problem.goal_test(node.state):
-                return node
-            explored.add(node.state)
-            for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
-                    frontier.append(child)
-                elif child in frontier:
-                    if (child.path_cost + h(child)) < frontier[child]:
-                        del frontier[child]
-                        frontier.append(child)
-        return None
+        f = lambda n: n.path_cost + h(n)  # f(n) = g(n) + h(n)
+        return super().search(self, problem, f)
 
 
 class DijkstraSearch(SearchAlgorithmBase):
     def search(self, problem):
         node = Node(problem.initial)
-        frontier = PriorityQueue("min", lambda n: n.path_cost)  # Dijkstra uses only g(n)
+        frontier = PriorityQueue(
+            "min", lambda n: n.path_cost
+        )  # Dijkstra uses only g(n)
         frontier.append(node)
         explored = set()
 
@@ -139,6 +113,7 @@ class DijkstraSearch(SearchAlgorithmBase):
                         frontier.append(child)
         return None
 
+
 class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
         def search(node, g, bound):
@@ -146,30 +121,3 @@ class IDAStarSearch(SearchAlgorithmBase):
             f = g + problem.h(node)
             if f > bound:  # If the cost exceeds the current bound, return the value of f
                 return f
-            if problem.goal_test(node.state):  # If goal is found, return the path
-                return node
-            min_bound = float('inf')
-            
-            # Expand all children of the current node
-            for child in node.expand(problem):
-                if child.state not in explored:  # Avoid cycles
-                    explored.add(child.state)
-                    temp = search(child, g + child.path_cost, bound)
-                    if isinstance(temp, Node):  # Goal found, return the path
-                        return temp
-                    min_bound = min(min_bound, temp)  # Update the minimum bound
-                    explored.remove(child.state)
-            
-            return min_bound  # Return the minimum bound for this path
-
-        bound = problem.h(problem.initial)  # Initial bound is just the heuristic of the start node
-        explored = set()
-        node = Node(problem.initial)
-
-        while True:
-            result = search(node, 0, bound)  # Start search with cost 0 and current bound
-            if isinstance(result, Node):  # Goal found, return the path
-                return result
-            if result == float('inf'):
-                return None
-            bound = result  # Increase the bound for the next iteration

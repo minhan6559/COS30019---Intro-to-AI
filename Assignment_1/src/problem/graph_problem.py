@@ -1,9 +1,9 @@
-from problem import Problem
+from src.problem.problem_base import ProblemBase
 import numpy as np
-from utils import distance
+from src.utils.utils import distance
 
 
-class GraphProblem(Problem):
+class GraphProblem(ProblemBase):
     """The problem of searching a graph from one node to another."""
 
     def __init__(self, initial, goal, graph, locations):
