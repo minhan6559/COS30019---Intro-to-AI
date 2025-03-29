@@ -8,7 +8,7 @@ def main():
     # You can now use different ways to specify the file path:
 
     # 1. Just the filename (will be searched in multiple locations)
-    filename = "Assignment_1/testcases/testcase1.txt"
+    filename = "testcases/testcase1.txt"
 
     # 2. Absolute path
     # filename = os.path.abspath("PathFinder-test.txt")

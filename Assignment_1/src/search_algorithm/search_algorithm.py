@@ -1,7 +1,8 @@
 from src.graph.graph import Node
 from src.search_algorithm.search_algorithm_base import SearchAlgorithmBase
-from collections import deque
 from src.utils.utils import memoize, PriorityQueue
+
+from collections import deque
 
 
 class DepthFirstSearch(SearchAlgorithmBase):
