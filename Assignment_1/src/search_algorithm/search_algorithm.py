@@ -80,14 +80,14 @@ class BestFirstSearch(SearchAlgorithmBase):
 class GreedyBestFirstSearch(BestFirstSearch):
     def search(self, problem):
         f = problem.h
-        return super().search(self, problem, f)
+        return super().search(problem, f)
 
 
 class AStarSearch(BestFirstSearch):
     def search(self, problem):
         h = memoize(problem.h, "h")
         f = lambda n: n.path_cost + h(n)  # f(n) = g(n) + h(n)
-        return super().search(self, problem, f)
+        return super().search(problem, f)
 
 
 class DijkstraSearch(SearchAlgorithmBase):
@@ -116,8 +116,38 @@ class DijkstraSearch(SearchAlgorithmBase):
 
 class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
+        """
+        Perform Iterative Deepening A* (IDA*) search.
+        Uses a depth-limited version of A* with iterative deepening.
+        """
         def search(node, g, bound):
-            # Calculate f(n) = g(n) + h(n)
+            # f(n) = g(n) + h(n)
             f = g + problem.h(node)
-            if f > bound:  # If the cost exceeds the current bound, return the value of f
-                return f
+            if f > bound:
+                return f  # Return the new bound if the limit is exceeded
+            if problem.goal_test(node.state):
+                return node  # Goal found, return the node
+            min_bound = float('inf')
+
+            for child in node.expand(problem):
+                if child.state not in explored:
+                    explored.add(child.state)
+                    temp = search(child, g + child.path_cost, bound)
+                    if isinstance(temp, Node):  # If a goal node is found, return it
+                        return temp
+                    min_bound = min(min_bound, temp)
+                    explored.remove(child.state)
+
+            return min_bound
+
+        bound = problem.h(Node(problem.initial))  # Set the initial bound to h(n)
+        explored = set([problem.initial])  # Start with the initial state in explored set
+        result = None
+
+        while True:
+            result = search(Node(problem.initial), 0, bound)
+            if isinstance(result, Node):
+                return result  # Return the actual goal node instead of the path
+            elif result == float('inf'):
+                return None
+            bound = result  # Update the bound for the next iteration
