@@ -98,38 +98,41 @@ class DijkstraSearch(BestFirstSearch):
 
 class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
-        def search(node, g, bound, path, goal):
+        """
+        Perform Iterative Deepening A* (IDA*) search.
+        Uses a depth-limited version of A* with iterative deepening.
+        """
+
+        def search(node, g, bound):
+            # f(n) = g(n) + h(n)
             f = g + problem.h(node)
             if f > bound:
-                return f
+                return f  # Return the new bound if the limit is exceeded
             if problem.goal_test(node.state):
-                return path  # Goal found, return the path
+                return node  # Goal found, return the node
             min_bound = float("inf")
 
             for child in node.expand(problem):
-                if child.state not in path:  # Avoid cycles
-                    path.append(child.state)
-                    temp = search(child, g + child.path_cost, bound, path, goal)
-                    if isinstance(temp, list):  # Goal found, return path
+                if child.state not in explored:
+                    explored.add(child.state)
+                    temp = search(child, g + child.path_cost, bound)
+                    if isinstance(temp, Node):  # If a goal node is found, return it
                         return temp
-                    if temp < min_bound:
-                        min_bound = temp
-                    path.pop()
+                    min_bound = min(min_bound, temp)
+                    explored.remove(child.state)
 
             return min_bound
 
-        all_paths = {}
-        for goal in problem.goal:
-            bound = problem.h(problem.initial)  # Initial bound based on the heuristic
-            path = [problem.initial]
-            while True:
-                result = search(Node(problem.initial), 0, bound, path, goal)
-                if isinstance(result, list):  # Goal found
-                    all_paths[goal] = result
-                    break
-                if result == float("inf"):  # No path found
-                    all_paths[goal] = None
-                    break
-                bound = result
+        bound = problem.h(Node(problem.initial))  # Set the initial bound to h(n)
+        explored = set(
+            [problem.initial]
+        )  # Start with the initial state in explored set
+        result = None
 
-        return all_paths
+        while True:
+            result = search(Node(problem.initial), 0, bound)
+            if isinstance(result, Node):
+                return result  # Return the actual goal node instead of the path
+            elif result == float("inf"):
+                return None
+            bound = result  # Update the bound for the next iteration
