@@ -7,7 +7,6 @@ from src.search_algorithm.search_algorithm import (
     GreedyBestFirstSearch,
     DijkstraSearch,
 )
-import os
 
 
 def main():

@@ -77,47 +77,17 @@ class BestFirstSearch(SearchAlgorithmBase):
         return None
 
 
-class GreedyBestFirstSearch(SearchAlgorithmBase):
+class GreedyBestFirstSearch(BestFirstSearch):
     def search(self, problem):
-        node = Node(problem.initial)
-        frontier = PriorityQueue("min", problem.h)  # Use the heuristic to prioritize
-        frontier.append(node)
-        explored = set()
-
-        while frontier:
-            node = frontier.pop()
-            if problem.goal_test(node.state):
-                return node
-            explored.add(node.state)
-            for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
-                    frontier.append(child)
-        return None
+        f = problem.h
+        return super().search(self, problem, f)
 
 
-class AStarSearch(SearchAlgorithmBase):
+class AStarSearch(BestFirstSearch):
     def search(self, problem):
         h = memoize(problem.h, "h")
-        node = Node(problem.initial)
-        frontier = PriorityQueue(
-            "min", lambda n: n.path_cost + h(n)
-        )  # A* f(n) = g(n) + h(n)
-        frontier.append(node)
-        explored = set()
-
-        while frontier:
-            node = frontier.pop()
-            if problem.goal_test(node.state):
-                return node
-            explored.add(node.state)
-            for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
-                    frontier.append(child)
-                elif child in frontier:
-                    if (child.path_cost + h(child)) < frontier[child]:
-                        del frontier[child]
-                        frontier.append(child)
-        return None
+        f = lambda n: n.path_cost + h(n)  # f(n) = g(n) + h(n)
+        return super().search(self, problem, f)
 
 
 class DijkstraSearch(SearchAlgorithmBase):
