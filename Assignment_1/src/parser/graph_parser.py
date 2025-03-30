@@ -157,26 +157,20 @@ class GraphParser:
                 except Exception as e:
                     print(f"Error parsing destination: {dest} -> {e}")
 
-    def create_graph(self, directed=True):
+    def create_graph(self):
         """
         Create a Graph object from the parsed data
-
-        Args:
-            directed: Whether the graph is directed or not
 
         Returns:
             graph: A Graph object with the parsed data and locations attached
         """
-        graph = Graph(self.graph_dict, directed)
+        graph = Graph(self.graph_dict)
         graph.locations = self.locations
         return graph
 
-    def get_problem_components(self, directed=True):
+    def get_problem_components(self):
         """
         Returns all components needed to create a GraphProblem
-
-        Args:
-            directed: Whether the graph is directed or not
 
         Returns:
             graph: A Graph object
@@ -184,20 +178,19 @@ class GraphParser:
             destinations: List of destination nodes
             locations: Dictionary mapping nodes to their coordinates
         """
-        graph = self.create_graph(directed)
+        graph = self.create_graph()
         return graph, self.origin, self.destinations, self.locations
 
 
-def create_graph_problem_from_file(filename, directed=True):
+def create_graph_problem_from_file(filename):
     """
     Helper function to create a GraphProblem directly from a file.
 
     Args:
         filename: Path to the graph file
-        directed: Whether the graph is directed
 
     Returns:
         tuple: (graph, origin, destinations, locations)
     """
     parser = GraphParser()
-    return parser.parse_file(filename).get_problem_components(directed)
+    return parser.parse_file(filename).get_problem_components()

@@ -86,28 +86,8 @@ class Graph:
     length of the link from A to B. 'Lengths' can actually be any object at
     all, and nodes can be any hashable object."""
 
-    def __init__(self, graph_dict=None, directed=True):
+    def __init__(self, graph_dict=None):
         self.graph_dict = graph_dict or {}
-        self.directed = directed
-        if not directed:
-            self.make_undirected()
-
-    def make_undirected(self):
-        """Make a digraph into an undirected graph by adding symmetric edges."""
-        for a in list(self.graph_dict.keys()):
-            for b, dist in self.graph_dict[a].items():
-                self.connect1(b, a, dist)
-
-    def connect(self, A, B, distance=1):
-        """Add a link from A and B of given distance, and also add the inverse
-        link if the graph is undirected."""
-        self.connect1(A, B, distance)
-        if not self.directed:
-            self.connect1(B, A, distance)
-
-    def connect1(self, A, B, distance):
-        """Add a link from A to B of given distance, in one direction only."""
-        self.graph_dict.setdefault(A, {})[B] = distance
 
     def get(self, a, b=None):
         """Return a link distance or a dict of {node: distance} entries.

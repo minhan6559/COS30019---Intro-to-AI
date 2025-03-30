@@ -1,6 +1,9 @@
 from src.problem.problem_base import ProblemBase
-import numpy as np
+from src.graph.graph import Graph
 from src.utils.utils import distance
+
+import numpy as np
+import random
 
 
 class GraphProblem(ProblemBase):
@@ -41,3 +44,70 @@ class GraphProblem(ProblemBase):
             return int(distance(locs[node.state], locs[self.goal]))
         else:
             return np.inf
+
+
+def generate_random_graph_problem(
+    num_nodes=10,
+    min_edges_per_node=2,
+    max_edges_per_node=4,
+    grid_size=100,
+    num_destinations=1,
+    curvature=lambda: random.uniform(1.1, 1.5),
+):
+    """
+    Generate a random graph problem for testing search algorithms.
+
+    Args:
+        num_nodes: Number of nodes in the graph
+        min_edges_per_node: Minimum outgoing edges per node
+        max_edges_per_node: Maximum outgoing edges per node
+        grid_size: Size of the coordinate grid (for node locations)
+        num_destinations: Number of destination nodes
+
+    Returns:
+        problem: A GraphProblem instance
+    """
+    # Generate node IDs and random locations
+    nodes = list(range(1, num_nodes + 1))
+    locations = {
+        node: (random.randint(0, grid_size), random.randint(0, grid_size))
+        for node in nodes
+    }
+
+    # Create empty graph
+    graph_dict = {node: {} for node in nodes}
+
+    # Add random edges
+    for node in nodes:
+        # Determine number of outgoing edges for this node
+        num_edges = random.randint(
+            min_edges_per_node, min(max_edges_per_node, num_nodes - 1)
+        )
+
+        # Get potential targets (all nodes except self)
+        potential_targets = [n for n in nodes if n != node]
+
+        potential_targets.sort(key=lambda x: distance(locations[node], locations[x]))
+
+        # Select targets
+        targets = potential_targets[: min(num_edges, len(potential_targets))]
+
+        # Add edges with random weights
+        for target in targets:
+            weight = distance(locations[node], locations[target]) * curvature()
+            graph_dict[node][target] = weight
+
+    # Create the graph
+    graph = Graph(graph_dict)
+
+    # Select random origin and destinations
+    origin = random.choice(nodes)
+    remaining_nodes = [n for n in nodes if n != origin]
+    destinations = random.sample(
+        remaining_nodes, min(num_destinations, len(remaining_nodes))
+    )
+
+    # Create the problem
+    problem = GraphProblem(origin, destinations, graph, locations)
+
+    return problem
