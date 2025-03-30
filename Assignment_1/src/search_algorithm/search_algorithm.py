@@ -95,11 +95,6 @@ class DijkstraSearch(BestFirstSearch):
         f = lambda n: n.path_cost
         return super().search(problem, f)
 
-
-from src.graph.graph import Node
-from src.search_algorithm.search_algorithm_base import SearchAlgorithmBase
-from src.utils.utils import memoize
-
 class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
         """
