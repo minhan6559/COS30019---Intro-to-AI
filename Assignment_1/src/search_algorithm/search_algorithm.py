@@ -95,21 +95,20 @@ class DijkstraSearch(BestFirstSearch):
         f = lambda n: n.path_cost
         return super().search(problem, f)
 
-
 class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
         """
         Perform Iterative Deepening A* (IDA*) search.
-        Uses a depth-limited version of A* with iterative deepening.
+        Uses a depth-limited version of A* with iterative deepening and memoization.
         """
-
+        h = memoize(problem.h, "h")
         def search(node, g, bound):
-            # f(n) = g(n) + h(n)
-            f = g + problem.h(node)
+            f = g + h(node)  # f(n) = g(n) + h(n)
             if f > bound:
                 return f  # Return the new bound if the limit is exceeded
             if problem.goal_test(node.state):
                 return node  # Goal found, return the node
+
             min_bound = float("inf")
 
             for child in node.expand(problem):
@@ -123,12 +122,12 @@ class IDAStarSearch(SearchAlgorithmBase):
 
             return min_bound
 
-        bound = problem.h(Node(problem.initial))  # Set the initial bound to h(n)
-        explored = set(
-            [problem.initial]
-        )  # Start with the initial state in explored set
+        # Set the initial bound to h(n)
+        bound = h(Node(problem.initial))
+        explored = set([problem.initial])  # Start with the initial state in explored set
         result = None
 
+        # Iteratively increase the bound
         while True:
             result = search(Node(problem.initial), 0, bound)
             if isinstance(result, Node):
