@@ -90,29 +90,15 @@ class AStarSearch(BestFirstSearch):
         return super().search(problem, f)
 
 
-class DijkstraSearch(SearchAlgorithmBase):
+class DijkstraSearch(BestFirstSearch):
     def search(self, problem):
-        node = Node(problem.initial)
-        frontier = PriorityQueue(
-            "min", lambda n: n.path_cost
-        )  # Dijkstra uses only g(n)
-        frontier.append(node)
-        explored = set()
+        f = lambda n: n.path_cost
+        return super().search(problem, f)
 
-        while frontier:
-            node = frontier.pop()
-            if problem.goal_test(node.state):
-                return node
-            explored.add(node.state)
-            for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
-                    frontier.append(child)
-                elif child in frontier:
-                    if child.path_cost < frontier[child]:
-                        del frontier[child]
-                        frontier.append(child)
-        return None
 
+from src.graph.graph import Node
+from src.search_algorithm.search_algorithm_base import SearchAlgorithmBase
+from src.utils.utils import memoize
 
 class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
@@ -151,6 +137,6 @@ class IDAStarSearch(SearchAlgorithmBase):
             result = search(Node(problem.initial), 0, bound)
             if isinstance(result, Node):
                 return result  # Return the actual goal node instead of the path
-            elif result == float('inf'):
+            elif result == float("inf"):
                 return None
             bound = result  # Update the bound for the next iteration
