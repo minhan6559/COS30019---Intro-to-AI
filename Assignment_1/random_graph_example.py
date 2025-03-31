@@ -14,11 +14,12 @@ def main():
     """Example of creating and solving a random graph problem"""
 
     # Parameters for medium-sized graph
-    num_nodes = 30
+    num_nodes = 500
     min_edges_per_node = 2
     max_edges_per_node = 5
-    grid_size = 150
+    grid_size = 1000
     num_destinations = 3
+    ensure_connectivity = True
 
     print("Generating random medium-sized graph problem...")
     print(f"Number of nodes: {num_nodes}")
@@ -33,6 +34,7 @@ def main():
         max_edges_per_node=max_edges_per_node,
         grid_size=grid_size,
         num_destinations=num_destinations,
+        ensure_connectivity=ensure_connectivity,
     )
 
     print("\nRandom graph problem created:")
@@ -59,7 +61,7 @@ def main():
         "A*": AStarSearch(),
         "Greedy": GreedyBestFirstSearch(),
         "Dijkstra": DijkstraSearch(),
-        "IDA*": IDAStarSearch(),
+        # "IDA*": IDAStarSearch(),
     }
 
     # For each goal in the problem, run each search algorithm

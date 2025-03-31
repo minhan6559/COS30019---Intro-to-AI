@@ -57,7 +57,7 @@ class BestFirstSearch(SearchAlgorithmBase):
         There is a subtlety: the line "f = memoize(f, 'f')" means that the f
         values will be cached on the nodes as they are computed. So after doing
         a best first search you can examine the f values of the path returned."""
-        f = memoize(f, "f")
+        # f = memoize(f, "f")
         node = Node(problem.initial)
         frontier = PriorityQueue("min", f)
         frontier.append(node)
@@ -95,6 +95,7 @@ class DijkstraSearch(BestFirstSearch):
         f = lambda n: n.path_cost
         return super().search(problem, f)
 
+
 class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
         """
@@ -102,6 +103,7 @@ class IDAStarSearch(SearchAlgorithmBase):
         Uses a depth-limited version of A* with iterative deepening and memoization.
         """
         h = memoize(problem.h, "h")
+
         def search(node, g, bound):
             f = g + h(node)  # f(n) = g(n) + h(n)
             if f > bound:
@@ -124,7 +126,9 @@ class IDAStarSearch(SearchAlgorithmBase):
 
         # Set the initial bound to h(n)
         bound = h(Node(problem.initial))
-        explored = set([problem.initial])  # Start with the initial state in explored set
+        explored = set(
+            [problem.initial]
+        )  # Start with the initial state in explored set
         result = None
 
         # Iteratively increase the bound
