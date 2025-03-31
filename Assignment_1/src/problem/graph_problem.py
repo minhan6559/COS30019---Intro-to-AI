@@ -4,6 +4,7 @@ from src.utils.utils import distance
 
 import numpy as np
 import random
+from collections import deque
 
 
 class GraphProblem(ProblemBase):
@@ -136,11 +137,12 @@ class GraphProblem(ProblemBase):
         Returns:
             bool: True if a path exists, False otherwise
         """
+
         visited = set()
-        queue = [start]
+        queue = deque([start])
 
         while queue:
-            node = queue.pop(0)
+            node = queue.popleft()
             if node == goal:
                 return True
 
@@ -171,11 +173,11 @@ class GraphProblem(ProblemBase):
 
         # Find all nodes reachable from start
         reachable = set()
-        queue = [start]
+        queue = deque([start])
         visited = {start}
 
         while queue:
-            node = queue.pop(0)
+            node = queue.popleft()
             reachable.add(node)
             for next_node in graph_dict[node]:
                 if next_node not in visited:

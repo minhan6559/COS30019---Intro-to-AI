@@ -49,7 +49,7 @@ class BreadthFirstSearch(SearchAlgorithmBase):
 
 
 class BestFirstSearch(SearchAlgorithmBase):
-    def search(self, problem, f):
+    def search(self, problem, f, use_memoize=False):
         """Search the nodes with the lowest f scores first.
         You specify the function f(node) that you want to minimize; for example,
         if f is a heuristic estimate to the goal, then we have greedy best
@@ -57,7 +57,9 @@ class BestFirstSearch(SearchAlgorithmBase):
         There is a subtlety: the line "f = memoize(f, 'f')" means that the f
         values will be cached on the nodes as they are computed. So after doing
         a best first search you can examine the f values of the path returned."""
-        # f = memoize(f, "f")
+        if use_memoize:
+            f = memoize(f, "f")
+
         node = Node(problem.initial)
         frontier = PriorityQueue("min", f)
         frontier.append(node)
@@ -78,22 +80,22 @@ class BestFirstSearch(SearchAlgorithmBase):
 
 
 class GreedyBestFirstSearch(BestFirstSearch):
-    def search(self, problem):
+    def search(self, problem, use_memoize=False):
         f = problem.h
-        return super().search(problem, f)
+        return super().search(problem, f, use_memoize)
 
 
 class AStarSearch(BestFirstSearch):
-    def search(self, problem):
+    def search(self, problem, use_memoize=False):
         h = memoize(problem.h, "h")
         f = lambda n: n.path_cost + h(n)  # f(n) = g(n) + h(n)
-        return super().search(problem, f)
+        return super().search(problem, f, use_memoize)
 
 
 class DijkstraSearch(BestFirstSearch):
-    def search(self, problem):
+    def search(self, problem, use_memoize=False):
         f = lambda n: n.path_cost
-        return super().search(problem, f)
+        return super().search(problem, f, use_memoize)
 
 
 class IDAStarSearch(SearchAlgorithmBase):
