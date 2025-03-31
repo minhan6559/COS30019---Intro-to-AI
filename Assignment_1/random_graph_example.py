@@ -16,11 +16,11 @@ def main():
     show_path = False  # Set to False to not show the path in the output
 
     # Parameters for graph
-    num_nodes = 3000
+    num_nodes = 5000
     min_edges_per_node = 2
     max_edges_per_node = 5
-    grid_size = 5000
-    num_destinations = 1
+    grid_size = 10000
+    num_destinations = 2
     ensure_connectivity = True
 
     print("Generating random graph problem...")

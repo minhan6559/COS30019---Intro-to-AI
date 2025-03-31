@@ -2,8 +2,8 @@ from src.problem.problem_base import ProblemBase
 from src.graph.graph import Graph
 from src.utils.utils import distance
 
-import numpy as np
 import random
+import math
 from collections import deque
 
 
@@ -37,11 +37,11 @@ class GraphProblem(ProblemBase):
         return action
 
     def path_cost(self, cost_so_far, A, action, B):
-        return cost_so_far + (self.graph.get(A, B) or np.inf)
+        return cost_so_far + (self.graph.get(A, B) or math.inf)
 
     def find_min_edge(self):
         """Find minimum value of edges."""
-        m = np.inf
+        m = math.inf
         for d in self.graph.graph_dict.values():
             local_min = min(d.values())
             m = min(m, local_min)
@@ -58,14 +58,14 @@ class GraphProblem(ProblemBase):
     def h(self, node):
         """h function is straight-line distance from node's state to current goal."""
         if not self.locations or not self.current_goal:
-            return np.inf
+            return math.inf
 
         # Handle different node types (Node objects, strings, integers, etc.)
         node_state = node.state if hasattr(node, "state") else node
 
         # Ensure both locations exist
         if node_state not in self.locations or self.current_goal not in self.locations:
-            return np.inf
+            return math.inf
 
         return int(
             distance(self.locations[node_state], self.locations[self.current_goal])
