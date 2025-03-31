@@ -7,12 +7,17 @@ class ProblemBase:
     __init__, goal_test, and path_cost. Then you will create instances
     of your subclass and solve them with the various search functions."""
 
-    def __init__(self, initial, goal=None):
-        """The constructor specifies the initial state, and possibly a goal
-        state, if there is a unique goal. Your subclass's constructor can add
-        other arguments."""
+    def __init__(self, initial, goals=None):
+        """The constructor specifies the initial state, and possibly goals
+        state(s). Your subclass's constructor can add other arguments."""
         self.initial = initial
-        self.goal = goal
+        # Always store goals as a list for consistency
+        if goals is None:
+            self.goals = []
+        elif isinstance(goals, list):
+            self.goals = goals
+        else:
+            self.goals = [goals]
 
     def actions(self, state):
         """Return the actions that can be executed in the given
@@ -28,14 +33,10 @@ class ProblemBase:
         raise NotImplementedError
 
     def goal_test(self, state):
-        """Return True if the state is a goal. The default method compares the
-        state to self.goal or checks for state in self.goal if it is a
-        list, as specified in the constructor. Override this method if
-        checking against a single self.goal is not enough."""
-        if isinstance(self.goal, list):
-            return is_in(state, self.goal)
-        else:
-            return state == self.goal
+        """Return True if the state is a goal. The default method checks if
+        state is in self.goals list. Override this method if more complex
+        goal testing is needed."""
+        return is_in(state, self.goals)
 
     def path_cost(self, c, state1, action, state2):
         """Return the cost of a solution path that arrives at state2 from

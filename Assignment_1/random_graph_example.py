@@ -1,0 +1,135 @@
+from src.problem.graph_problem import GraphProblem
+from src.search_algorithm.search_algorithm import (
+    BreadthFirstSearch,
+    DepthFirstSearch,
+    AStarSearch,
+    GreedyBestFirstSearch,
+    DijkstraSearch,
+    IDAStarSearch,
+)
+import time
+
+
+def main():
+    """Example of creating and solving a random graph problem"""
+
+    # Parameters for medium-sized graph
+    num_nodes = 30
+    min_edges_per_node = 2
+    max_edges_per_node = 5
+    grid_size = 150
+    num_destinations = 3
+
+    print("Generating random medium-sized graph problem...")
+    print(f"Number of nodes: {num_nodes}")
+    print(f"Edges per node: {min_edges_per_node}-{max_edges_per_node}")
+    print(f"Grid size: {grid_size}x{grid_size}")
+    print(f"Number of destinations: {num_destinations}")
+
+    # Create a random graph problem
+    problem = GraphProblem.random(
+        num_nodes=num_nodes,
+        min_edges_per_node=min_edges_per_node,
+        max_edges_per_node=max_edges_per_node,
+        grid_size=grid_size,
+        num_destinations=num_destinations,
+    )
+
+    print("\nRandom graph problem created:")
+    print(problem)
+
+    print(f"\nStarting point: {problem.initial}")
+    print(f"Goals: {problem.goals}")
+    print(f"Current goal: {problem.current_goal}")
+
+    # Print a sample of nodes and their connections
+    print("\nSample of graph connections:")
+    sample_nodes = list(problem.graph.graph_dict.keys())[:5]  # First 5 nodes
+    for node in sample_nodes:
+        neighbors = problem.graph.get(node)
+        print(f"Node {node} connects to: {neighbors}")
+
+    # Dictionary to store search results
+    all_results = {}
+
+    # Set up available search algorithms
+    algorithms = {
+        "BFS": BreadthFirstSearch(),
+        "DFS": DepthFirstSearch(),
+        "A*": AStarSearch(),
+        "Greedy": GreedyBestFirstSearch(),
+        "Dijkstra": DijkstraSearch(),
+        "IDA*": IDAStarSearch(),
+    }
+
+    # For each goal in the problem, run each search algorithm
+    for _ in range(len(problem.goals)):
+        current_goal = problem.current_goal
+        print(f"\n{'=' * 50}")
+        print(f"Searching paths to destination {current_goal}:")
+        print(f"{'=' * 50}")
+
+        # Run each algorithm against the current goal
+        for name, algorithm in algorithms.items():
+            print(f"\nRunning {name}...")
+            start_time = time.time()
+
+            result = algorithm.search(problem)
+
+            elapsed_time = time.time() - start_time
+
+            if result:
+                path = result.path()
+                path_nodes = [node.state for node in path]
+                path_cost = result.path_cost
+
+                print(f"  {name}: Path found in {elapsed_time:.4f} seconds")
+                print(f"  Cost: {path_cost:.2f}, Path length: {len(path_nodes)}")
+                print(f"  Path: {' -> '.join(map(str, path_nodes))}")
+
+                # Store in results
+                if current_goal not in all_results:
+                    all_results[current_goal] = {}
+                all_results[current_goal][name] = {
+                    "path": path_nodes,
+                    "cost": path_cost,
+                    "time": elapsed_time,
+                }
+            else:
+                print(f"  {name}: No path found after {elapsed_time:.4f} seconds")
+
+                if current_goal not in all_results:
+                    all_results[current_goal] = {}
+                all_results[current_goal][name] = {
+                    "path": None,
+                    "cost": float("inf"),
+                    "time": elapsed_time,
+                }
+
+        # Switch to the next goal for the next iteration
+        problem.next_goal()
+
+    # Print performance comparison
+    print("\n" + "=" * 60)
+    print("Performance Comparison Across All Destinations")
+    print("=" * 60)
+
+    for goal, algorithms_results in all_results.items():
+        print(f"\nDestination {goal}:")
+        print(f"{'-' * 50}")
+        print(
+            f"{'Algorithm':<10} {'Success':<8} {'Path Cost':<12} {'Path Length':<14} {'Time (s)':<10}"
+        )
+        print(f"{'-' * 50}")
+
+        for name, result in algorithms_results.items():
+            success = "Yes" if result["path"] is not None else "No"
+            cost = f"{result['cost']:.2f}" if result["path"] is not None else "N/A"
+            path_len = len(result["path"]) if result["path"] is not None else "N/A"
+            time_taken = f"{result['time']:.4f}"
+
+            print(f"{name:<10} {success:<8} {cost:<12} {path_len:<14} {time_taken:<10}")
+
+
+if __name__ == "__main__":
+    main()

@@ -165,7 +165,6 @@ class GraphParser:
             graph: A Graph object with the parsed data and locations attached
         """
         graph = Graph(self.graph_dict)
-        graph.locations = self.locations
         return graph
 
     def get_problem_components(self):
@@ -180,17 +179,3 @@ class GraphParser:
         """
         graph = self.create_graph()
         return graph, self.origin, self.destinations, self.locations
-
-
-def create_graph_problem_from_file(filename):
-    """
-    Helper function to create a GraphProblem directly from a file.
-
-    Args:
-        filename: Path to the graph file
-
-    Returns:
-        tuple: (graph, origin, destinations, locations)
-    """
-    parser = GraphParser()
-    return parser.parse_file(filename).get_problem_components()

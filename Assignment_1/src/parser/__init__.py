@@ -1,1 +1,1 @@
-from .graph_parser import GraphParser, create_graph_problem_from_file
+from .graph_parser import GraphParser

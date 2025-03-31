@@ -1,51 +1,43 @@
-from src.parser.graph_parser import GraphParser, create_graph_problem_from_file
+from src.problem.graph_problem import GraphProblem
 import os
 
 
 def main():
-    """Example usage of the GraphParser and helper functions"""
+    """Example usage of GraphProblem's file loading capabilities"""
 
-    # You can now use different ways to specify the file path:
+    # You can use different ways to specify the file path:
 
     # 1. Just the filename (will be searched in multiple locations)
     filename = "testcases/testcase3.txt"
 
-    # 2. Absolute path
-    # filename = os.path.abspath("PathFinder-test.txt")
+    print(f"Loading graph from file: {filename}")
 
-    # 3. Path relative to testcases directory
-    # filename = os.path.join("testcases", "PathFinder-test.txt")
+    # Create the problem directly from the file
+    problem = GraphProblem.from_file(filename)
 
-    print(f"Attempting to parse graph file: {filename}")
+    print("\nGraph Problem Information:")
+    print("--------------------------")
+    print(problem)  # This uses the __repr__ method
 
-    # Using the OOP approach
-    print("\nUsing GraphParser class:")
-    print("------------------------")
-    parser = GraphParser()
-    parser.parse_file(filename)
-    graph = parser.create_graph()
-
-    print("Parsed Graph Data:")
-    print("------------------")
-    print("Nodes (with coordinates):")
-    for node, coords in parser.locations.items():
-        print(f"{node}: {coords}")
+    print("\nDetailed Graph Data:")
+    print("-------------------")
+    print("Starting point:", problem.initial)
+    print("Goals:", problem.goals)
+    print("Current goal:", problem.current_goal)
 
     print("\nGraph Structure:")
-    for src, neighbors in graph.graph_dict.items():
+    for src, neighbors in problem.graph.graph_dict.items():
         print(f"{src} -> {neighbors}")
 
-    print("\nOrigin:", parser.origin)
-    print("Destinations:", parser.destinations)
+    print("\nNode Coordinates:")
+    for node, coords in problem.locations.items():
+        print(f"{node}: {coords}")
 
-    # Using the helper function
-    print("\nUsing helper function:")
-    print("----------------------")
-    graph, origin, destinations, locations = create_graph_problem_from_file(filename)
-
-    print("Locations:", locations)
-    print("Origin:", origin)
-    print("Destinations:", destinations)
+    print("\nGraph Statistics:")
+    print(f"Number of nodes: {len(problem.graph.nodes())}")
+    print(
+        f"Number of edges: {sum(len(neighbors) for neighbors in problem.graph.graph_dict.values())}"
+    )
 
     return 0
 
