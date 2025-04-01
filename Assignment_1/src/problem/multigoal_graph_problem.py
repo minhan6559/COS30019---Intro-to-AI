@@ -7,7 +7,7 @@ import math
 from collections import deque
 
 
-class GraphProblem(ProblemBase):
+class MultigoalGraphProblem(ProblemBase):
     """The problem of searching a graph from one node to another."""
 
     def __init__(self, initial, goals, graph, locations):
@@ -25,8 +25,6 @@ class GraphProblem(ProblemBase):
         super().__init__(initial, self.goals)
         self.graph = graph
         self.locations = locations
-        # Track the current active goal
-        self.current_goal = self.goals[0] if self.goals else None
 
     def actions(self, A):
         """The actions at a graph node are just its neighbors."""
@@ -39,71 +37,36 @@ class GraphProblem(ProblemBase):
     def path_cost(self, cost_so_far, A, action, B):
         return cost_so_far + (self.graph.get(A, B) or math.inf)
 
-    def find_min_edge(self):
-        """Find minimum value of edges."""
-        m = math.inf
-        for d in self.graph.graph_dict.values():
-            local_min = min(d.values())
-            m = min(m, local_min)
-
-        return m
-
     def goal_test(self, state):
         """
-        Return True if the state matches the current active goal.
-        This overrides the default method to test only against the current goal.
+        Return True if the state matches one of the goals.
         """
-        return state == self.current_goal
+        return state in self.goals
 
     def h(self, node):
-        """h function is straight-line distance from node's state to current goal."""
-        if not self.locations or not self.current_goal:
+        """
+        Heuristic function to estimate the cost from the current node to the nearest goal.
+        """
+
+        if not self.locations or not self.goals:
             return math.inf
 
         # Handle different node types (Node objects, strings, integers, etc.)
         node_state = node.state if hasattr(node, "state") else node
 
-        # Ensure both locations exist
-        if node_state not in self.locations or self.current_goal not in self.locations:
+        # Ensure current node and all goals exist in the locations
+        if node_state not in self.locations or not all(
+            goal in self.locations for goal in self.goals
+        ):
             return math.inf
 
+        # calculate the min distance between the node to all goals
         return int(
-            distance(self.locations[node_state], self.locations[self.current_goal])
+            min(
+                distance(self.locations[node_state], self.locations[goal])
+                for goal in self.goals
+            )
         )
-
-    def set_current_goal(self, goal):
-        """
-        Change the current active goal.
-
-        Args:
-            goal: The new goal to set as current destination
-
-        Returns:
-            bool: True if goal was changed successfully, False otherwise
-        """
-        if goal in self.goals:
-            self.current_goal = goal
-            return True
-        return False
-
-    def next_goal(self):
-        """
-        Switch to the next goal in the list of goals.
-
-        Returns:
-            The new current goal, or None if there are no goals
-        """
-        if not self.goals:
-            return None
-
-        current_index = (
-            self.goals.index(self.current_goal)
-            if self.current_goal in self.goals
-            else -1
-        )
-        next_index = (current_index + 1) % len(self.goals)
-        self.current_goal = self.goals[next_index]
-        return self.current_goal
 
     def __repr__(self):
         """Return a string representation of the GraphProblem."""
@@ -118,7 +81,6 @@ class GraphProblem(ProblemBase):
         return (
             f"GraphProblem(initial={self.initial}, "
             f"goals={self.goals}, "
-            f"current_goal={self.current_goal}, "
             f"nodes={nodes_count}, "
             f"edges={edges_count}, "
             f"has_locations={has_locations})"

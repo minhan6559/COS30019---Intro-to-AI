@@ -49,7 +49,7 @@ class BreadthFirstSearch(SearchAlgorithmBase):
 
 
 class BestFirstSearch(SearchAlgorithmBase):
-    def search(self, problem, f, use_memoize=False):
+    def search(self, problem, f):
         """Search the nodes with the lowest f scores first.
         You specify the function f(node) that you want to minimize; for example,
         if f is a heuristic estimate to the goal, then we have greedy best
@@ -57,9 +57,6 @@ class BestFirstSearch(SearchAlgorithmBase):
         There is a subtlety: the line "f = memoize(f, 'f')" means that the f
         values will be cached on the nodes as they are computed. So after doing
         a best first search you can examine the f values of the path returned."""
-        if use_memoize:
-            f = memoize(f, "f")
-
         node = Node(problem.initial)
         frontier = PriorityQueue("min", f)
         frontier.append(node)
@@ -80,123 +77,85 @@ class BestFirstSearch(SearchAlgorithmBase):
 
 
 class GreedyBestFirstSearch(BestFirstSearch):
-    def search(self, problem, use_memoize=False):
+    def search(self, problem):
         f = problem.h
-        return super().search(problem, f, use_memoize)
+        return super().search(problem, f)
 
 
 class AStarSearch(BestFirstSearch):
-    def search(self, problem, use_memoize=False):
-        h = memoize(problem.h, "h")
-        f = lambda n: n.path_cost + h(n)  # f(n) = g(n) + h(n)
-        return super().search(problem, f, use_memoize)
-
-
-class DijkstraSearch(BestFirstSearch):
-    def search(self, problem, use_memoize=False):
-        f = lambda n: n.path_cost
-        return super().search(problem, f, use_memoize)
-
-
-class IDAStarSearch(SearchAlgorithmBase):
     def search(self, problem):
-        """
-        Perform Iterative Deepening A* (IDA*) search.
-        Uses a depth-limited version of A* with iterative deepening and memoization.
-        """
-        # Ensure the heuristic is cached using memoization
-        h = memoize(problem.h, "h")
-
-        # Recursive search function with pruning
-        def search(node, g, bound, explored):
-            f = g + h(node)  # f(n) = g(n) + h(n)
-            if f > bound:
-                return f  # Return the new bound if the limit is exceeded
-
-            if problem.goal_test(node.state):
-                return node  # Goal found, return the node
-
-            min_bound = float("inf")
-
-            # Expand the current node
-            for child in node.expand(problem):
-                if child.state not in explored:
-                    explored.add(child.state)
-                    temp = search(child, g + child.path_cost, bound, explored)
-                    if isinstance(temp, Node):  # If a goal node is found, return it
-                        return temp
-                    min_bound = min(min_bound, temp)
-                    explored.remove(child.state)
-
-            return min_bound
-
-        # Set the initial bound to the heuristic value of the initial node
-        initial_node = Node(problem.initial)
-        bound = h(initial_node)
-        explored = set([problem.initial])  # Start with the initial state in explored set
-        result = None
-
-        # Iteratively increase the bound until the solution is found
-        while True:
-            result = search(initial_node, 0, bound, explored)
-            if isinstance(result, Node):
-                return result  # Return the actual goal node
-            elif result == float("inf"):
-                return None  # No solution found within the current bound
-            bound = result  # Update the bound for the next iteration
+        h = problem.h
+        f = lambda n: n.path_cost + h(n)  # f(n) = g(n) + h(n)
+        return super().search(problem, f)
 
 
-class BidirectionalAStarSearch(SearchAlgorithmBase):
-    def search(self, problem, use_memoize=False):
-        """
-        Perform Bidirectional A* Search.
-        This search algorithm runs A* from both the start and goal nodes.
-        It stops when the frontiers from both directions meet.
-        """
-        # Initialize the forward and backward search frontiers
-        start_node = Node(problem.initial)
-        goal_node = Node(problem.goal)
-        
-        if problem.goal_test(start_node.state):
-            return start_node
-        
-        # Frontiers for forward and backward searches
-        forward_frontier = PriorityQueue("min", lambda n: n.path_cost + problem.h(n))
-        forward_frontier.append(start_node)
-        
-        backward_frontier = PriorityQueue("min", lambda n: n.path_cost + problem.h(n))
-        backward_frontier.append(goal_node)
-        
-        # Explored states for both forward and backward searches
-        forward_explored = set()
-        backward_explored = set()
-        
-        while forward_frontier and backward_frontier:
-            # Expand the forward frontier
-            forward_node = forward_frontier.pop()
-            if problem.goal_test(forward_node.state):
-                return forward_node
-            forward_explored.add(forward_node.state)
-            
-            for child in forward_node.expand(problem):
-                if child.state not in forward_explored:
-                    forward_frontier.append(child)
-                    
-            # Expand the backward frontier
-            backward_node = backward_frontier.pop()
-            if problem.goal_test(backward_node.state):
-                return backward_node
-            backward_explored.add(backward_node.state)
-            
-            for child in backward_node.expand(problem):
-                if child.state not in backward_explored:
-                    backward_frontier.append(child)
-            
-            # Check for intersection of forward and backward frontiers
-            if forward_frontier[-1].state in backward_explored:
-                return forward_frontier[-1]
-            
-            if backward_frontier[-1].state in forward_explored:
-                return backward_frontier[-1]
-        
+class UniformCostSearch(BestFirstSearch):
+    def search(self, problem):
+        f = lambda n: n.path_cost
+        return super().search(problem, f)
+
+
+class BULBSearch(SearchAlgorithmBase):
+    def __init__(self, beam_width=10, max_discrepancies=10):
+        self.beam_width = beam_width
+        self.max_discrepancies = max_discrepancies
+
+    def search(self, problem):
+        h = problem.h
+
+        class DiscrepancyNode:
+            def __init__(self, node, discrepancies=0):
+                self.node = node
+                self.discrepancies = discrepancies
+                self.f_value = node.path_cost + h(node)
+
+            def __lt__(self, other):
+                if self.discrepancies != other.discrepancies:
+                    return self.discrepancies < other.discrepancies
+                return self.f_value < other.f_value
+
+        # Start with the initial node
+        initial_node = DiscrepancyNode(Node(problem.initial))
+
+        # Use PriorityQueue instead of a list
+        queue = PriorityQueue("min", lambda n: (n.discrepancies, n.f_value))
+        queue.append(initial_node)
+        visited = set()
+
+        while queue:
+            current = queue.pop()
+
+            if current.node.state in visited:
+                continue
+            visited.add(current.node.state)
+
+            if problem.goal_test(current.node.state):
+                return current.node
+
+            # Generate successors
+            successors = [
+                DiscrepancyNode(child, current.discrepancies)
+                for child in current.node.expand(problem)
+            ]
+
+            if not successors:
+                continue
+
+            # Sort by f-value for beam selection
+            successors.sort(key=lambda n: n.f_value)
+
+            # Apply beam search
+            beam = successors[: min(self.beam_width, len(successors))]
+            pruned = successors[min(self.beam_width, len(successors)) :]
+
+            # Add beam nodes to the queue
+            for node in beam:
+                queue.append(node)
+
+            # Add pruned nodes with increased discrepancy if within limit
+            for node in pruned:
+                if node.discrepancies < self.max_discrepancies:
+                    backtrack_node = DiscrepancyNode(node.node, node.discrepancies + 1)
+                    queue.append(backtrack_node)
+
         return None

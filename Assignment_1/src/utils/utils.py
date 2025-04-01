@@ -5,9 +5,9 @@ import math
 
 def distance(a, b):
     """The distance between two (x, y) points."""
-    xA, yA = a
-    xB, yB = b
-    return math.sqrt((xA - xB) ** 2 + (yA - yB) ** 2)
+    dx = a[0] - b[0]
+    dy = a[1] - b[1]
+    return math.sqrt(dx * dx + dy * dy)
 
 
 def memoize(fn, slot=None, maxsize=32):

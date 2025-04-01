@@ -7,11 +7,14 @@ from src.search_algorithm.search_algorithm import (
     UniformCostSearch,
     BULBSearch,
 )
+from src.graph.graph import Graph
+from src.utils.utils import distance
 import time
+import copy
 
 
 def main():
-    """Example of creating and solving a random graph problem"""
+    """Example of creating a random graph problem with an isolated destination"""
 
     show_path = False  # Set to False to not show the path in the output
 
@@ -20,7 +23,7 @@ def main():
     min_edges_per_node = 5
     max_edges_per_node = 8
     grid_size = 25000
-    num_destinations = 3
+    num_destinations = 3  # We need exactly 3 destinations
     ensure_connectivity = True
 
     print("Generating random graph problem...")
@@ -48,11 +51,62 @@ def main():
     print(f"\nStarting point: {original_problem.initial}")
     print(f"Goals: {original_problem.goals}")
 
-    # Store original problem data we'll need for creating fresh instances
-    original_initial = original_problem.initial
-    original_goals = original_problem.goals.copy()
-    original_graph = original_problem.graph
-    original_locations = original_problem.locations
+    # Find the closest destination to the initial node (A)
+    initial_node = original_problem.initial
+    destinations = original_problem.goals
+    locations = original_problem.locations
+
+    closest_dest = None
+    min_distance = float("inf")
+    for dest in destinations:
+        dist = distance(locations[initial_node], locations[dest])
+        if dist < min_distance:
+            min_distance = dist
+            closest_dest = dest
+
+    print(
+        f"\nClosest destination to initial node: {closest_dest} (distance: {min_distance:.2f})"
+    )
+    print(f"Isolating node {closest_dest} (removing all connections)...")
+
+    # Create a deep copy of the graph dictionary to modify
+    graph_dict = copy.deepcopy(original_problem.graph.graph_dict)
+
+    # Count connections to be removed
+    connection_count = 0
+    for node in graph_dict:
+        if closest_dest in graph_dict[node]:
+            connection_count += 1
+
+    # Also count outgoing connections from closest_dest
+    if closest_dest in graph_dict:
+        connection_count += len(graph_dict[closest_dest])
+
+    # Isolate the closest destination by removing all edges to/from it
+    for node in graph_dict:
+        if closest_dest in graph_dict[node]:
+            # Remove edge from node to closest_dest
+            del graph_dict[node][closest_dest]
+
+    # Remove all outgoing edges from closest_dest
+    if closest_dest in graph_dict:
+        graph_dict[closest_dest] = {}
+
+    print(f"Removed {connection_count} connections to/from node {closest_dest}")
+
+    # Create a new problem instance with the modified graph
+    isolated_problem = MultigoalGraphProblem(
+        original_problem.initial,
+        original_problem.goals,
+        Graph(graph_dict),
+        original_problem.locations,
+    )
+
+    # Store data we'll need for creating fresh instances
+    initial = isolated_problem.initial
+    goals = isolated_problem.goals.copy()
+    graph = isolated_problem.graph
+    locations = isolated_problem.locations
 
     # Dictionary to store search results
     all_results = {}
@@ -74,10 +128,10 @@ def main():
 
     # Create a fresh instance of the multi-goal problem
     multi_goal_problem = MultigoalGraphProblem(
-        original_initial,
-        original_goals,  # Pass the list of all goals
-        original_graph,
-        original_locations,
+        initial,
+        goals,  # Pass the list of all goals
+        graph,
+        locations,
     )
 
     # Dictionary to store multi-goal results
@@ -121,18 +175,17 @@ def main():
             }
 
     # For each individual goal, create a fresh problem instance and run each search algorithm
-    for goal in original_goals:
+    for goal in goals:
         print(f"\n{'=' * 50}")
         print(f"Searching paths to single destination {goal}:")
         print(f"{'=' * 50}")
 
         # Create a fresh problem instance for this goal
-        # This ensures no memoization side effects between different goals
         fresh_problem = MultigoalGraphProblem(
-            original_initial,
+            initial,
             goal,  # Pass single goal instead of list
-            original_graph,
-            original_locations,
+            graph,
+            locations,
         )
 
         # Run each algorithm against the current goal
@@ -208,6 +261,11 @@ def main():
             f"{'Algorithm':<10} {'Success':<8} {'Path Cost':<12} {'Path Length':<14} {'Time (s)':<10}"
         )
         print(f"{'-' * 50}")
+
+        # Highlight if this is the isolated node
+        is_isolated = goal == closest_dest
+        if is_isolated:
+            print(f"NOTE: This is the isolated destination node (Node A)")
 
         for name, result in algorithms_results.items():
             success = "Yes" if result["path"] is not None else "No"
