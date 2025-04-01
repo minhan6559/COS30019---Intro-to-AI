@@ -1,5 +1,3 @@
-from src.utils import is_in
-
 
 class ProblemBase:
     """The abstract class for a formal problem. You should subclass
