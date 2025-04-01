@@ -104,21 +104,25 @@ class IDAStarSearch(SearchAlgorithmBase):
         Perform Iterative Deepening A* (IDA*) search.
         Uses a depth-limited version of A* with iterative deepening and memoization.
         """
+        # Ensure the heuristic is cached using memoization
         h = memoize(problem.h, "h")
 
-        def search(node, g, bound):
+        # Recursive search function with pruning
+        def search(node, g, bound, explored):
             f = g + h(node)  # f(n) = g(n) + h(n)
             if f > bound:
                 return f  # Return the new bound if the limit is exceeded
+
             if problem.goal_test(node.state):
                 return node  # Goal found, return the node
 
             min_bound = float("inf")
 
+            # Expand the current node
             for child in node.expand(problem):
                 if child.state not in explored:
                     explored.add(child.state)
-                    temp = search(child, g + child.path_cost, bound)
+                    temp = search(child, g + child.path_cost, bound, explored)
                     if isinstance(temp, Node):  # If a goal node is found, return it
                         return temp
                     min_bound = min(min_bound, temp)
@@ -126,18 +130,73 @@ class IDAStarSearch(SearchAlgorithmBase):
 
             return min_bound
 
-        # Set the initial bound to h(n)
-        bound = h(Node(problem.initial))
-        explored = set(
-            [problem.initial]
-        )  # Start with the initial state in explored set
+        # Set the initial bound to the heuristic value of the initial node
+        initial_node = Node(problem.initial)
+        bound = h(initial_node)
+        explored = set([problem.initial])  # Start with the initial state in explored set
         result = None
 
-        # Iteratively increase the bound
+        # Iteratively increase the bound until the solution is found
         while True:
-            result = search(Node(problem.initial), 0, bound)
+            result = search(initial_node, 0, bound, explored)
             if isinstance(result, Node):
-                return result  # Return the actual goal node instead of the path
+                return result  # Return the actual goal node
             elif result == float("inf"):
-                return None
+                return None  # No solution found within the current bound
             bound = result  # Update the bound for the next iteration
+
+
+class BidirectionalAStarSearch(SearchAlgorithmBase):
+    def search(self, problem, use_memoize=False):
+        """
+        Perform Bidirectional A* Search.
+        This search algorithm runs A* from both the start and goal nodes.
+        It stops when the frontiers from both directions meet.
+        """
+        # Initialize the forward and backward search frontiers
+        start_node = Node(problem.initial)
+        goal_node = Node(problem.goal)
+        
+        if problem.goal_test(start_node.state):
+            return start_node
+        
+        # Frontiers for forward and backward searches
+        forward_frontier = PriorityQueue("min", lambda n: n.path_cost + problem.h(n))
+        forward_frontier.append(start_node)
+        
+        backward_frontier = PriorityQueue("min", lambda n: n.path_cost + problem.h(n))
+        backward_frontier.append(goal_node)
+        
+        # Explored states for both forward and backward searches
+        forward_explored = set()
+        backward_explored = set()
+        
+        while forward_frontier and backward_frontier:
+            # Expand the forward frontier
+            forward_node = forward_frontier.pop()
+            if problem.goal_test(forward_node.state):
+                return forward_node
+            forward_explored.add(forward_node.state)
+            
+            for child in forward_node.expand(problem):
+                if child.state not in forward_explored:
+                    forward_frontier.append(child)
+                    
+            # Expand the backward frontier
+            backward_node = backward_frontier.pop()
+            if problem.goal_test(backward_node.state):
+                return backward_node
+            backward_explored.add(backward_node.state)
+            
+            for child in backward_node.expand(problem):
+                if child.state not in backward_explored:
+                    backward_frontier.append(child)
+            
+            # Check for intersection of forward and backward frontiers
+            if forward_frontier[-1].state in backward_explored:
+                return forward_frontier[-1]
+            
+            if backward_frontier[-1].state in forward_explored:
+                return backward_frontier[-1]
+        
+        return None

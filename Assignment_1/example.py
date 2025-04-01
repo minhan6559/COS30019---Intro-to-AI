@@ -6,6 +6,7 @@ from src.search_algorithm.search_algorithm import (
     GreedyBestFirstSearch,
     DijkstraSearch,
     IDAStarSearch,
+    # BidirectionalAStarSearch,
 )
 
 
@@ -38,6 +39,7 @@ def main():
         "Greedy": GreedyBestFirstSearch(),
         "Dijkstra": DijkstraSearch(),
         "IDA*": IDAStarSearch(),
+        # "Bidirectional": BidirectionalAStarSearch(),
     }
 
     # For each goal in the problem, run each algorithm

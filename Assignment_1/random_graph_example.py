@@ -6,6 +6,7 @@ from src.search_algorithm.search_algorithm import (
     GreedyBestFirstSearch,
     DijkstraSearch,
     IDAStarSearch,
+    # BidirectionalAStarSearch,
 )
 import time
 
@@ -16,10 +17,10 @@ def main():
     show_path = False  # Set to False to not show the path in the output
 
     # Parameters for graph
-    num_nodes = 200
+    num_nodes = 600
     min_edges_per_node = 2
     max_edges_per_node = 5
-    grid_size = 500
+    grid_size = 2000
     num_destinations = 2
     ensure_connectivity = True
 
@@ -71,7 +72,8 @@ def main():
         "A*": AStarSearch(),
         "Greedy": GreedyBestFirstSearch(),
         "Dijkstra": DijkstraSearch(),
-        # "IDA*": IDAStarSearch(),
+        "IDA*": IDAStarSearch(),
+        # "Bidirectional": BidirectionalAStarSearch(),
     }
 
     # For each goal, create a fresh problem instance and run each search algorithm
