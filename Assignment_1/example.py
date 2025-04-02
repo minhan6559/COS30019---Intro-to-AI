@@ -6,6 +6,8 @@ from src.search_algorithm.search_algorithm import (
     GreedyBestFirstSearch,
     UniformCostSearch,
     BULBSearch,
+    UniformCostSearch,
+    BULBSearch,
 )
 
 
