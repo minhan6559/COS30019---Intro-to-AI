@@ -6,8 +6,6 @@ from src.search_algorithm.search_algorithm import (
     GreedyBestFirstSearch,
     UniformCostSearch,
     BULBSearch,
-    UniformCostSearch,
-    BULBSearch,
 )
 
 
@@ -21,7 +19,7 @@ def gay():
 
     result = search_algo.search(original_problem)
 
-    print("Result:", result)
+    print("Result:", result.state)
 
 
 if __name__ == "__main__":
