@@ -26,11 +26,11 @@ class MultigoalGraphProblem(ProblemBase):
         self.graph = graph
         self.locations = locations
 
-    def get_neighbors(self, A):
-        return list(self.graph.get(A).keys())
+    def get_neighbors(self, current_state):
+        return list(self.graph.get(current_state).keys())
 
-    def path_cost(self, cost_so_far, A, B):
-        return cost_so_far + (self.graph.get(A, B) or math.inf)
+    def path_cost(self, cost_so_far, current_state, next_state):
+        return cost_so_far + (self.graph.get(current_state, next_state) or math.inf)
 
     def goal_test(self, state):
         """
