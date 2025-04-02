@@ -1,4 +1,3 @@
-
 class ProblemBase:
     """The abstract class for a formal problem. You should subclass
     this and implement the methods actions and result, and possibly
@@ -20,11 +19,8 @@ class ProblemBase:
     def actions(self, state):
         raise NotImplementedError
 
-    def result(self, state, action):
-        raise NotImplementedError
-
     def goal_test(self, state):
         raise NotImplementedError
 
-    def path_cost(self, c, state1, action, state2):
+    def path_cost(self, c, state1, state2):
         raise NotImplementedError

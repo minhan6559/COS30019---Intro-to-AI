@@ -94,8 +94,7 @@ def main():
 
         if result:
             result_state = result.state
-            path = result.path()
-            path_nodes = [node.state for node in path]
+            path_nodes = result.path_states()
             path_cost = result.path_cost
 
             if show_path:
@@ -145,8 +144,7 @@ def main():
             elapsed_time = time.time() - start_time
 
             if result:
-                path = result.path()
-                path_nodes = [node.state for node in path]
+                path_nodes = result.path_states()
                 path_cost = result.path_cost
 
                 if show_path:

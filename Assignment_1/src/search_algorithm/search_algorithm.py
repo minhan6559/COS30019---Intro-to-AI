@@ -1,4 +1,4 @@
-from src.graph.graph import Node
+from src.graph.node import Node, DiscrepancyNode
 from src.search_algorithm.search_algorithm_base import SearchAlgorithmBase
 from src.utils.utils import memoize, PriorityQueue
 
@@ -16,17 +16,21 @@ class DepthFirstSearch(SearchAlgorithmBase):
         """
         frontier = [Node(problem.initial)]  # Stack
 
-        explored = set()
+        visited = set()
         while frontier:
             node = frontier.pop()
             if problem.goal_test(node.state):
                 return node
-            explored.add(node.state)
+            visited.add(node.state)
+
+            children = node.expand(problem, reverse=True)
+
             frontier.extend(
                 child
-                for child in node.expand(problem)
-                if child.state not in explored and child not in frontier
+                for child in children
+                if child.state not in visited and child not in frontier
             )
+
         return None
 
 
@@ -36,12 +40,17 @@ class BreadthFirstSearch(SearchAlgorithmBase):
         if problem.goal_test(node.state):
             return node
         frontier = deque([node])
-        explored = set()
+        visited = set()
         while frontier:
             node = frontier.popleft()
-            explored.add(node.state)
-            for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
+            visited.add(node.state)
+
+            # Sort children to ensure consistent ordering
+            children = node.expand(problem)
+            children.sort(key=lambda n: n.state)
+
+            for child in children:
+                if child.state not in visited and child not in frontier:
                     if problem.goal_test(child.state):
                         return child
                     frontier.append(child)
@@ -60,14 +69,17 @@ class BestFirstSearch(SearchAlgorithmBase):
         node = Node(problem.initial)
         frontier = PriorityQueue("min", f)
         frontier.append(node)
-        explored = set()
+        visited = set()
+
         while frontier:
             node = frontier.pop()
             if problem.goal_test(node.state):
                 return node
-            explored.add(node.state)
+
+            visited.add(node.state)
+
             for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
+                if child.state not in visited and child not in frontier:
                     frontier.append(child)
                 elif child in frontier:
                     if f(child) < frontier[child]:
@@ -103,28 +115,18 @@ class BULBSearch(SearchAlgorithmBase):
     def search(self, problem):
         h = problem.h
 
-        class DiscrepancyNode:
-            def __init__(self, node, discrepancies=0):
-                self.node = node
-                self.discrepancies = discrepancies
-                self.f_value = node.path_cost + h(node)
-
-            def __lt__(self, other):
-                if self.discrepancies != other.discrepancies:
-                    return self.discrepancies < other.discrepancies
-                return self.f_value < other.f_value
-
         # Start with the initial node
-        initial_node = DiscrepancyNode(Node(problem.initial))
+        initial_node = DiscrepancyNode(Node(problem.initial), h)
 
-        # Use PriorityQueue instead of a list
-        queue = PriorityQueue("min", lambda n: (n.discrepancies, n.f_value))
+        # Use PriorityQueue with expanded priority function
+        queue = PriorityQueue(
+            "min", lambda n: (n.discrepancies, n.f_value, n.node.state)
+        )
         queue.append(initial_node)
         visited = set()
 
         while queue:
             current = queue.pop()
-
             if current.node.state in visited:
                 continue
             visited.add(current.node.state)
@@ -134,15 +136,15 @@ class BULBSearch(SearchAlgorithmBase):
 
             # Generate successors
             successors = [
-                DiscrepancyNode(child, current.discrepancies)
-                for child in current.node.expand(problem)
+                DiscrepancyNode(child, h, current.discrepancies)
+                for child in current.node.expand(problem, should_sort=False)
             ]
 
             if not successors:
                 continue
 
-            # Sort by f-value for beam selection
-            successors.sort(key=lambda n: n.f_value)
+            # Sort by both f-value and state for consistent ordering
+            successors.sort(key=lambda n: (n.f_value, n.node.state))
 
             # Apply beam search
             beam = successors[: min(self.beam_width, len(successors))]
@@ -155,7 +157,9 @@ class BULBSearch(SearchAlgorithmBase):
             # Add pruned nodes with increased discrepancy if within limit
             for node in pruned:
                 if node.discrepancies < self.max_discrepancies:
-                    backtrack_node = DiscrepancyNode(node.node, node.discrepancies + 1)
+                    backtrack_node = DiscrepancyNode(
+                        node.node, h, node.discrepancies + 1
+                    )
                     queue.append(backtrack_node)
 
         return None

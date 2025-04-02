@@ -26,15 +26,10 @@ class MultigoalGraphProblem(ProblemBase):
         self.graph = graph
         self.locations = locations
 
-    def actions(self, A):
-        """The actions at a graph node are just its neighbors."""
+    def get_neighbors(self, A):
         return list(self.graph.get(A).keys())
 
-    def result(self, state, action):
-        """The result of going to a neighbor is just that neighbor."""
-        return action
-
-    def path_cost(self, cost_so_far, A, action, B):
+    def path_cost(self, cost_so_far, A, B):
         return cost_so_far + (self.graph.get(A, B) or math.inf)
 
     def goal_test(self, state):
@@ -61,11 +56,9 @@ class MultigoalGraphProblem(ProblemBase):
             return math.inf
 
         # calculate the min distance between the node to all goals
-        return int(
-            min(
-                distance(self.locations[node_state], self.locations[goal])
-                for goal in self.goals
-            )
+        return min(
+            distance(self.locations[node_state], self.locations[goal])
+            for goal in self.goals
         )
 
     def __repr__(self):
