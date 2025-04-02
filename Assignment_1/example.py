@@ -4,9 +4,8 @@ from src.search_algorithm.search_algorithm import (
     DepthFirstSearch,
     AStarSearch,
     GreedyBestFirstSearch,
-    DijkstraSearch,
-    IDAStarSearch,
-    # BidirectionalAStarSearch,
+    UniformCostSearch,
+    BULBSearch,
 )
 
 
@@ -37,9 +36,8 @@ def main():
         "DFS": DepthFirstSearch(),
         "A*": AStarSearch(),
         "Greedy": GreedyBestFirstSearch(),
-        "Dijkstra": DijkstraSearch(),
-        "IDA*": IDAStarSearch(),
-        # "Bidirectional": BidirectionalAStarSearch(),
+        "UCS": UniformCostSearch(),
+        "BULB": BULBSearch(),
     }
 
     # For each goal in the problem, run each algorithm
