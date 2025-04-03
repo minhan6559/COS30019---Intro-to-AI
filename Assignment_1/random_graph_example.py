@@ -88,7 +88,7 @@ def main():
         print(f"\nRunning {name} on multi-goal problem...")
         start_time = time.time()
 
-        # The result now returns a tuple (node, expanded_count)
+        # The result now returns a tuple (node, expanded_count, created_count)
         result_tuple = algorithm.search(multi_goal_problem)
 
         elapsed_time = time.time() - start_time
@@ -96,6 +96,7 @@ def main():
         if result_tuple and result_tuple[0]:  # Check if node exists
             result_node = result_tuple[0]
             expanded_count = result_tuple[1]
+            created_count = result_tuple[2]
 
             result_state = result_node.state
             path_nodes = result_node.path_states()
@@ -104,7 +105,9 @@ def main():
             if show_path:
                 print(f"  {name}: Path found in {elapsed_time:.4f} seconds")
                 print(f"  Cost: {path_cost:.2f}, Path length: {len(path_nodes)}")
-                print(f"  Nodes expanded: {expanded_count}")
+                print(
+                    f"  Nodes expanded: {expanded_count}, Nodes created: {created_count}"
+                )
                 print(f"  Path: {' -> '.join(map(str, path_nodes))}")
 
             # Store in results
@@ -114,11 +117,13 @@ def main():
                 "cost": path_cost,
                 "time": elapsed_time,
                 "expanded": expanded_count,
+                "created": created_count,
             }
         else:
             expanded_count = result_tuple[1] if result_tuple else 0
+            created_count = result_tuple[2] if result_tuple else 0
             print(f"  {name}: No path found after {elapsed_time:.4f} seconds")
-            print(f"  Nodes expanded: {expanded_count}")
+            print(f"  Nodes expanded: {expanded_count}, Nodes created: {created_count}")
 
             all_results["multi-goal"][name] = {
                 "Destination": "N/A",
@@ -126,6 +131,7 @@ def main():
                 "cost": float("inf"),
                 "time": elapsed_time,
                 "expanded": expanded_count,
+                "created": created_count,
             }
 
     # For each individual goal, create a fresh problem instance and run each search algorithm
@@ -147,7 +153,7 @@ def main():
             print(f"\nRunning {name}...")
             start_time = time.time()
 
-            # The result now returns a tuple (node, expanded_count)
+            # The result now returns a tuple (node, expanded_count, created_count)
             result_tuple = algorithm.search(fresh_problem)
 
             elapsed_time = time.time() - start_time
@@ -155,6 +161,7 @@ def main():
             if result_tuple and result_tuple[0]:  # Check if node exists
                 result_node = result_tuple[0]
                 expanded_count = result_tuple[1]
+                created_count = result_tuple[2]
 
                 path_nodes = result_node.path_states()
                 path_cost = result_node.path_cost
@@ -162,7 +169,9 @@ def main():
                 if show_path:
                     print(f"  {name}: Path found in {elapsed_time:.4f} seconds")
                     print(f"  Cost: {path_cost:.2f}, Path length: {len(path_nodes)}")
-                    print(f"  Nodes expanded: {expanded_count}")
+                    print(
+                        f"  Nodes expanded: {expanded_count}, Nodes created: {created_count}"
+                    )
                     print(f"  Path: {' -> '.join(map(str, path_nodes))}")
 
                 # Store in results
@@ -173,11 +182,15 @@ def main():
                     "cost": path_cost,
                     "time": elapsed_time,
                     "expanded": expanded_count,
+                    "created": created_count,
                 }
             else:
                 expanded_count = result_tuple[1] if result_tuple else 0
+                created_count = result_tuple[2] if result_tuple else 0
                 print(f"  {name}: No path found after {elapsed_time:.4f} seconds")
-                print(f"  Nodes expanded: {expanded_count}")
+                print(
+                    f"  Nodes expanded: {expanded_count}, Nodes created: {created_count}"
+                )
 
                 if goal not in all_results:
                     all_results[goal] = {}
@@ -186,6 +199,7 @@ def main():
                     "cost": float("inf"),
                     "time": elapsed_time,
                     "expanded": expanded_count,
+                    "created": created_count,
                 }
 
     # Print performance comparison
@@ -195,11 +209,11 @@ def main():
 
     # First print multi-goal results
     print("\nMulti-Goal Problem:")
-    print(f"{'-' * 80}")
+    print(f"{'-' * 90}")
     print(
-        f"{'Algorithm':<10} {'Success':<8} {'Dest':<8} {'Path Cost':<12} {'Path Length':<14} {'Expanded':<10} {'Time (s)':<10}"
+        f"{'Algorithm':<10} {'Success':<8} {'Dest':<8} {'Path Cost':<12} {'Path Length':<12} {'Expanded':<10} {'Created':<10} {'Time (s)':<10}"
     )
-    print(f"{'-' * 80}")
+    print(f"{'-' * 90}")
 
     for name, result in all_results["multi-goal"].items():
         success = "Yes" if result["path"] is not None else "No"
@@ -207,10 +221,11 @@ def main():
         cost = f"{result['cost']:.2f}" if result["path"] is not None else "N/A"
         path_len = len(result["path"]) if result["path"] is not None else "N/A"
         expanded = f"{result['expanded']}"
+        created = f"{result['created']}"
         time_taken = f"{result['time']:.4f}"
 
         print(
-            f"{name:<10} {success:<8} {destination:<8} {cost:<12} {path_len:<14} {expanded:<10} {time_taken:<10}"
+            f"{name:<10} {success:<8} {destination:<8} {cost:<12} {path_len:<12} {expanded:<10} {created:<10} {time_taken:<10}"
         )
 
     # Then print individual goal results
@@ -219,21 +234,22 @@ def main():
             continue  # Skip the multi-goal results as we've already printed them
 
         print(f"\nDestination {goal}:")
-        print(f"{'-' * 70}")
+        print(f"{'-' * 80}")
         print(
-            f"{'Algorithm':<10} {'Success':<8} {'Path Cost':<12} {'Path Length':<14} {'Expanded':<10} {'Time (s)':<10}"
+            f"{'Algorithm':<10} {'Success':<8} {'Path Cost':<12} {'Path Length':<12} {'Expanded':<10} {'Created':<10} {'Time (s)':<10}"
         )
-        print(f"{'-' * 70}")
+        print(f"{'-' * 80}")
 
         for name, result in algorithms_results.items():
             success = "Yes" if result["path"] is not None else "No"
             cost = f"{result['cost']:.2f}" if result["path"] is not None else "N/A"
             path_len = len(result["path"]) if result["path"] is not None else "N/A"
             expanded = f"{result['expanded']}"
+            created = f"{result['created']}"
             time_taken = f"{result['time']:.4f}"
 
             print(
-                f"{name:<10} {success:<8} {cost:<12} {path_len:<14} {expanded:<10} {time_taken:<10}"
+                f"{name:<10} {success:<8} {cost:<12} {path_len:<12} {expanded:<10} {created:<10} {time_taken:<10}"
             )
 
 

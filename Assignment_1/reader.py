@@ -1,4 +1,4 @@
-from src.problem.graph_problem import GraphProblem
+from src.problem.multigoal_graph_problem import MultigoalGraphProblem
 import os
 
 
@@ -8,12 +8,12 @@ def main():
     # You can use different ways to specify the file path:
 
     # 1. Just the filename (will be searched in multiple locations)
-    filename = "testcases/testcase3.txt"
+    filename = "exported_graph.txt"
 
     print(f"Loading graph from file: {filename}")
 
     # Create the problem directly from the file
-    problem = GraphProblem.from_file(filename)
+    problem = MultigoalGraphProblem.from_file(filename)
 
     print("\nGraph Problem Information:")
     print("--------------------------")
@@ -23,7 +23,6 @@ def main():
     print("-------------------")
     print("Starting point:", problem.initial)
     print("Goals:", problem.goals)
-    print("Current goal:", problem.current_goal)
 
     print("\nGraph Structure:")
     for src, neighbors in problem.graph.graph_dict.items():
@@ -38,6 +37,17 @@ def main():
     print(
         f"Number of edges: {sum(len(neighbors) for neighbors in problem.graph.graph_dict.values())}"
     )
+
+    # Export the graph to a file
+    export_filename = "exported_graph.txt"
+    MultigoalGraphProblem.to_file(problem, export_filename)
+    print(f"\nGraph exported to {export_filename}")
+
+    ## Load the graph from the exported file and verify it
+    loaded_problem = MultigoalGraphProblem.from_file(export_filename)
+    print("\nLoaded Graph Problem Information:")
+    print("--------------------------")
+    print(loaded_problem)  # This uses the __repr__ method
 
     return 0
 

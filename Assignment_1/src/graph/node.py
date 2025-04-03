@@ -1,24 +1,15 @@
 class Node:
-    """A node in a search tree. Contains a pointer to the parent (the node
-    that this is a successor of) and to the actual state for this node. Note
-    that if a state is arrived at by two paths, then there are two nodes with
-    the same state. Also includes the action that got us to this state, and
-    the total path_cost (also known as g) to reach the node. Other functions
-    may add an f and h value; see best_first_graph_search and astar_search for
-    an explanation of how the f and h values are handled. You will not need to
-    subclass this class."""
+    # Class variable to count the total number of nodes created
+    nodes_created = 0
 
     def __init__(self, state, parent=None, path_cost=0):
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
         self.parent = parent
         self.path_cost = path_cost
-        self.depth = 0
-        if parent:
-            self.depth = parent.depth + 1
 
-    def __repr__(self):
-        return "<Node {}>".format(self.state)
+        # Increment the nodes created counter
+        Node.nodes_created += 1
 
     def __lt__(self, node):
         return self.state < node.state
@@ -77,12 +68,17 @@ class Node:
         # with the same state in a Hash Table
         return hash(self.state)
 
+    @classmethod
+    def reset_counter(cls):
+        """Reset the nodes_created counter to zero."""
+        cls.nodes_created = 0
+
 
 class DiscrepancyNode:
-    def __init__(self, node, h_func, discrepancies=0):
+    def __init__(self, node, f_func, discrepancies=0):
         self.node = node
         self.discrepancies = discrepancies
-        self.f_value = node.path_cost + h_func(node)
+        self.f_value = f_func(node)
 
     def __lt__(self, other):
         if self.discrepancies != other.discrepancies:

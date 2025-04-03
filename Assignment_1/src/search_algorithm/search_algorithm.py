@@ -1,6 +1,6 @@
 from src.graph.node import Node, DiscrepancyNode
 from src.search_algorithm.search_algorithm_base import SearchAlgorithmBase
-from src.utils.utils import memoize, PriorityQueue
+from src.utils.utils import PriorityQueue
 
 from collections import deque
 
@@ -14,6 +14,9 @@ class DepthFirstSearch(SearchAlgorithmBase):
         Does not get trapped by loops.
         If two paths reach a state, only use the first one.
         """
+        # Reset the node creation counter
+        Node.reset_counter()
+
         initial_node = Node(problem.initial)
 
         stack = [initial_node]
@@ -25,7 +28,7 @@ class DepthFirstSearch(SearchAlgorithmBase):
             count_expanded += 1  # Increment the count for each node expanded
 
             if problem.goal_test(node.state):
-                return node, count_expanded
+                return node, count_expanded, Node.nodes_created
 
             visited.add(node.state)
 
@@ -37,11 +40,13 @@ class DepthFirstSearch(SearchAlgorithmBase):
                 if child.state not in visited and child not in stack
             )
 
-        return None, count_expanded
+        return None, count_expanded, Node.nodes_created
 
 
 class BreadthFirstSearch(SearchAlgorithmBase):
     def search(self, problem):
+        Node.reset_counter()  # Reset the node creation counter
+
         node = Node(problem.initial)
 
         queue = deque([node])
@@ -53,7 +58,7 @@ class BreadthFirstSearch(SearchAlgorithmBase):
             count_expanded += 1
 
             if problem.goal_test(node.state):
-                return node, count_expanded
+                return node, count_expanded, Node.nodes_created
 
             visited.add(node.state)
             children = node.expand(problem)
@@ -61,14 +66,17 @@ class BreadthFirstSearch(SearchAlgorithmBase):
             for child in children:
                 if child.state not in visited and child not in queue:
                     if problem.goal_test(child.state):
-                        return child, count_expanded
+                        return child, count_expanded, Node.nodes_created
+
                     queue.append(child)
 
-        return None, count_expanded
+        return None, count_expanded, Node.nodes_created
 
 
 class BestFirstSearch(SearchAlgorithmBase):
     def search(self, problem, f):
+        Node.reset_counter()  # Reset the node creation counter
+
         node = Node(problem.initial)
 
         priority_queue = PriorityQueue("min", f)
@@ -81,7 +89,7 @@ class BestFirstSearch(SearchAlgorithmBase):
             count_expanded += 1
 
             if problem.goal_test(node.state):
-                return node, count_expanded
+                return node, count_expanded, Node.nodes_created
 
             visited.add(node.state)
 
@@ -93,7 +101,7 @@ class BestFirstSearch(SearchAlgorithmBase):
                         del priority_queue[child]
                         priority_queue.append(child)
 
-        return None, count_expanded
+        return None, count_expanded, Node.nodes_created
 
 
 class GreedyBestFirstSearch(BestFirstSearch):
@@ -122,8 +130,10 @@ class BULBSearch(SearchAlgorithmBase):
         self.max_discrepancies = max_discrepancies
 
     def search(self, problem):
-        h = problem.h
-        initial_node = DiscrepancyNode(Node(problem.initial), h)
+        Node.reset_counter()  # Reset the node creation counter
+
+        f_func = lambda n: n.path_cost + problem.h(n)
+        initial_node = DiscrepancyNode(Node(problem.initial), f_func)
 
         priority_queue = PriorityQueue(
             "min", lambda n: (n.discrepancies, n.f_value, n.node.state)
@@ -140,13 +150,13 @@ class BULBSearch(SearchAlgorithmBase):
                 continue
 
             if problem.goal_test(current.node.state):
-                return current.node, count_expanded
+                return current.node, count_expanded, Node.nodes_created
 
             visited.add(current.node.state)
 
             # Generate successors
             successors = [
-                DiscrepancyNode(child, h, current.discrepancies)
+                DiscrepancyNode(child, f_func, current.discrepancies)
                 for child in current.node.expand(problem, should_sort=False)
             ]
 
@@ -168,8 +178,8 @@ class BULBSearch(SearchAlgorithmBase):
             for node in pruned:
                 if node.discrepancies < self.max_discrepancies:
                     backtrack_node = DiscrepancyNode(
-                        node.node, h, node.discrepancies + 1
+                        node.node, f_func, node.discrepancies + 1
                     )
                     priority_queue.append(backtrack_node)
 
-        return None, count_expanded
+        return None, count_expanded, Node.nodes_created

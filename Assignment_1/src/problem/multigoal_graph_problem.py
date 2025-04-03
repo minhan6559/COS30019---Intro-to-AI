@@ -207,7 +207,7 @@ class MultigoalGraphProblem(ProblemBase):
 
         # Select random origin and destinations
         origin, destinations = cls._select_origin_and_destinations(
-            nodes, num_destinations
+            nodes, num_destinations, locations
         )
 
         # Calculate maximum connection distance
@@ -255,22 +255,42 @@ class MultigoalGraphProblem(ProblemBase):
         return nodes, locations
 
     @classmethod
-    def _select_origin_and_destinations(cls, nodes, num_destinations):
+    def _select_origin_and_destinations(cls, nodes, num_destinations, locations=None):
         """
-        Select random origin and destination nodes.
+        Select random origin and destination nodes that are relatively far from each other.
 
         Args:
             nodes: List of all nodes
             num_destinations: Number of destinations to select
+            locations: Dictionary mapping nodes to (x, y) coordinates
 
         Returns:
             tuple: (origin node, list of destination nodes)
         """
         origin = random.choice(nodes)
         remaining_nodes = [n for n in nodes if n != origin]
-        destinations = random.sample(
-            remaining_nodes, min(num_destinations, len(remaining_nodes))
-        )
+
+        # If we have location data, select destinations that tend to be far from origin
+        if locations:
+            # Sort remaining nodes by distance from origin (farthest first)
+            remaining_nodes.sort(
+                key=lambda n: distance(locations[origin], locations[n]), reverse=True
+            )
+
+            # Select from the farthest 60% of nodes to add randomness while favoring distant nodes
+            candidate_pool_size = max(int(len(remaining_nodes) * 0.6), num_destinations)
+            candidate_pool = remaining_nodes[:candidate_pool_size]
+
+            # Randomly select from the candidate pool
+            destinations = random.sample(
+                candidate_pool, min(num_destinations, len(candidate_pool))
+            )
+        else:
+            # Fall back to random selection if no location data
+            destinations = random.sample(
+                remaining_nodes, min(num_destinations, len(remaining_nodes))
+            )
+
         return origin, destinations
 
     @classmethod
@@ -405,3 +425,56 @@ class MultigoalGraphProblem(ProblemBase):
 
         # Create and return the problem instance
         return cls(origin, destinations, graph, locations)
+
+    @classmethod
+    def to_file(cls, problem, filepath):
+        """
+        Save a graph problem to a file in the standard format.
+
+        Args:
+            problem: MultigoalGraphProblem instance to save
+            filepath: Path to save the file
+
+        Returns:
+            str: The filepath where the problem was saved
+        """
+        # Extract necessary components
+        graph_dict = (
+            problem.graph.graph_dict if hasattr(problem.graph, "graph_dict") else {}
+        )
+        locations = problem.locations
+        initial = problem.initial
+        goals = problem.goals
+
+        # Ensure all nodes in locations appear in the graph dictionary
+        for node in locations:
+            if node not in graph_dict:
+                graph_dict[node] = {}
+
+        with open(filepath, "w") as f:
+            # Write nodes section
+            f.write("Nodes:\n")
+            for node in sorted(locations.keys()):
+                x, y = locations[node]
+                f.write(f"{node}: ({x},{y})\n")
+
+            # Write edges section
+            f.write("Edges:\n")
+            for node in sorted(graph_dict.keys()):
+                for neighbor, weight in sorted(graph_dict[node].items()):
+                    # Format weight: keep as float with 2 decimal place if it has fractional part
+                    if isinstance(weight, float) and weight.is_integer():
+                        weight_str = int(weight)
+                    else:
+                        weight_str = round(float(weight), 2)
+                    f.write(f"({node},{neighbor}): {weight_str}\n")
+
+            # Write origin section
+            f.write("Origin:\n")
+            f.write(f"{initial}\n")
+
+            # Write destinations section
+            f.write("Destinations:\n")
+            f.write("; ".join(str(goal) for goal in goals))
+
+        return filepath

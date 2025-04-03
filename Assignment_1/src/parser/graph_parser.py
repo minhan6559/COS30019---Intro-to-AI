@@ -124,7 +124,7 @@ class GraphParser:
         """Parse an edge line in the format '(2,1): 4'"""
         try:
             left, weight_str = line.split(":")
-            weight = int(weight_str.strip())
+            weight = float(weight_str.strip())
             left = left.strip().strip("()")
             src_str, dest_str = left.split(",")
             src = int(src_str.strip())
