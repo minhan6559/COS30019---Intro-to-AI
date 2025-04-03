@@ -103,7 +103,6 @@ class GraphParser:
         for base_dir in base_dirs:
             potential_path = os.path.join(base_dir, filename)
             if os.path.exists(potential_path):
-                print(f"Found file at: {potential_path}")
                 return potential_path
 
         # If we get here, we couldn't find the file
