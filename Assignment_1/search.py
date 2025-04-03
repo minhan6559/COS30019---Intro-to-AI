@@ -2,8 +2,7 @@ import sys
 
 from src.problem.multigoal_graph_problem import MultigoalGraphProblem
 from src.search_algorithm.search_algorithm import *
-# Add a static counter to the Node class for tracking node creation
-from src.graph.graph import Node
+
 
 
 
@@ -44,23 +43,23 @@ def main():
         
         # Execute the search algorithm
         search_algorithm = methods[method]
-        result = search_algorithm.search(problem)
+        result_tuple = search_algorithm.search(problem)
         
         # Output the results in the required format
-        if result:
+        if result_tuple and result_tuple[0]:
+            result_node = result_tuple[0]
+            expanded_count = result_tuple[1]
+            nodes_created = result_tuple[2]
+            print("\n")
             # First line: filename method
             print(f"{filename} {method}")
-            
             # Second line: goal number_of_nodes
-            # Using placeholder value for node count
-            nodes_created = 0  # Placeholder value
-            # This should be replaced with the actual node count from the search algorithm - right now it has not been implemented
             print(f"{problem.current_goal} {nodes_created}")
             
             # Third line: path
-            path = [node.state for node in result.path()]
+            path = [node.state for node in result_tuple[0].path_nodes()]
             print(" ".join(map(str, path)))
-            
+            print("\n")
             return 0  # Success
         else:
             print(f"No solution found for {filename} using {method}")
