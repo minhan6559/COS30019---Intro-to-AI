@@ -1,0 +1,11 @@
+2025-04-03 22:54:37,115 - experiment - INFO - Experiment started at: 2025-04-03 22:54:37
+2025-04-03 22:54:37,115 - experiment - INFO - Command line arguments: ['run_search_experiments.py', '--analyze']
+2025-04-03 22:54:37,115 - experiment - INFO - Working directory: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1
+2025-04-03 22:54:37,116 - experiment - INFO - ==================================================
+2025-04-03 22:54:37,116 - experiment - INFO - STEP 3: Analyzing results
+2025-04-03 22:54:37,116 - experiment - INFO - ==================================================
+2025-04-03 22:54:37,116 - experiment - INFO - Running command: E:\Anaconda\envs\ita\python.exe C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\src\experiment\analyze_results.py --log-scale --metrics path_cost path_length nodes_expanded runtime_ms --log-dir logs --timestamp 20250403_225437
+2025-04-03 22:54:42,474 - experiment - INFO - Command completed successfully with return code 0
+2025-04-03 22:54:42,475 - experiment - INFO - ==================================================
+2025-04-03 22:54:42,475 - experiment - INFO - Experiment completed in 5.36 seconds
+2025-04-03 22:54:42,475 - experiment - INFO - ==================================================

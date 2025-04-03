@@ -125,7 +125,7 @@ class UniformCostSearch(BestFirstSearch):
 
 # Beam search using Limited Discrepancy Backtracking Search (BULB)
 class BULBSearch(SearchAlgorithmBase):
-    def __init__(self, beam_width=10, max_discrepancies=10):
+    def __init__(self, beam_width=15, max_discrepancies=10):
         self.beam_width = beam_width
         self.max_discrepancies = max_discrepancies
 

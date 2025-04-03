@@ -16,16 +16,17 @@ def main():
     show_path = False  # Set to False to not show the path in the output
 
     # Parameters for graph
-    num_nodes = 10000
+    num_nodes = 1000
+    grid_size = num_nodes * 3
+    num_destinations = 1
     min_edges_per_node = 10
     max_edges_per_node = 20
-    grid_size = 25000
-    num_destinations = 3
     ensure_connectivity = True
 
-    print("Generating random graph problem...")
+    print("Generating random graph problem with connectivity density...")
     print(f"Number of nodes: {num_nodes}")
-    print(f"Edges per node: {min_edges_per_node}-{max_edges_per_node}")
+    print(f"Minimum edges per node: {min_edges_per_node}")
+    print(f"Maximum edges per node: {max_edges_per_node}")
     print(f"Grid size: {grid_size}x{grid_size}")
     print(f"Number of destinations: {num_destinations}")
 
@@ -48,6 +49,24 @@ def main():
     print(f"\nStarting point: {original_problem.initial}")
     print(f"Goals: {original_problem.goals}")
 
+    # Calculate and print graph statistics
+    graph_dict = original_problem.graph.graph_dict
+    locations = original_problem.locations
+
+    # Basic statistics
+    total_nodes = len(graph_dict)
+    total_edges = sum(len(neighbors) for neighbors in graph_dict.values())
+    avg_edges_per_node = total_edges / total_nodes if total_nodes > 0 else 0
+
+    print("\n" + "=" * 60)
+    print("Graph Statistics")
+    print("=" * 60)
+    print(f"Total nodes: {total_nodes}")
+    print(f"Total edges: {total_edges}")
+    print(
+        f"Graph density: {total_edges/(total_nodes*(total_nodes-1)) if total_nodes > 1 else 0:.6f}"
+    )
+
     # Store original problem data we'll need for creating fresh instances
     original_initial = original_problem.initial
     original_goals = original_problem.goals.copy()
@@ -64,7 +83,7 @@ def main():
         "A*": AStarSearch(),
         "Greedy": GreedyBestFirstSearch(),
         "UCS": UniformCostSearch(),
-        "BULB": BULBSearch(beam_width=6, max_discrepancies=10),
+        "BULB": BULBSearch(),
     }
 
     # First, run the multi-goal search

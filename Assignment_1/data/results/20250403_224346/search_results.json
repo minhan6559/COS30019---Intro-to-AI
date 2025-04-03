@@ -1,0 +1,867 @@
+{
+  "metadata": {
+    "timestamp": "20250403_224346",
+    "graphs_checkpoint": "20250403_224036",
+    "node_counts": [
+      1000,
+      3000,
+      5000,
+      8000,
+      10000
+    ],
+    "graphs_per_size": 3,
+    "timeout": 300
+  },
+  "results": {
+    "1000": {
+      "graph_1000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 2042.23,
+          "path_length": 8,
+          "nodes_expanded": 304,
+          "nodes_created": 4410,
+          "runtime_ms": 27.056640625,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 17941.07,
+          "path_length": 76,
+          "nodes_expanded": 283,
+          "nodes_created": 4182,
+          "runtime_ms": 153.87451171875,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 1722.7800000000002,
+          "path_length": 10,
+          "nodes_expanded": 83,
+          "nodes_created": 1185,
+          "runtime_ms": 7.014892578125,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 2082.2200000000003,
+          "path_length": 9,
+          "nodes_expanded": 9,
+          "nodes_created": 119,
+          "runtime_ms": 1.000244140625,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 1722.7800000000002,
+          "path_length": 10,
+          "nodes_expanded": 460,
+          "nodes_created": 6690,
+          "runtime_ms": 21.34619140625,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 1722.7800000000002,
+          "path_length": 10,
+          "nodes_expanded": 439,
+          "nodes_created": 1185,
+          "runtime_ms": 10.5947265625,
+          "timeout": false
+        }
+      },
+      "graph_1000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 1770.42,
+          "path_length": 7,
+          "nodes_expanded": 206,
+          "nodes_created": 3116,
+          "runtime_ms": 16.768310546875,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 16876.42,
+          "path_length": 68,
+          "nodes_expanded": 653,
+          "nodes_created": 9708,
+          "runtime_ms": 411.194580078125,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 1414.43,
+          "path_length": 10,
+          "nodes_expanded": 53,
+          "nodes_created": 785,
+          "runtime_ms": 6.016357421875,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 1969.66,
+          "path_length": 8,
+          "nodes_expanded": 8,
+          "nodes_created": 92,
+          "runtime_ms": 1.0126953125,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 1414.43,
+          "path_length": 10,
+          "nodes_expanded": 265,
+          "nodes_created": 3996,
+          "runtime_ms": 12.50537109375,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 1414.43,
+          "path_length": 10,
+          "nodes_expanded": 209,
+          "nodes_created": 785,
+          "runtime_ms": 7.52783203125,
+          "timeout": false
+        }
+      },
+      "graph_1000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 1719.29,
+          "path_length": 7,
+          "nodes_expanded": 215,
+          "nodes_created": 3209,
+          "runtime_ms": 16.025390625,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 28520.03000000001,
+          "path_length": 113,
+          "nodes_expanded": 304,
+          "nodes_created": 4509,
+          "runtime_ms": 188.91064453125,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 1380.0500000000002,
+          "path_length": 9,
+          "nodes_expanded": 68,
+          "nodes_created": 1029,
+          "runtime_ms": 6.5224609375,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 1686.29,
+          "path_length": 7,
+          "nodes_expanded": 7,
+          "nodes_created": 86,
+          "runtime_ms": 1.51513671875,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 1380.0500000000002,
+          "path_length": 9,
+          "nodes_expanded": 292,
+          "nodes_created": 4346,
+          "runtime_ms": 13.210693359375,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 1380.0500000000002,
+          "path_length": 9,
+          "nodes_expanded": 429,
+          "nodes_created": 1029,
+          "runtime_ms": 9.268310546875,
+          "timeout": false
+        }
+      }
+    },
+    "3000": {
+      "graph_3000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 6659.73,
+          "path_length": 13,
+          "nodes_expanded": 925,
+          "nodes_created": 13757,
+          "runtime_ms": 103.34619140625,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 68312.28000000004,
+          "path_length": 163,
+          "nodes_expanded": 1943,
+          "nodes_created": 28577,
+          "runtime_ms": 3566.105224609375,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 5163.7,
+          "path_length": 19,
+          "nodes_expanded": 325,
+          "nodes_created": 4758,
+          "runtime_ms": 30.152587890625,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 5797.650000000001,
+          "path_length": 15,
+          "nodes_expanded": 15,
+          "nodes_created": 204,
+          "runtime_ms": 1.999267578125,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 5163.7,
+          "path_length": 19,
+          "nodes_expanded": 1123,
+          "nodes_created": 16665,
+          "runtime_ms": 51.634521484375,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 5163.7,
+          "path_length": 19,
+          "nodes_expanded": 2813,
+          "nodes_created": 4758,
+          "runtime_ms": 44.8701171875,
+          "timeout": false
+        }
+      },
+      "graph_3000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 4663.820000000001,
+          "path_length": 10,
+          "nodes_expanded": 788,
+          "nodes_created": 11760,
+          "runtime_ms": 97.71630859375,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 51852.48999999998,
+          "path_length": 122,
+          "nodes_expanded": 207,
+          "nodes_created": 3136,
+          "runtime_ms": 203.788330078125,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 3827.03,
+          "path_length": 14,
+          "nodes_expanded": 131,
+          "nodes_created": 1936,
+          "runtime_ms": 12.4755859375,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 4374.09,
+          "path_length": 12,
+          "nodes_expanded": 12,
+          "nodes_created": 171,
+          "runtime_ms": 1.0029296875,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 3827.03,
+          "path_length": 14,
+          "nodes_expanded": 919,
+          "nodes_created": 13651,
+          "runtime_ms": 42.62060546875,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 3827.03,
+          "path_length": 14,
+          "nodes_expanded": 877,
+          "nodes_created": 1936,
+          "runtime_ms": 17.58740234375,
+          "timeout": false
+        }
+      },
+      "graph_3000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 4954.13,
+          "path_length": 10,
+          "nodes_expanded": 637,
+          "nodes_created": 9556,
+          "runtime_ms": 86.362548828125,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 30396.840000000004,
+          "path_length": 73,
+          "nodes_expanded": 73,
+          "nodes_created": 1055,
+          "runtime_ms": 37.3662109375,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 3671.039999999999,
+          "path_length": 12,
+          "nodes_expanded": 129,
+          "nodes_created": 1918,
+          "runtime_ms": 11.913818359375,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 4560.6900000000005,
+          "path_length": 12,
+          "nodes_expanded": 12,
+          "nodes_created": 151,
+          "runtime_ms": 1.236328125,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 3671.039999999999,
+          "path_length": 12,
+          "nodes_expanded": 810,
+          "nodes_created": 12141,
+          "runtime_ms": 41.5068359375,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 3671.039999999999,
+          "path_length": 12,
+          "nodes_expanded": 763,
+          "nodes_created": 1918,
+          "runtime_ms": 18.65869140625,
+          "timeout": false
+        }
+      }
+    },
+    "5000": {
+      "graph_5000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 15627.699999999997,
+          "path_length": 24,
+          "nodes_expanded": 2320,
+          "nodes_created": 34911,
+          "runtime_ms": 276.603515625,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 151826.57000000004,
+          "path_length": 275,
+          "nodes_expanded": 3525,
+          "nodes_created": 53002,
+          "runtime_ms": 9000.503173828125,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 12303.790000000003,
+          "path_length": 34,
+          "nodes_expanded": 1020,
+          "nodes_created": 15403,
+          "runtime_ms": 99.825439453125,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 15917.079999999998,
+          "path_length": 25,
+          "nodes_expanded": 25,
+          "nodes_created": 351,
+          "runtime_ms": 3.020751953125,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 12303.790000000003,
+          "path_length": 34,
+          "nodes_expanded": 2515,
+          "nodes_created": 37817,
+          "runtime_ms": 126.0283203125,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 12303.790000000003,
+          "path_length": 34,
+          "nodes_expanded": 11378,
+          "nodes_created": 15403,
+          "runtime_ms": 175.860595703125,
+          "timeout": false
+        }
+      },
+      "graph_5000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 13421.82,
+          "path_length": 19,
+          "nodes_expanded": 2726,
+          "nodes_created": 40777,
+          "runtime_ms": 512.302978515625,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 112488.26999999996,
+          "path_length": 211,
+          "nodes_expanded": 273,
+          "nodes_created": 4014,
+          "runtime_ms": 390.00048828125,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 9665.47,
+          "path_length": 25,
+          "nodes_expanded": 903,
+          "nodes_created": 13362,
+          "runtime_ms": 79.4375,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 11944.35,
+          "path_length": 23,
+          "nodes_expanded": 23,
+          "nodes_created": 308,
+          "runtime_ms": 3.0,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 9665.47,
+          "path_length": 25,
+          "nodes_expanded": 2909,
+          "nodes_created": 43500,
+          "runtime_ms": 140.672119140625,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 9665.47,
+          "path_length": 25,
+          "nodes_expanded": 8172,
+          "nodes_created": 13362,
+          "runtime_ms": 169.9599609375,
+          "timeout": false
+        }
+      },
+      "graph_5000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 14837.519999999999,
+          "path_length": 22,
+          "nodes_expanded": 2199,
+          "nodes_created": 32843,
+          "runtime_ms": 278.991943359375,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 123452.14000000006,
+          "path_length": 218,
+          "nodes_expanded": 3026,
+          "nodes_created": 45277,
+          "runtime_ms": 8239.5458984375,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 11179.94,
+          "path_length": 30,
+          "nodes_expanded": 587,
+          "nodes_created": 8809,
+          "runtime_ms": 50.399658203125,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 13637.14,
+          "path_length": 23,
+          "nodes_expanded": 23,
+          "nodes_created": 329,
+          "runtime_ms": 3.000244140625,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 11179.94,
+          "path_length": 30,
+          "nodes_expanded": 2314,
+          "nodes_created": 34604,
+          "runtime_ms": 109.719482421875,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 11179.94,
+          "path_length": 30,
+          "nodes_expanded": 5666,
+          "nodes_created": 8788,
+          "runtime_ms": 88.2607421875,
+          "timeout": false
+        }
+      }
+    },
+    "8000": {
+      "graph_8000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 13773.119999999997,
+          "path_length": 16,
+          "nodes_expanded": 1958,
+          "nodes_created": 29334,
+          "runtime_ms": 345.279296875,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 248286.65000000002,
+          "path_length": 364,
+          "nodes_expanded": 518,
+          "nodes_created": 7785,
+          "runtime_ms": 1224.382080078125,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 10346.57,
+          "path_length": 23,
+          "nodes_expanded": 366,
+          "nodes_created": 5489,
+          "runtime_ms": 33.031494140625,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 13231.75,
+          "path_length": 18,
+          "nodes_expanded": 18,
+          "nodes_created": 251,
+          "runtime_ms": 2.514404296875,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 10346.57,
+          "path_length": 23,
+          "nodes_expanded": 2281,
+          "nodes_created": 34066,
+          "runtime_ms": 107.453125,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 10346.57,
+          "path_length": 23,
+          "nodes_expanded": 3108,
+          "nodes_created": 5396,
+          "runtime_ms": 51.16455078125,
+          "timeout": false
+        }
+      },
+      "graph_8000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 15247.08,
+          "path_length": 18,
+          "nodes_expanded": 2236,
+          "nodes_created": 33396,
+          "runtime_ms": 347.5771484375,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 183652.6499999999,
+          "path_length": 263,
+          "nodes_expanded": 578,
+          "nodes_created": 8623,
+          "runtime_ms": 1009.27880859375,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 12067.519999999999,
+          "path_length": 25,
+          "nodes_expanded": 631,
+          "nodes_created": 9530,
+          "runtime_ms": 57.37646484375,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 14911.640000000003,
+          "path_length": 20,
+          "nodes_expanded": 20,
+          "nodes_created": 293,
+          "runtime_ms": 2.5048828125,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 12067.519999999999,
+          "path_length": 25,
+          "nodes_expanded": 2547,
+          "nodes_created": 38056,
+          "runtime_ms": 120.5,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 12067.519999999999,
+          "path_length": 25,
+          "nodes_expanded": 5899,
+          "nodes_created": 9463,
+          "runtime_ms": 97.315673828125,
+          "timeout": false
+        }
+      },
+      "graph_8000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 26099.61,
+          "path_length": 32,
+          "nodes_expanded": 3229,
+          "nodes_created": 48223,
+          "runtime_ms": 399.470947265625,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 525349.8900000001,
+          "path_length": 754,
+          "nodes_expanded": 1657,
+          "nodes_created": 24658,
+          "runtime_ms": 8259.70166015625,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 22142.82,
+          "path_length": 45,
+          "nodes_expanded": 1610,
+          "nodes_created": 24119,
+          "runtime_ms": 135.340576171875,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 26776.789999999997,
+          "path_length": 36,
+          "nodes_expanded": 36,
+          "nodes_created": 512,
+          "runtime_ms": 3.210205078125,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 22142.82,
+          "path_length": 45,
+          "nodes_expanded": 3422,
+          "nodes_created": 51186,
+          "runtime_ms": 158.762451171875,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 22142.82,
+          "path_length": 45,
+          "nodes_expanded": 18875,
+          "nodes_created": 24119,
+          "runtime_ms": 256.76318359375,
+          "timeout": false
+        }
+      }
+    },
+    "10000": {
+      "graph_10000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 31831.410000000007,
+          "path_length": 33,
+          "nodes_expanded": 4436,
+          "nodes_created": 66766,
+          "runtime_ms": 663.44775390625,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 590321.1299999993,
+          "path_length": 763,
+          "nodes_expanded": 5789,
+          "nodes_created": 86862,
+          "runtime_ms": 27963.76171875,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 24305.26,
+          "path_length": 47,
+          "nodes_expanded": 1430,
+          "nodes_created": 21494,
+          "runtime_ms": 120.014404296875,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 32842.579999999994,
+          "path_length": 36,
+          "nodes_expanded": 36,
+          "nodes_created": 524,
+          "runtime_ms": 3.525390625,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 24305.26,
+          "path_length": 47,
+          "nodes_expanded": 4503,
+          "nodes_created": 67729,
+          "runtime_ms": 213.200927734375,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 24305.26,
+          "path_length": 47,
+          "nodes_expanded": 16586,
+          "nodes_created": 21450,
+          "runtime_ms": 229.634765625,
+          "timeout": false
+        }
+      },
+      "graph_10000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 23789.450000000004,
+          "path_length": 24,
+          "nodes_expanded": 3574,
+          "nodes_created": 53696,
+          "runtime_ms": 624.595458984375,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 444087.85000000015,
+          "path_length": 570,
+          "nodes_expanded": 1971,
+          "nodes_created": 29375,
+          "runtime_ms": 9597.224853515625,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 17798.710000000006,
+          "path_length": 31,
+          "nodes_expanded": 942,
+          "nodes_created": 14032,
+          "runtime_ms": 91.764892578125,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 23815.289999999997,
+          "path_length": 25,
+          "nodes_expanded": 25,
+          "nodes_created": 358,
+          "runtime_ms": 3.551025390625,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 17798.710000000006,
+          "path_length": 31,
+          "nodes_expanded": 3754,
+          "nodes_created": 56409,
+          "runtime_ms": 206.374755859375,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 17798.710000000006,
+          "path_length": 31,
+          "nodes_expanded": 10200,
+          "nodes_created": 14032,
+          "runtime_ms": 156.77978515625,
+          "timeout": false
+        }
+      },
+      "graph_10000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 18569.64,
+          "path_length": 21,
+          "nodes_expanded": 2909,
+          "nodes_created": 43454,
+          "runtime_ms": 500.743408203125,
+          "timeout": false
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 601451.0299999998,
+          "path_length": 761,
+          "nodes_expanded": 1981,
+          "nodes_created": 29599,
+          "runtime_ms": 9974.106689453125,
+          "timeout": false
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 13967.14,
+          "path_length": 28,
+          "nodes_expanded": 580,
+          "nodes_created": 8791,
+          "runtime_ms": 50.236328125,
+          "timeout": false
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 17664.93,
+          "path_length": 22,
+          "nodes_expanded": 22,
+          "nodes_created": 324,
+          "runtime_ms": 3.652099609375,
+          "timeout": false
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 13967.14,
+          "path_length": 28,
+          "nodes_expanded": 2773,
+          "nodes_created": 41468,
+          "runtime_ms": 132.873291015625,
+          "timeout": false
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 13967.14,
+          "path_length": 28,
+          "nodes_expanded": 5826,
+          "nodes_created": 8755,
+          "runtime_ms": 87.061279296875,
+          "timeout": false
+        }
+      }
+    }
+  }
+}

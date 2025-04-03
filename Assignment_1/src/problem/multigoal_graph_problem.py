@@ -178,29 +178,16 @@ class MultigoalGraphProblem(ProblemBase):
     def random(
         cls,
         num_nodes=10,
-        min_edges_per_node=2,
-        max_edges_per_node=4,
+        min_edges_per_node=8,
+        max_edges_per_node=16,
         grid_size=100,
         num_destinations=1,
-        curvature=lambda: random.uniform(0.8, 2.5),
+        curvature=lambda: random.uniform(1.1, 2.0),
         max_distance_factor=2.0,
         ensure_connectivity=True,
     ):
         """
-        Generate a random graph problem for testing search algorithms.
-
-        Args:
-            num_nodes: Number of nodes in the graph
-            min_edges_per_node: Minimum outgoing edges per node
-            max_edges_per_node: Maximum outgoing edges per node
-            grid_size: Size of the coordinate grid (for node locations)
-            num_destinations: Number of destination nodes
-            curvature: Function that returns a factor to multiply distances by
-            max_distance_factor: Maximum distance for connections, as a multiple of the average neighbor distance
-            ensure_connectivity: If True, ensures the origin can reach all destinations
-
-        Returns:
-            problem: A GraphProblem instance
+        Generate a random graph problem with consistent edge distribution.
         """
         # Generate node IDs and random locations
         nodes, locations = cls._generate_random_nodes(num_nodes, grid_size)
@@ -215,7 +202,7 @@ class MultigoalGraphProblem(ProblemBase):
             nodes, locations, max_distance_factor, grid_size
         )
 
-        # Create graph with random edges
+        # Create graph with consistent edge counts per node
         graph_dict = cls._generate_random_edges(
             nodes,
             locations,
@@ -277,8 +264,10 @@ class MultigoalGraphProblem(ProblemBase):
                 key=lambda n: distance(locations[origin], locations[n]), reverse=True
             )
 
-            # Select from the farthest 60% of nodes to add randomness while favoring distant nodes
-            candidate_pool_size = max(int(len(remaining_nodes) * 0.6), num_destinations)
+            # Select from the farthest 75% of nodes to add randomness while favoring distant nodes
+            candidate_pool_size = max(
+                int(len(remaining_nodes) * 0.75), num_destinations
+            )
             candidate_pool = remaining_nodes[:candidate_pool_size]
 
             # Randomly select from the candidate pool
