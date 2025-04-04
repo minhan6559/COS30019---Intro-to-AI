@@ -166,6 +166,7 @@ def calculate_means(results_data, logger=None):
                 "nodes_expanded": [],
                 "nodes_created": [],
                 "runtime_ms": [],
+                "peak_memory_kb": [],  # Add memory usage tracking
                 "success_rate": 0,
             }
 
@@ -182,6 +183,11 @@ def calculate_means(results_data, logger=None):
                         results.get("nodes_created", 0)
                     )
                     means[node_count][alg]["runtime_ms"].append(results["runtime_ms"])
+                    # Add memory usage if available
+                    if "peak_memory_kb" in results:
+                        means[node_count][alg]["peak_memory_kb"].append(
+                            results["peak_memory_kb"]
+                        )
                     means[node_count][alg]["success_rate"] += 1
 
         # Calculate final means and success rates
@@ -202,6 +208,7 @@ def calculate_means(results_data, logger=None):
                 "nodes_expanded",
                 "nodes_created",
                 "runtime_ms",
+                "peak_memory_kb",  # Include memory in metrics
             ]:
                 values = means[node_count][alg][metric]
                 if values:
@@ -315,7 +322,6 @@ def generate_charts(means, metrics, output_dir, use_log_scale=True, logger=None)
         # Use log scale if specified
         if use_log_scale:
             plt.yscale("log")
-            plt.xscale("log")
 
         # Set x-axis ticks to show exact node counts
         plt.xticks(node_counts, [str(nc) for nc in node_counts])
@@ -370,7 +376,6 @@ def generate_charts(means, metrics, output_dir, use_log_scale=True, logger=None)
     plt.ylabel("Success Rate (%)", fontsize=14)
 
     if use_log_scale:
-        plt.xscale("log")  # Only x-axis log for success rate
         # Set x-axis ticks to show exact node counts
         plt.xticks(node_counts, [str(nc) for nc in node_counts])
 
@@ -404,11 +409,8 @@ def main():
     ensure_dir(output_checkpoint_dir)
     logger.info(f"Created analysis checkpoint directory: {output_checkpoint_dir}")
 
-    # Create a "latest" file to track the most recent analysis checkpoint
-    latest_output_file = os.path.join(base_output_dir, "latest")
-    with open(latest_output_file, "w") as f:
-        f.write(args.timestamp)
-    logger.info(f"Updated latest analysis checkpoint pointer to: {args.timestamp}")
+    # Remove the "latest" file creation - we'll use the checkpoint system like other steps
+    # Instead of creating a symlink, we'll just log the checkpoint being used
 
     # Get the base results directory
     base_results_dir = os.path.abspath(args.results_dir)

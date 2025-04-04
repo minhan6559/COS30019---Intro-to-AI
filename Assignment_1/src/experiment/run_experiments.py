@@ -7,6 +7,7 @@ import json
 import glob
 import logging
 import traceback
+import tracemalloc
 from pathlib import Path
 from datetime import datetime
 
@@ -134,25 +135,50 @@ def get_algorithms():
         "A*": AStarSearch(),
         "Greedy": GreedyBestFirstSearch(),
         "UCS": UniformCostSearch(),
-        "BULB": BULBSearch(beam_width=15, max_discrepancies=10),
+        "BULB": BULBSearch(),
     }
 
 
-def run_experiment(problem, algorithm_name, algorithm, timeout, logger=None):
+def run_experiment(
+    problem, algorithm_name, algorithm, timeout, logger=None, track_memory=False
+):
     """
     Run a search algorithm on a problem with timeout
 
+    Args:
+        problem: The problem to solve
+        algorithm_name: Name of the algorithm
+        algorithm: The search algorithm instance
+        timeout: Timeout in seconds
+        logger: Logger instance
+        track_memory: Whether to track memory usage (adds overhead to runtime)
+
     Returns:
-        dict: Results dictionary with metrics or None if timeout
+        dict: Results dictionary with metrics
     """
     if logger:
-        logger.info(f"  Running {algorithm_name}...")
+        if track_memory:
+            logger.info(f"  Running {algorithm_name} WITH memory tracking...")
+        else:
+            logger.info(f"  Running {algorithm_name} for runtime measurement only...")
 
     start_time = time.time() * 1000  # Convert to milliseconds
+
+    # Only start memory tracking if requested
+    if track_memory:
+        tracemalloc.start()
+        peak_memory_kb = 0
 
     try:
         # Set a timeout function here if your environment supports it
         result_tuple = algorithm.search(problem)
+
+        # Capture peak memory usage if tracking
+        if track_memory:
+            current, peak = tracemalloc.get_traced_memory()
+            peak_memory_kb = peak / 1024  # Convert to KB
+            # Stop memory tracking
+            tracemalloc.stop()
 
         end_time = time.time() * 1000  # Convert to milliseconds
         runtime_ms = end_time - start_time
@@ -164,64 +190,103 @@ def run_experiment(problem, algorithm_name, algorithm, timeout, logger=None):
             path_cost = result_node.path_cost
 
             if logger:
-                logger.info(
-                    f"    {algorithm_name}: Found path of length {len(path_nodes)} "
-                    f"with cost {path_cost:.2f} in {runtime_ms:.2f}ms"
-                )
-                logger.debug(
-                    f"    Nodes expanded: {expanded_count}, created: {created_count}"
-                )
+                if track_memory:
+                    logger.info(
+                        f"    {algorithm_name}: Found path of length {len(path_nodes)} "
+                        f"with cost {path_cost:.2f} in {runtime_ms:.2f}ms"
+                    )
+                    logger.debug(
+                        f"    Nodes expanded: {expanded_count}, created: {created_count}"
+                    )
+                    logger.debug(f"    Peak memory usage: {peak_memory_kb:.2f} KB")
+                else:
+                    logger.info(
+                        f"    {algorithm_name}: Runtime measurement: {runtime_ms:.2f}ms"
+                    )
 
-            return {
-                "success": True,
-                "path_cost": path_cost,
-                "path_length": len(path_nodes),
-                "nodes_expanded": expanded_count,
-                "nodes_created": created_count,
-                "runtime_ms": runtime_ms,
-                "timeout": False,
-            }
+            if track_memory:
+                return {
+                    "success": True,
+                    "path_cost": path_cost,
+                    "path_length": len(path_nodes),
+                    "nodes_expanded": expanded_count,
+                    "nodes_created": created_count,
+                    "peak_memory_kb": peak_memory_kb,
+                    "timeout": False,
+                }
+            else:
+                return {
+                    "success": True,
+                    "runtime_ms": runtime_ms,
+                }
         else:
             # No solution found, but algorithm completed
             expanded_count = result_tuple[1] if result_tuple else 0
             created_count = result_tuple[2] if result_tuple else 0
 
             if logger:
-                logger.info(
-                    f"    {algorithm_name}: No solution found after {runtime_ms:.2f}ms"
-                )
-                logger.debug(
-                    f"    Nodes expanded: {expanded_count}, created: {created_count}"
-                )
+                if track_memory:
+                    logger.info(
+                        f"    {algorithm_name}: No solution found after {runtime_ms:.2f}ms"
+                    )
+                    logger.debug(
+                        f"    Nodes expanded: {expanded_count}, created: {created_count}"
+                    )
+                    logger.debug(f"    Peak memory usage: {peak_memory_kb:.2f} KB")
+                else:
+                    logger.info(
+                        f"    {algorithm_name}: No solution (runtime: {runtime_ms:.2f}ms)"
+                    )
 
-            return {
-                "success": False,
-                "path_cost": float("inf"),
-                "path_length": 0,
-                "nodes_expanded": expanded_count,
-                "nodes_created": created_count,
-                "runtime_ms": runtime_ms,
-                "timeout": False,
-            }
+            if track_memory:
+                return {
+                    "success": False,
+                    "path_cost": float("inf"),
+                    "path_length": 0,
+                    "nodes_expanded": expanded_count,
+                    "nodes_created": created_count,
+                    "peak_memory_kb": peak_memory_kb,
+                    "timeout": False,
+                }
+            else:
+                return {
+                    "success": False,
+                    "runtime_ms": runtime_ms,
+                }
 
     except Exception as e:
+        # Make sure to stop tracemalloc even on exception
+        if track_memory:
+            current, peak = tracemalloc.get_traced_memory()
+            peak_memory_kb = peak / 1024  # Convert to KB
+            tracemalloc.stop()
+
         end_time = time.time() * 1000  # Convert to milliseconds
         runtime_ms = end_time - start_time
 
         if logger:
             logger.error(f"    Error running {algorithm_name}: {str(e)}")
             logger.debug(traceback.format_exc())
+            if track_memory:
+                logger.debug(f"    Peak memory usage: {peak_memory_kb:.2f} KB")
 
-        return {
-            "success": False,
-            "path_cost": float("inf"),
-            "path_length": 0,
-            "nodes_expanded": 0,
-            "nodes_created": 0,
-            "runtime_ms": runtime_ms,
-            "timeout": False,
-            "error": str(e),
-        }
+        if track_memory:
+            return {
+                "success": False,
+                "path_cost": float("inf"),
+                "path_length": 0,
+                "nodes_expanded": 0,
+                "nodes_created": 0,
+                "peak_memory_kb": peak_memory_kb,
+                "timeout": False,
+                "error": str(e),
+            }
+        else:
+            return {
+                "success": False,
+                "runtime_ms": runtime_ms,
+                "error": str(e),
+            }
 
 
 def main():
@@ -331,12 +396,38 @@ def main():
             # Initialize results for this graph
             all_results["results"][str(node_count)][graph_id] = {}
 
-            # Run each algorithm
+            # Run each algorithm twice - once for runtime, once for memory usage
             for alg_name, algorithm in algorithms.items():
-                results = run_experiment(
-                    problem, alg_name, algorithm, args.timeout, logger
+                logger.info(f"  Testing algorithm: {alg_name}")
+
+                # First run - runtime only (no memory tracking)
+                runtime_results = run_experiment(
+                    problem,
+                    alg_name,
+                    algorithm,
+                    args.timeout,
+                    logger,
+                    track_memory=False,
                 )
-                all_results["results"][str(node_count)][graph_id][alg_name] = results
+
+                # Second run - with memory tracking for all other metrics
+                metrics_results = run_experiment(
+                    problem,
+                    alg_name,
+                    algorithm,
+                    args.timeout,
+                    logger,
+                    track_memory=True,
+                )
+
+                # Merge results, using runtime from the first run
+                combined_results = metrics_results.copy()
+                if "runtime_ms" in runtime_results:
+                    combined_results["runtime_ms"] = runtime_results["runtime_ms"]
+
+                all_results["results"][str(node_count)][graph_id][
+                    alg_name
+                ] = combined_results
 
     # Save results to file
     results_file = os.path.join(results_checkpoint_dir, f"search_results.json")

@@ -268,7 +268,14 @@ def main():
             ["--log-scale" if args.log_scale else "--no-log-scale"]
         )
         analyze_command_args.extend(
-            ["--metrics", "path_cost", "path_length", "nodes_expanded", "runtime_ms"]
+            [
+                "--metrics",
+                "path_cost",
+                "path_length",
+                "nodes_expanded",
+                "runtime_ms",
+                "peak_memory_kb",
+            ]
         )
         analyze_command_args.extend(["--log-dir", args.log_dir])
 

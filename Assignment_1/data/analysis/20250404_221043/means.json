@@ -1,0 +1,282 @@
+{
+  "1000": {
+    "Greedy": {
+      "path_cost": 2475.78,
+      "path_length": 10.0,
+      "nodes_expanded": 10.0,
+      "nodes_created": 136.33333333333334,
+      "runtime_ms": 1.1277669270833333,
+      "peak_memory_kb": 17.1171875,
+      "success_rate": 1.0
+    },
+    "BULB": {
+      "path_cost": 1964.033333333333,
+      "path_length": 13.666666666666666,
+      "nodes_expanded": 966.0,
+      "nodes_created": 1968.3333333333333,
+      "runtime_ms": 18.135904947916668,
+      "peak_memory_kb": 543.9801432291666,
+      "success_rate": 1.0
+    },
+    "UCS": {
+      "path_cost": 1964.033333333333,
+      "path_length": 13.666666666666666,
+      "nodes_expanded": 379.6666666666667,
+      "nodes_created": 5715.0,
+      "runtime_ms": 17.890625,
+      "peak_memory_kb": 83.76334635416667,
+      "success_rate": 1.0
+    },
+    "A*": {
+      "path_cost": 1964.033333333333,
+      "path_length": 13.666666666666666,
+      "nodes_expanded": 133.0,
+      "nodes_created": 1968.3333333333333,
+      "runtime_ms": 12.099202473958334,
+      "peak_memory_kb": 54.246744791666664,
+      "success_rate": 1.0
+    },
+    "BFS": {
+      "path_cost": 2683.5,
+      "path_length": 9.666666666666666,
+      "nodes_expanded": 290.6666666666667,
+      "nodes_created": 4387.666666666667,
+      "runtime_ms": 19.983235677083332,
+      "peak_memory_kb": 54.11328125,
+      "success_rate": 1.0
+    },
+    "DFS": {
+      "path_cost": 24097.226666666666,
+      "path_length": 96.66666666666667,
+      "nodes_expanded": 245.33333333333334,
+      "nodes_created": 3700.3333333333335,
+      "runtime_ms": 174.62312825520834,
+      "peak_memory_kb": 124.54296875,
+      "success_rate": 1.0
+    }
+  },
+  "3000": {
+    "Greedy": {
+      "path_cost": 8444.630000000001,
+      "path_length": 19.333333333333332,
+      "nodes_expanded": 19.333333333333332,
+      "nodes_created": 274.0,
+      "runtime_ms": 1.9984537760416667,
+      "peak_memory_kb": 42.368489583333336,
+      "success_rate": 1.0
+    },
+    "BULB": {
+      "path_cost": 6832.306666666667,
+      "path_length": 22.333333333333332,
+      "nodes_expanded": 4483.666666666667,
+      "nodes_created": 6894.666666666667,
+      "runtime_ms": 69.65665690104167,
+      "peak_memory_kb": 1433.1966145833333,
+      "success_rate": 1.0
+    },
+    "UCS": {
+      "path_cost": 6832.306666666667,
+      "path_length": 22.333333333333332,
+      "nodes_expanded": 1572.6666666666667,
+      "nodes_created": 23494.0,
+      "runtime_ms": 73.8369140625,
+      "peak_memory_kb": 262.71875,
+      "success_rate": 1.0
+    },
+    "A*": {
+      "path_cost": 6832.306666666667,
+      "path_length": 22.333333333333332,
+      "nodes_expanded": 458.3333333333333,
+      "nodes_created": 6903.666666666667,
+      "runtime_ms": 39.37255859375,
+      "peak_memory_kb": 134.82291666666666,
+      "success_rate": 1.0
+    },
+    "BFS": {
+      "path_cost": 8390.346666666666,
+      "path_length": 16.333333333333332,
+      "nodes_expanded": 1312.3333333333333,
+      "nodes_created": 19661.666666666668,
+      "runtime_ms": 143.96394856770834,
+      "peak_memory_kb": 189.66276041666666,
+      "success_rate": 1.0
+    },
+    "DFS": {
+      "path_cost": 102132.13333333335,
+      "path_length": 240.66666666666666,
+      "nodes_expanded": 1157.0,
+      "nodes_created": 17232.0,
+      "runtime_ms": 2200.8040364583335,
+      "peak_memory_kb": 399.2864583333333,
+      "success_rate": 1.0
+    }
+  },
+  "5000": {
+    "Greedy": {
+      "path_cost": 13923.343333333332,
+      "path_length": 23.333333333333332,
+      "nodes_expanded": 23.333333333333332,
+      "nodes_created": 334.3333333333333,
+      "runtime_ms": 2.7129720052083335,
+      "peak_memory_kb": 52.290364583333336,
+      "success_rate": 1.0
+    },
+    "BULB": {
+      "path_cost": 11028.04,
+      "path_length": 31.0,
+      "nodes_expanded": 7910.0,
+      "nodes_created": 11145.666666666666,
+      "runtime_ms": 110.68806966145833,
+      "peak_memory_kb": 1953.6875,
+      "success_rate": 1.0
+    },
+    "UCS": {
+      "path_cost": 11028.04,
+      "path_length": 31.0,
+      "nodes_expanded": 2750.0,
+      "nodes_created": 41172.333333333336,
+      "runtime_ms": 131.31575520833334,
+      "peak_memory_kb": 359.39453125,
+      "success_rate": 1.0
+    },
+    "A*": {
+      "path_cost": 11028.04,
+      "path_length": 31.0,
+      "nodes_expanded": 747.3333333333334,
+      "nodes_created": 11162.666666666666,
+      "runtime_ms": 64.73006184895833,
+      "peak_memory_kb": 181.70703125,
+      "success_rate": 1.0
+    },
+    "BFS": {
+      "path_cost": 14409.33,
+      "path_length": 21.333333333333332,
+      "nodes_expanded": 2437.3333333333335,
+      "nodes_created": 36481.0,
+      "runtime_ms": 353.915771484375,
+      "peak_memory_kb": 213.23958333333334,
+      "success_rate": 1.0
+    },
+    "DFS": {
+      "path_cost": 182203.35,
+      "path_length": 328.0,
+      "nodes_expanded": 795.0,
+      "nodes_created": 11826.333333333334,
+      "runtime_ms": 1734.020751953125,
+      "peak_memory_kb": 409.3697916666667,
+      "success_rate": 1.0
+    }
+  },
+  "8000": {
+    "Greedy": {
+      "path_cost": 12130.590000000002,
+      "path_length": 17.333333333333332,
+      "nodes_expanded": 17.333333333333332,
+      "nodes_created": 254.0,
+      "runtime_ms": 2.0013020833333335,
+      "peak_memory_kb": 34.940104166666664,
+      "success_rate": 1.0
+    },
+    "BULB": {
+      "path_cost": 10203.593333333336,
+      "path_length": 21.666666666666668,
+      "nodes_expanded": 4692.333333333333,
+      "nodes_created": 7751.333333333333,
+      "runtime_ms": 74.84228515625,
+      "peak_memory_kb": 1834.1848958333333,
+      "success_rate": 1.0
+    },
+    "UCS": {
+      "path_cost": 10203.593333333336,
+      "path_length": 21.666666666666668,
+      "nodes_expanded": 2467.0,
+      "nodes_created": 36900.0,
+      "runtime_ms": 118.1689453125,
+      "peak_memory_kb": 450.0455729166667,
+      "success_rate": 1.0
+    },
+    "A*": {
+      "path_cost": 10203.593333333336,
+      "path_length": 21.666666666666668,
+      "nodes_expanded": 517.6666666666666,
+      "nodes_created": 7764.333333333333,
+      "runtime_ms": 45.751220703125,
+      "peak_memory_kb": 186.41015625,
+      "success_rate": 1.0
+    },
+    "BFS": {
+      "path_cost": 12704.793333333335,
+      "path_length": 15.333333333333334,
+      "nodes_expanded": 1918.0,
+      "nodes_created": 28646.333333333332,
+      "runtime_ms": 355.0972493489583,
+      "peak_memory_kb": 275.36328125,
+      "success_rate": 1.0
+    },
+    "DFS": {
+      "path_cost": 408692.97666666657,
+      "path_length": 584.6666666666666,
+      "nodes_expanded": 1841.6666666666667,
+      "nodes_created": 27665.666666666668,
+      "runtime_ms": 7925.103108723958,
+      "peak_memory_kb": 750.2786458333334,
+      "success_rate": 1.0
+    }
+  },
+  "10000": {
+    "Greedy": {
+      "path_cost": 19682.106666666667,
+      "path_length": 22.666666666666668,
+      "nodes_expanded": 22.666666666666668,
+      "nodes_created": 333.0,
+      "runtime_ms": 1.998291015625,
+      "peak_memory_kb": 52.567708333333336,
+      "success_rate": 1.0
+    },
+    "BULB": {
+      "path_cost": 15479.470000000001,
+      "path_length": 29.666666666666668,
+      "nodes_expanded": 7244.0,
+      "nodes_created": 10628.0,
+      "runtime_ms": 105.149658203125,
+      "peak_memory_kb": 2040.0598958333333,
+      "success_rate": 1.0
+    },
+    "UCS": {
+      "path_cost": 15479.470000000001,
+      "path_length": 29.666666666666668,
+      "nodes_expanded": 2766.6666666666665,
+      "nodes_created": 41453.0,
+      "runtime_ms": 133.7373046875,
+      "peak_memory_kb": 389.7200520833333,
+      "success_rate": 1.0
+    },
+    "A*": {
+      "path_cost": 15479.470000000001,
+      "path_length": 29.666666666666668,
+      "nodes_expanded": 713.6666666666666,
+      "nodes_created": 10665.0,
+      "runtime_ms": 63.723225911458336,
+      "peak_memory_kb": 207.9375,
+      "success_rate": 1.0
+    },
+    "BFS": {
+      "path_cost": 18987.823333333334,
+      "path_length": 21.333333333333332,
+      "nodes_expanded": 2734.3333333333335,
+      "nodes_created": 40964.666666666664,
+      "runtime_ms": 474.938232421875,
+      "peak_memory_kb": 276.0911458333333,
+      "success_rate": 1.0
+    },
+    "DFS": {
+      "path_cost": 562273.9766666669,
+      "path_length": 713.0,
+      "nodes_expanded": 2258.0,
+      "nodes_created": 33795.666666666664,
+      "runtime_ms": 10792.34033203125,
+      "peak_memory_kb": 966.7981770833334,
+      "success_rate": 1.0
+    }
+  }
+}
