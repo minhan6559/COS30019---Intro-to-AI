@@ -30,14 +30,21 @@ def setup_logging(timestamp, log_dir="logs"):
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
+    # Create checkpoint-specific log directory
+    checkpoint_log_dir = os.path.join(log_dir, timestamp)
+    if not os.path.exists(checkpoint_log_dir):
+        os.makedirs(checkpoint_log_dir)
+
     # Configure logging
-    log_file = os.path.join(log_dir, f"run_experiments_{timestamp}.log")
+    log_file = os.path.join(checkpoint_log_dir, f"run_experiments.log")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[logging.FileHandler(log_file), logging.StreamHandler(sys.stdout)],
     )
-    return logging.getLogger("run_experiments")
+    logger = logging.getLogger("run_experiments")
+    logger.info(f"Logs will be saved to: {log_file}")
+    return logger
 
 
 def parse_args():
@@ -100,32 +107,23 @@ def ensure_dir(directory):
 
 def get_latest_checkpoint(base_dir, logger=None):
     """Get the latest checkpoint from the base directory"""
-    latest_file = os.path.join(base_dir, "latest")
-    if os.path.exists(latest_file):
-        with open(latest_file, "r") as f:
-            checkpoint = f.read().strip()
-            if logger:
-                logger.info(f"Found latest checkpoint marker: {checkpoint}")
-            return checkpoint
-
-    # If no latest file, try to find the most recent directory
-    if logger:
-        logger.info("No latest checkpoint marker, finding most recent directory")
-
+    # Find all subdirectories in the base directory
     checkpoints = [
-        d
-        for d in os.listdir(base_dir)
-        if os.path.isdir(os.path.join(base_dir, d)) and d != "latest"
+        d for d in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, d))
     ]
-    if checkpoints:
-        checkpoint = sorted(checkpoints)[-1]
+
+    if not checkpoints:
         if logger:
-            logger.info(f"Found most recent checkpoint directory: {checkpoint}")
-        return checkpoint
+            logger.warning(f"No checkpoint directories found in {base_dir}")
+        return None
+
+    # Sort checkpoints by name (which should be timestamps)
+    latest_checkpoint = sorted(checkpoints)[-1]
 
     if logger:
-        logger.warning("No checkpoint directories found")
-    return None
+        logger.info(f"Found most recent checkpoint directory: {latest_checkpoint}")
+
+    return latest_checkpoint
 
 
 def get_algorithms():
@@ -245,12 +243,6 @@ def main():
     results_checkpoint_dir = os.path.join(base_results_dir, args.timestamp)
     ensure_dir(results_checkpoint_dir)
     logger.info(f"Created results checkpoint directory: {results_checkpoint_dir}")
-
-    # Create a "latest" file to track the most recent results checkpoint
-    latest_results_file = os.path.join(base_results_dir, "latest")
-    with open(latest_results_file, "w") as f:
-        f.write(args.timestamp)
-    logger.info(f"Updated latest results checkpoint pointer to: {args.timestamp}")
 
     # Get the base graphs directory
     base_graphs_dir = os.path.abspath(args.graphs_dir)

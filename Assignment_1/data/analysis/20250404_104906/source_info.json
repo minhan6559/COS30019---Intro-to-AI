@@ -1,0 +1,17 @@
+{
+  "timestamp": "20250404_104906",
+  "source_file": "C:\\Users\\Admin\\Desktop\\COS30019---Intro-to-AI\\Assignment_1\\data\\results\\20250404_104906\\search_results.json",
+  "source_data": {
+    "timestamp": "20250404_104906",
+    "graphs_checkpoint": "20250404_104906",
+    "node_counts": [
+      1000,
+      3000,
+      5000,
+      8000,
+      10000
+    ],
+    "graphs_per_size": 3,
+    "timeout": 300
+  }
+}

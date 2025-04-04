@@ -1,7 +1,0 @@
-2025-04-03 22:53:00,516 - experiment - INFO - Experiment started at: 2025-04-03 22:53:00
-2025-04-03 22:53:00,516 - experiment - INFO - Command line arguments: ['run_search_experiments.py', '--run']
-2025-04-03 22:53:00,517 - experiment - INFO - Working directory: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1
-2025-04-03 22:53:00,517 - experiment - INFO - ==================================================
-2025-04-03 22:53:00,517 - experiment - INFO - STEP 2: Running experiments
-2025-04-03 22:53:00,517 - experiment - INFO - ==================================================
-2025-04-03 22:53:00,529 - experiment - INFO - Running command: E:\Anaconda\envs\ita\python.exe C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\src\experiment\run_experiments.py --timeout 300 --node-counts 1000 3000 5000 8000 10000 --graphs-per-size 3 --log-dir logs --timestamp 20250403_225300

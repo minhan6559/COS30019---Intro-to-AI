@@ -1,0 +1,22 @@
+2025-04-04 10:49:06,503 - experiment - INFO - Logs will be saved to: logs\20250404_104906\experiment.log
+2025-04-04 10:49:06,503 - experiment - INFO - Experiment started at: 2025-04-04 10:49:06
+2025-04-04 10:49:06,503 - experiment - INFO - Command line arguments: ['run_search_experiments.py', '--all']
+2025-04-04 10:49:06,504 - experiment - INFO - Working directory: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1
+2025-04-04 10:49:06,504 - experiment - INFO - ==================================================
+2025-04-04 10:49:06,504 - experiment - INFO - STEP 1: Generating test graphs
+2025-04-04 10:49:06,515 - experiment - INFO - ==================================================
+2025-04-04 10:49:06,515 - experiment - INFO - Running command: E:\Anaconda\envs\ita\python.exe C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\src\experiment\generate_graphs.py --node-counts 1000 3000 5000 8000 10000 --graphs-per-size 3 --min-edges 10 --max-edges 20 --log-dir logs --timestamp 20250404_104906
+2025-04-04 11:08:24,672 - experiment - INFO - Command completed successfully with return code 0
+2025-04-04 11:08:24,672 - experiment - INFO - ==================================================
+2025-04-04 11:08:24,672 - experiment - INFO - STEP 2: Running experiments
+2025-04-04 11:08:24,672 - experiment - INFO - ==================================================
+2025-04-04 11:08:24,673 - experiment - INFO - Running command: E:\Anaconda\envs\ita\python.exe C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\src\experiment\run_experiments.py --timeout 300 --node-counts 1000 3000 5000 8000 10000 --graphs-per-size 3 --log-dir logs --timestamp 20250404_104906
+2025-04-04 11:09:33,081 - experiment - INFO - Command completed successfully with return code 0
+2025-04-04 11:09:33,082 - experiment - INFO - ==================================================
+2025-04-04 11:09:33,082 - experiment - INFO - STEP 3: Analyzing results
+2025-04-04 11:09:33,082 - experiment - INFO - ==================================================
+2025-04-04 11:09:33,083 - experiment - INFO - Running command: E:\Anaconda\envs\ita\python.exe C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\src\experiment\analyze_results.py --log-scale --metrics path_cost path_length nodes_expanded runtime_ms --log-dir logs --timestamp 20250404_104906
+2025-04-04 11:09:37,892 - experiment - INFO - Command completed successfully with return code 0
+2025-04-04 11:09:37,894 - experiment - INFO - ==================================================
+2025-04-04 11:09:37,894 - experiment - INFO - Experiment completed in 1231.39 seconds
+2025-04-04 11:09:37,894 - experiment - INFO - ==================================================

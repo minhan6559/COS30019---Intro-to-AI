@@ -21,14 +21,21 @@ def setup_logging(timestamp, log_dir="logs"):
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
+    # Create checkpoint-specific log directory
+    checkpoint_log_dir = os.path.join(log_dir, timestamp)
+    if not os.path.exists(checkpoint_log_dir):
+        os.makedirs(checkpoint_log_dir)
+
     # Configure logging
-    log_file = os.path.join(log_dir, f"generate_graphs_{timestamp}.log")
+    log_file = os.path.join(checkpoint_log_dir, f"generate_graphs.log")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[logging.FileHandler(log_file), logging.StreamHandler(sys.stdout)],
     )
-    return logging.getLogger("generate_graphs")
+    logger = logging.getLogger("generate_graphs")
+    logger.info(f"Logs will be saved to: {log_file}")
+    return logger
 
 
 def parse_args():
@@ -140,12 +147,6 @@ def main():
     ensure_dir(checkpoint_dir)
     logger.info(f"Created checkpoint directory: {checkpoint_dir}")
 
-    # Create a "latest" file to track the most recent checkpoint
-    latest_file = os.path.join(base_dir, "latest")
-    with open(latest_file, "w") as f:
-        f.write(args.timestamp)
-    logger.info(f"Updated latest checkpoint pointer to: {args.timestamp}")
-
     logger.info(f"Generating graphs with parameters:")
     logger.info(f"  Node counts: {args.node_counts}")
     logger.info(f"  Graphs per size: {args.graphs_per_size}")
@@ -160,8 +161,10 @@ def main():
         logger.info(f"Processing node count: {node_count}")
 
         for i in range(1, args.graphs_per_size + 1):
-            # Use a deterministic seed for reproducibility
-            seed = node_count * 100 + i
+            # Use a deterministic seed if want reproducibility
+            # seed = node_count * 100 + i
+            seed = None
+
             logger.info(
                 f"  Generating graph {i}/{args.graphs_per_size} with seed {seed}"
             )
