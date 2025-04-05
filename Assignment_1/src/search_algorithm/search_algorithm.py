@@ -133,12 +133,18 @@ class BULBSearch(SearchAlgorithmBase):
         Node.reset_counter()  # Reset the node creation counter
 
         f_func = lambda n: n.path_cost + problem.h(n)
-        initial_node = DiscrepancyNode(Node(problem.initial), f_func)
+
+        # Create initial node and wrap it
+        initial_node = Node(problem.initial)
+        initial_discrepancy_node = DiscrepancyNode(initial_node, f_func)
+
+        # Create a node cache to avoid recreating nodes for the same state
+        node_cache = {problem.initial: initial_node}
 
         priority_queue = PriorityQueue(
             "min", lambda n: (n.discrepancies, n.f_value, n.node.state)
         )
-        priority_queue.append(initial_node)
+        priority_queue.append(initial_discrepancy_node)
         visited = set()
         count_expanded = 0
 
@@ -154,11 +160,32 @@ class BULBSearch(SearchAlgorithmBase):
 
             visited.add(current.node.state)
 
-            # Generate successors
-            successors = [
-                DiscrepancyNode(child, f_func, current.discrepancies)
-                for child in current.node.expand(problem, should_sort=False)
-            ]
+            # Get neighbors without creating nodes yet
+            neighbors = problem.get_neighbors(current.node.state)
+            successors = []
+
+            for next_state in neighbors:
+                # Create or reuse a node for this state
+                if next_state in node_cache:
+                    # Node already exists in our cache
+                    child_node = node_cache[next_state]
+
+                    # Update path cost if we found a better path
+                    new_cost = problem.path_cost(
+                        current.node.path_cost, current.node.state, next_state
+                    )
+                    if new_cost < child_node.path_cost:
+                        child_node.path_cost = new_cost
+                        child_node.parent = current.node
+                else:
+                    # Create a new node
+                    child_node = current.node.child_node(problem, next_state)
+                    node_cache[next_state] = child_node
+
+                # Create a discrepancy node with the node
+                successors.append(
+                    DiscrepancyNode(child_node, f_func, current.discrepancies)
+                )
 
             if not successors:
                 continue
