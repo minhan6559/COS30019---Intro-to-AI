@@ -110,16 +110,23 @@ def generate_graph(num_nodes, min_edges, max_edges, seed=None, logger=None):
             min_edges_per_node=min_edges,
             max_edges_per_node=max_edges,
             grid_size=grid_size,
-            num_destinations=3,  # Multiple destinations for more interesting problems
+            num_destinations=1,  # Multiple destinations for more interesting problems
             ensure_connectivity=True,
         )
+
+        # Calculate total edges and average edges per node
+        total_edges = sum(
+            len(neighbors) for neighbors in problem.graph.graph_dict.values()
+        )
+        avg_edges_per_node = total_edges / len(problem.graph.nodes())
 
         elapsed_time = time.time() - start_time
         if logger:
             logger.info(f"  Generation completed in {elapsed_time:.2f} seconds")
-            logger.debug(
-                f"  Graph has {len(problem.graph.nodes())} nodes and {sum(len(neighbors) for neighbors in problem.graph.graph_dict.values())} edges"
+            logger.info(
+                f"  Graph has {len(problem.graph.nodes())} nodes and {total_edges} edges"
             )
+            logger.info(f"  Average edges per node: {avg_edges_per_node:.2f}")
 
         return problem
     except Exception as e:
@@ -154,11 +161,16 @@ def main():
     logger.info(f"  Output directory: {checkpoint_dir}")
     logger.info(f"  Checkpoint timestamp: {args.timestamp}")
 
+    # Track overall statistics
+    all_graphs_avg_edges = []
+
     # Generate graphs for each node count
     for node_count in args.node_counts:
         node_dir = os.path.join(checkpoint_dir, f"nodes_{node_count}")
         ensure_dir(node_dir)
         logger.info(f"Processing node count: {node_count}")
+
+        node_count_avg_edges = []
 
         for i in range(1, args.graphs_per_size + 1):
             # Use a deterministic seed if want reproducibility
@@ -179,6 +191,14 @@ def main():
                     logger=logger,
                 )
 
+                # Calculate average edges per node for statistics
+                total_edges = sum(
+                    len(neighbors) for neighbors in problem.graph.graph_dict.values()
+                )
+                avg_edges = total_edges / len(problem.graph.nodes())
+                node_count_avg_edges.append(avg_edges)
+                all_graphs_avg_edges.append(avg_edges)
+
                 # Save the graph to a file
                 filename = f"graph_{node_count}_{i}.txt"
                 filepath = os.path.join(node_dir, filename)
@@ -190,6 +210,20 @@ def main():
             except Exception as e:
                 logger.error(f"  Failed to generate or save graph: {str(e)}")
                 continue
+
+        # Log average edges for this node count
+        if node_count_avg_edges:
+            avg = sum(node_count_avg_edges) / len(node_count_avg_edges)
+            logger.info(
+                f"  Average edges per node for {node_count}-node graphs: {avg:.2f}"
+            )
+
+    # Log overall average
+    if all_graphs_avg_edges:
+        overall_avg = sum(all_graphs_avg_edges) / len(all_graphs_avg_edges)
+        logger.info(
+            f"\nOverall average edges per node across all graphs: {overall_avg:.2f}"
+        )
 
     logger.info("\nAll graphs generated successfully!")
     logger.info(f"Checkpoint created: {args.timestamp}")

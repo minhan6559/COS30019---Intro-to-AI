@@ -1,30 +1,33 @@
+# Test Case 8: Equal-Cost Paths with Different Heuristics
+# Tests how informed algorithms handle multiple paths with identical costs but different heuristic values
+# Expected behavior: 
+# - All algorithms find path to node 7
+# - Both paths (via node 5 or node 6) have identical total cost of 11
+# - Informed algorithms (A*, GBFS, Fringe) should prefer path through node 6 due to better heuristic
+# - UCS may choose either path as they have equal cost (but will choose node 5 since node ID is smaller)
+# - DFS and BFS will choose based on their exploration order
+
 Nodes:
-1: (1,1)
-2: (1,7)
-3: (4,4)
-4: (7,1)
-5: (7,7)
-6: (10,4)
+1: (0,0)
+2: (0,2)
+3: (2,0)
+4: (2,2)
+5: (5,3)
+6: (3,5)
+7: (4,5)
+
 Edges:
-(1,3): 5
-(2,3): 5
-(3,1): 5
-(3,2): 5
-(3,4): 5
-(3,5): 5
-(3,6): 7
-(4,3): 5
-(5,3): 5
-(6,3): 7
-(4,6): 6
-(6,4): 6
-(5,6): 6
-(6,5): 6
-(1,2): 8
-(2,5): 8
-(5,4): 8
-(4,1): 8
+(1,2): 2
+(1,3): 2
+(2,4): 2
+(3,4): 2
+(4,5): 4
+(4,6): 4
+(6,7): 3
+(5,7): 3
+
 Origin:
 1
+
 Destinations:
-6; 5
+7

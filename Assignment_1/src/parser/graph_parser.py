@@ -44,7 +44,8 @@ class GraphParser:
         with open(file_path, "r") as file:
             for line in file:
                 line = line.strip()
-                if not line:
+                # Skip empty lines or comment lines that start with #
+                if not line or line.startswith("#"):
                     continue
 
                 # Identify the section headers

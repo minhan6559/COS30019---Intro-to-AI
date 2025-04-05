@@ -81,12 +81,6 @@ def parse_args():
         help="Only run experiments on graphs of this size: small=1000, medium=3000,5000, large=8000,10000 nodes",
     )
     run_group.add_argument(
-        "--timeout",
-        type=int,
-        default=300,
-        help="Timeout in seconds for each algorithm run (default: 300)",
-    )
-    run_group.add_argument(
         "--run-node-counts",
         type=int,
         nargs="+",
@@ -224,8 +218,6 @@ def main():
         run_command_args = [sys.executable, run_script]
         if args.size:
             run_command_args.extend(["--size", args.size])
-        if args.timeout:
-            run_command_args.extend(["--timeout", str(args.timeout)])
 
         # Use run-node-counts if specified, otherwise fall back to node-counts
         node_counts_for_run = (

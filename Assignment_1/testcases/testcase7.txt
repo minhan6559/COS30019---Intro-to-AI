@@ -1,29 +1,48 @@
+# Test Case 7: Worst-Case for Uninformed Search
+# A structure where DFS and BFS must explore almost the entire graph
+# Expected behavior: 
+# - DFS and BFS perform poorly, expanding most nodes due to unfavorable node ordering
+# - UCS finds the optimal path efficiently despite being uninformed, thanks to path costs
+# - Informed searches (A*, GBFS, Fringe) perform best by directly heading toward the goal
+# - Demonstrates how node ordering and exploration strategy can severely impact performance
+
 Nodes:
-1: (1,3)
-2: (3,5)
-3: (5,7)
-4: (7,5)
-5: (9,3)
-6: (3,1)
-7: (5,3)
-8: (7,1)
+1: (0,0)
+2: (4,1)
+3: (3,1)
+4: (2,1)
+5: (1,1)
+6: (0,1)
+7: (4,2)
+8: (3,2)
+9: (2,2)
+10: (1,2)
+11: (0,2)
+12: (4,3)
+13: (3,3)
+14: (2,3)
+15: (1,3)
+16: (0,3)
+
 Edges:
-(1,2): 3
-(2,3): 3
-(3,4): 3
-(4,5): 3
-(1,6): 3
-(6,7): 3
-(7,8): 3
-(8,5): 3
-(2,7): 4
-(7,4): 4
-(6,2): 4
-(4,8): 4
-(1,7): 6
-(3,7): 5
-(7,5): 6
+(1,6): 1
+(6,11): 1
+(11,16): 1
+(2,7): 1
+(7,12): 1
+(3,8): 1
+(8,13): 1
+(4,9): 1
+(9,14): 1
+(5,10): 1
+(10,15): 1
+(1,2): 5
+(1,3): 4
+(1,4): 3
+(1,5): 2
+
 Origin:
-6
+1
+
 Destinations:
-5; 3
+16

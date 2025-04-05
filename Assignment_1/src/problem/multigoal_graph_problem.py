@@ -264,10 +264,8 @@ class MultigoalGraphProblem(ProblemBase):
                 key=lambda n: distance(locations[origin], locations[n]), reverse=True
             )
 
-            # Select from the farthest 75% of nodes to add randomness while favoring distant nodes
-            candidate_pool_size = max(
-                int(len(remaining_nodes) * 0.75), num_destinations
-            )
+            # Select from the farthest 90% of nodes to add randomness while favoring distant nodes
+            candidate_pool_size = max(int(len(remaining_nodes) * 0.9), num_destinations)
             candidate_pool = remaining_nodes[:candidate_pool_size]
 
             # Randomly select from the candidate pool

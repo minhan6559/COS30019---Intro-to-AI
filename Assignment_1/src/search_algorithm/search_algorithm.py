@@ -34,11 +34,7 @@ class DepthFirstSearch(SearchAlgorithmBase):
 
             children = node.expand(problem, reverse=True)
 
-            stack.extend(
-                child
-                for child in children
-                if child.state not in visited and child not in stack
-            )
+            stack.extend(child for child in children if child.state not in visited)
 
         return None, count_expanded, Node.nodes_created
 
@@ -54,6 +50,7 @@ class BreadthFirstSearch(SearchAlgorithmBase):
         visited = set()
 
         while queue:
+
             node = queue.popleft()
             count_expanded += 1
 
@@ -125,7 +122,7 @@ class UniformCostSearch(BestFirstSearch):
 
 # Beam search using Limited Discrepancy Backtracking Search (BULB)
 class BULBSearch(SearchAlgorithmBase):
-    def __init__(self, beam_width=15, max_discrepancies=10):
+    def __init__(self, beam_width=50, max_discrepancies=8):
         self.beam_width = beam_width
         self.max_discrepancies = max_discrepancies
 
@@ -141,9 +138,7 @@ class BULBSearch(SearchAlgorithmBase):
         # Create a node cache to avoid recreating nodes for the same state
         node_cache = {problem.initial: initial_node}
 
-        priority_queue = PriorityQueue(
-            "min", lambda n: (n.discrepancies, n.f_value, n.node.state)
-        )
+        priority_queue = PriorityQueue("min", lambda n: (n.discrepancies, n.f_value))
         priority_queue.append(initial_discrepancy_node)
         visited = set()
         count_expanded = 0

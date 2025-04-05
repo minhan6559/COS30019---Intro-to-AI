@@ -56,12 +56,6 @@ def parse_args():
         help="Only run experiments on graphs of this size",
     )
     parser.add_argument(
-        "--timeout",
-        type=int,
-        default=300,
-        help="Timeout in seconds for each algorithm run",
-    )
-    parser.add_argument(
         "--node-counts",
         type=int,
         nargs="+",
@@ -139,17 +133,14 @@ def get_algorithms():
     }
 
 
-def run_experiment(
-    problem, algorithm_name, algorithm, timeout, logger=None, track_memory=False
-):
+def run_experiment(problem, algorithm_name, algorithm, logger=None, track_memory=False):
     """
-    Run a search algorithm on a problem with timeout
+    Run a search algorithm on a problem
 
     Args:
         problem: The problem to solve
         algorithm_name: Name of the algorithm
         algorithm: The search algorithm instance
-        timeout: Timeout in seconds
         logger: Logger instance
         track_memory: Whether to track memory usage (adds overhead to runtime)
 
@@ -170,7 +161,6 @@ def run_experiment(
         peak_memory_kb = 0
 
     try:
-        # Set a timeout function here if your environment supports it
         result_tuple = algorithm.search(problem)
 
         # Capture peak memory usage if tracking
@@ -212,7 +202,6 @@ def run_experiment(
                     "nodes_expanded": expanded_count,
                     "nodes_created": created_count,
                     "peak_memory_kb": peak_memory_kb,
-                    "timeout": False,
                 }
             else:
                 return {
@@ -246,7 +235,6 @@ def run_experiment(
                     "nodes_expanded": expanded_count,
                     "nodes_created": created_count,
                     "peak_memory_kb": peak_memory_kb,
-                    "timeout": False,
                 }
             else:
                 return {
@@ -278,7 +266,6 @@ def run_experiment(
                 "nodes_expanded": 0,
                 "nodes_created": 0,
                 "peak_memory_kb": peak_memory_kb,
-                "timeout": False,
                 "error": str(e),
             }
         else:
@@ -350,7 +337,6 @@ def main():
             "graphs_checkpoint": graphs_checkpoint,
             "node_counts": node_counts,
             "graphs_per_size": args.graphs_per_size,
-            "timeout": args.timeout,
         },
         "results": {},
     }
@@ -405,7 +391,6 @@ def main():
                     problem,
                     alg_name,
                     algorithm,
-                    args.timeout,
                     logger,
                     track_memory=False,
                 )
@@ -415,7 +400,6 @@ def main():
                     problem,
                     alg_name,
                     algorithm,
-                    args.timeout,
                     logger,
                     track_memory=True,
                 )
