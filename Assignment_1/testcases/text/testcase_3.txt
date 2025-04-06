@@ -1,0 +1,25 @@
+#Test Scenario: Deceptive Heuristic
+#A test to see how algorithms using heuristics respond to deceptive geometric shortcuts.
+#Expected outcome:
+#- Algorithms that factor in path costs, such as UCS, A*, and BULB, will identify the best route.
+#- GBFS will be led astray by the heuristic and choose a more expensive, lengthier route.
+#- Shows why search methods based solely on heuristics may not be as good as methods that take g(n) into account.
+
+Nodes:
+3: (6,3)
+4: (1,2)
+5: (0,1)
+6: (1,0)
+7: (4,1)
+8: (1,1)
+Edges:
+(3,4): 8
+(3,7): 4
+(4,5): 5
+(5,6): 5
+(6,8): 5
+(7,8): 4
+Origin:
+3
+Destinations:
+8

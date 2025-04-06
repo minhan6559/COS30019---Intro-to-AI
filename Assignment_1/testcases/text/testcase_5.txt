@@ -1,0 +1,30 @@
+#Test Scenario: Elementary Route Discovery
+#Verifies basic route discovery with several destination choices.
+#Anticipated outcome:
+#- Algorithms that factor in cost (UCS, A*, BULB) will choose path 2, 3, 6, 9 because of its cheaper overall cost.
+#- BFS will explore each level and identify a route to node 8.
+#- DFS will delve deeply into path 2, 3, 6, 9.
+#- GBFS will choose path 2, 5, 8 because it adheres to the shortest geometric route.
+
+Nodes:
+2: (2,3)
+3: (0,2)
+4: (1,2)
+5: (2,2)
+6: (0,1)
+7: (1,1)
+8: (2,1)
+9: (1,0)
+Edges:
+(2,3): 4
+(2,4): 6
+(2,5): 6
+(3,6): 2
+(4,7): 5
+(5,8): 6
+(6,9): 3
+(7,9): 4
+Origin:
+2
+Destinations:
+8; 9

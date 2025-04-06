@@ -70,7 +70,7 @@ def visualize_and_save_graph(filepath, output_dir):
                     y1,
                     dx * 0.85,
                     dy * 0.85,
-                    head_width=0.03,
+                    head_width=0.04,
                     head_length=0.05,
                     fc="black",
                     ec="black",

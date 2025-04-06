@@ -1,0 +1,22 @@
+#Test Scenario: Goal Path Verification
+#A test to see if algorithms are able to locate a different goal when the seemingly better path is invalid.
+#Predicted outcome:
+#- All search algorithms must be able to detect the invalid path and find the alternative path.
+#- Although goal 9 may initially appear less appealing, the correct solution is the path 5,7,9.
+#- Goal 4 initially appears to have a better heuristic/cost. However, there's no complete path to reach goal 4.
+
+Nodes:
+4: (7,5)
+5: (5,5)
+6: (3,5)
+7: (5,3)
+9: (5,0)
+Edges:
+(4,5): 4
+(5,6): 3
+(5,7): 4
+(7,9): 5
+Origin:
+5
+Destinations:
+4; 9

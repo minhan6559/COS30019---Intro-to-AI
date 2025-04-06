@@ -47,15 +47,10 @@ def main():
         "BFS": BreadthFirstSearch(),
         "DFS": DepthFirstSearch(),
         "A*": AStarSearch(),
-        "Greedy": GreedyBestFirstSearch(),
+        "GBFS": GreedyBestFirstSearch(),
         "UCS": UniformCostSearch(),
         "BULB": BULBSearch(),
     }
-
-    # First, run the multi-goal search
-    print(f"\n{'=' * 50}")
-    print(f"Searching paths for multi-goal problem (all destinations):")
-    print(f"{'=' * 50}")
 
     # Create a fresh instance of the multi-goal problem
     multi_goal_problem = MultigoalGraphProblem(
@@ -110,18 +105,13 @@ def main():
                 "created": created_count,
             }
 
-    # Print performance comparison
-    print("\n" + "=" * 60)
-    print("Performance Comparison Across All Problems")
-    print("=" * 60)
-
-    # First print multi-goal results
-    print("\nMulti-Goal Problem:")
-    print(f"{'-' * 100}")
+    # print(
+    #     f"{'Algorithm':<10} {'Success':<8} {'Dest':<8} {'Path Cost':<12} {'Path Length':<12} {'Expanded':<10} {'Created':<10} {'Time (s)':<10} {'Path':<10}"
+    # )
     print(
-        f"{'Algorithm':<10} {'Success':<8} {'Dest':<8} {'Path Cost':<12} {'Path Length':<12} {'Expanded':<10} {'Created':<10} {'Time (s)':<10} {'Path':<10}"
+        f"{'Algorithm':<10} {'Dest':<8} {'Path Cost':<12} {'Expanded':<10} {'Path':<10}"
     )
-    print(f"{'-' * 100}")
+    print(f"{'-' * 60}")
 
     for name, result in all_results["multi-goal"].items():
         success = "Yes" if result["path"] is not None else "No"
@@ -133,9 +123,10 @@ def main():
         time_taken = f"{result['time']:.4f}"
         path_nodes = f"{result['path']}" if result["path"] is not None else "N/A"
 
-        print(
-            f"{name:<10} {success:<8} {destination:<8} {cost:<12} {path_len:<12} {expanded:<10} {created:<10} {time_taken:<10} {path_nodes:<10}"
-        )
+        # print(
+        #     f"{name:<10} {success:<8} {destination:<8} {cost:<12} {path_len:<12} {expanded:<10} {created:<10} {time_taken:<10} {path_nodes:<10}"
+        # )
+        print(f"{name:<10} {destination:<8} {cost:<12} {expanded:<10} {path_nodes:<10}")
 
 
 if __name__ == "__main__":

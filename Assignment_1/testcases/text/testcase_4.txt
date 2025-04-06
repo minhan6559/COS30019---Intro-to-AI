@@ -1,0 +1,43 @@
+# Test Case represents a worst-case for uninformed search.
+# DFS and BFS will explore almost the entire graph, performing poorly due to unfavorable node ordering.
+# Despite being uninformed, UCS efficiently finds the optimal path using path costs.
+# Informed searches (A*, GBFS, BULB) perform best by directly heading toward the goal.
+# This demonstrates the significant impact of node ordering and exploration strategy on performance.
+
+Nodes:
+2: (4,3)
+3: (0,2)
+4: (1,2)
+5: (2,2)
+6: (3,2)
+7: (4,2)
+8: (0,1)
+9: (1,1)
+10: (2,1)
+11: (3,1)
+12: (4,1)
+13: (0,0)
+14: (1,0)
+15: (2,0)
+16: (3,0)
+17: (4,0)
+Edges:
+(2,3): 6
+(2,4): 5
+(2,5): 4
+(2,6): 3
+(2,7): 2
+(3,8): 2
+(4,9): 2
+(5,10): 2
+(6,11): 2
+(7,12): 2
+(8,13): 2
+(9,14): 2
+(10,15): 2
+(11,16): 2
+(12,17): 2
+Origin:
+2
+Destinations:
+17

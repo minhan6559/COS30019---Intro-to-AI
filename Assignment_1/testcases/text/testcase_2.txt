@@ -1,0 +1,28 @@
+# Test Case: Explores informed search with equal-cost paths and varying heuristics.
+# The expected outcome is that all algorithms will discover a route to node 8.
+# Notably, two paths exist (via node 6 or 7) with a cost of 15.
+# DFS and BFS will make their path selection based on their specific search traversal order.
+# UCS might select either path given their equal cost from the start (though it will pick node 6 due to its lower ID).
+# Informed algorithms (A*, GBFS, BULB) are anticipated to favor the path through node 7 due to its more promising heuristic value.
+
+Nodes:
+2: (5,5)
+3: (5,3)
+4: (3,5)
+5: (3,3)
+6: (0,2)
+7: (2,0)
+8: (1,0)
+Edges:
+(2,3): 3
+(2,4): 3
+(3,5): 3
+(4,5): 3
+(5,6): 5
+(5,7): 5
+(6,8): 4
+(7,8): 4
+Origin:
+2
+Destinations:
+8

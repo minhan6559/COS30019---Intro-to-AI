@@ -1,0 +1,28 @@
+#Test Scenario: Tie Resolution Assessment
+#Assesses how algorithms manage nodes that have equivalent heuristic values and costs.
+#Anticipated outcome:
+#- All algorithms should identify path 2, 3, 6, 8 because of the tie-breaking protocols.
+#- When similar nodes are located on separate branches, they should be expanded in the order they appear.
+#- Presuming all other factors are constant, nodes should be expanded in ascending sequence (with lower node IDs being prioritized).
+
+Nodes:
+2: (1,6)
+3: (2,4)
+4: (0,4)
+5: (0,0)
+6: (2,0)
+7: (1,1)
+8: (1,0)
+Edges:
+(2,3): 4
+(2,4): 4
+(3,6): 5
+(3,7): 5
+(4,5): 5
+(5,8): 2
+(6,8): 2
+(7,8): 2
+Origin:
+2
+Destinations:
+8

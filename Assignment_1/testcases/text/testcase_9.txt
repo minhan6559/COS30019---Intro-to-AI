@@ -1,0 +1,15 @@
+#Test Scenario: Initial Point as Destination
+#Evaluates scenarios where the initial node also serves as the destination.
+#Predicted outcome: all algorithms should instantly recognize that the start is a goal state and return it without expanding other nodes.
+
+Nodes:
+2: (1,1)
+3: (0,1)
+5: (0,0)
+Edges:
+(2,3): 2
+(3,5): 2
+Origin:
+2
+Destinations:
+2; 5
