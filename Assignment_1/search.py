@@ -45,11 +45,12 @@ def main():
             # First line: filename method
             print(f"{filename} {method}")
             # Second line: goal number_of_nodes
-            print(f"{result_node.state} {nodes_created}")
+            print(f"{result_node.state} {expanded_count}")
 
             # Third line: path
             path = result_node.path_states()
-            print(" ".join(map(str, path)))
+            # print(" ".join(map(str, path)))
+            print(path)
             return 0  # Success
         else:
             print(f"No solution found for {filename} using {method}")
