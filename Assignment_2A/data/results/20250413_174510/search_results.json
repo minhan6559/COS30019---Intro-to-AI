@@ -1,0 +1,866 @@
+{
+  "metadata": {
+    "timestamp": "20250413_174510",
+    "graphs_checkpoint": "20250405_234841",
+    "node_counts": [
+      1000,
+      3000,
+      5000,
+      8000,
+      10000
+    ],
+    "graphs_per_size": 3
+  },
+  "results": {
+    "1000": {
+      "graph_1000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 1792.58,
+          "path_length": 8,
+          "nodes_expanded": 360,
+          "nodes_created": 5253,
+          "peak_memory_kb": 80.5244140625,
+          "runtime_ms": 35.255615234375
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 169993.01000000015,
+          "path_length": 740,
+          "nodes_expanded": 859,
+          "nodes_created": 12670,
+          "peak_memory_kb": 1229.53515625,
+          "runtime_ms": 27.937744140625
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 1621.95,
+          "path_length": 12,
+          "nodes_expanded": 91,
+          "nodes_created": 1303,
+          "peak_memory_kb": 46.9501953125,
+          "runtime_ms": 6.367919921875
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 2338.35,
+          "path_length": 9,
+          "nodes_expanded": 9,
+          "nodes_created": 118,
+          "peak_memory_kb": 14.65625,
+          "runtime_ms": 1.00927734375
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 1621.95,
+          "path_length": 12,
+          "nodes_expanded": 462,
+          "nodes_created": 6819,
+          "peak_memory_kb": 145.279296875,
+          "runtime_ms": 21.740478515625
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 1621.95,
+          "path_length": 12,
+          "nodes_expanded": 1030,
+          "nodes_created": 158,
+          "peak_memory_kb": 131.8203125,
+          "runtime_ms": 9.62255859375
+        }
+      },
+      "graph_1000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 3084.3299999999995,
+          "path_length": 11,
+          "nodes_expanded": 366,
+          "nodes_created": 5452,
+          "peak_memory_kb": 62.5546875,
+          "runtime_ms": 28.8779296875
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 181341.89,
+          "path_length": 794,
+          "nodes_expanded": 1114,
+          "nodes_created": 16454,
+          "peak_memory_kb": 1283.92578125,
+          "runtime_ms": 39.80078125
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 2740.0699999999993,
+          "path_length": 15,
+          "nodes_expanded": 215,
+          "nodes_created": 3227,
+          "peak_memory_kb": 78.67578125,
+          "runtime_ms": 19.110595703125
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 3485.22,
+          "path_length": 12,
+          "nodes_expanded": 12,
+          "nodes_created": 155,
+          "peak_memory_kb": 22.296875,
+          "runtime_ms": 1.004150390625
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 2740.0699999999993,
+          "path_length": 15,
+          "nodes_expanded": 512,
+          "nodes_created": 7609,
+          "peak_memory_kb": 99.22265625,
+          "runtime_ms": 29.265625
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 2740.0699999999993,
+          "path_length": 15,
+          "nodes_expanded": 2751,
+          "nodes_created": 307,
+          "peak_memory_kb": 242.9609375,
+          "runtime_ms": 26.87841796875
+        }
+      },
+      "graph_1000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 2811.59,
+          "path_length": 11,
+          "nodes_expanded": 426,
+          "nodes_created": 6397,
+          "peak_memory_kb": 66.98828125,
+          "runtime_ms": 35.54248046875
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 140093.09000000014,
+          "path_length": 600,
+          "nodes_expanded": 1494,
+          "nodes_created": 22370,
+          "peak_memory_kb": 1178.42578125,
+          "runtime_ms": 50.772705078125
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 2729.7200000000003,
+          "path_length": 12,
+          "nodes_expanded": 185,
+          "nodes_created": 2829,
+          "peak_memory_kb": 77.375,
+          "runtime_ms": 19.135986328125
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 3163.21,
+          "path_length": 11,
+          "nodes_expanded": 11,
+          "nodes_created": 160,
+          "peak_memory_kb": 23.8203125,
+          "runtime_ms": 0.99853515625
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 2729.7200000000003,
+          "path_length": 12,
+          "nodes_expanded": 563,
+          "nodes_created": 8320,
+          "peak_memory_kb": 105.31640625,
+          "runtime_ms": 27.493408203125
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 2729.7200000000003,
+          "path_length": 12,
+          "nodes_expanded": 2402,
+          "nodes_created": 283,
+          "peak_memory_kb": 218.17578125,
+          "runtime_ms": 19.908447265625
+        }
+      }
+    },
+    "3000": {
+      "graph_3000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 15626.5,
+          "path_length": 28,
+          "nodes_expanded": 2536,
+          "nodes_created": 37909,
+          "peak_memory_kb": 225.98828125,
+          "runtime_ms": 286.12548828125
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 819000.6099999996,
+          "path_length": 2079,
+          "nodes_expanded": 4022,
+          "nodes_created": 60039,
+          "peak_memory_kb": 3638.55078125,
+          "runtime_ms": 178.779296875
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 11345.65,
+          "path_length": 43,
+          "nodes_expanded": 1123,
+          "nodes_created": 16779,
+          "peak_memory_kb": 219.3828125,
+          "runtime_ms": 100.937255859375
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 14797.46,
+          "path_length": 36,
+          "nodes_expanded": 36,
+          "nodes_created": 476,
+          "peak_memory_kb": 70.72265625,
+          "runtime_ms": 3.4951171875
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 11345.65,
+          "path_length": 43,
+          "nodes_expanded": 2542,
+          "nodes_created": 37994,
+          "peak_memory_kb": 312.55078125,
+          "runtime_ms": 136.62255859375
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 11345.65,
+          "path_length": 43,
+          "nodes_expanded": 15881,
+          "nodes_created": 1293,
+          "peak_memory_kb": 686.66796875,
+          "runtime_ms": 143.66357421875
+        }
+      },
+      "graph_3000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 7832.280000000001,
+          "path_length": 15,
+          "nodes_expanded": 1658,
+          "nodes_created": 24938,
+          "peak_memory_kb": 242.6875,
+          "runtime_ms": 264.1201171875
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 719548.2100000007,
+          "path_length": 1809,
+          "nodes_expanded": 2634,
+          "nodes_created": 39797,
+          "peak_memory_kb": 3361.1640625,
+          "runtime_ms": 80.6826171875
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 6021.17,
+          "path_length": 21,
+          "nodes_expanded": 348,
+          "nodes_created": 5233,
+          "peak_memory_kb": 138.3828125,
+          "runtime_ms": 28.17822265625
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 8239.39,
+          "path_length": 15,
+          "nodes_expanded": 15,
+          "nodes_created": 232,
+          "peak_memory_kb": 34.1328125,
+          "runtime_ms": 2.00244140625
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 6021.17,
+          "path_length": 21,
+          "nodes_expanded": 1814,
+          "nodes_created": 27260,
+          "peak_memory_kb": 337.52734375,
+          "runtime_ms": 108.1318359375
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 6021.17,
+          "path_length": 21,
+          "nodes_expanded": 4569,
+          "nodes_created": 499,
+          "peak_memory_kb": 368.6171875,
+          "runtime_ms": 43.8173828125
+        }
+      },
+      "graph_3000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 6074.3,
+          "path_length": 12,
+          "nodes_expanded": 715,
+          "nodes_created": 10684,
+          "peak_memory_kb": 76.30078125,
+          "runtime_ms": 67.34912109375
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 104782.73999999999,
+          "path_length": 266,
+          "nodes_expanded": 266,
+          "nodes_created": 3931,
+          "peak_memory_kb": 588.08203125,
+          "runtime_ms": 7.2099609375
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 4847.179999999999,
+          "path_length": 16,
+          "nodes_expanded": 220,
+          "nodes_created": 3197,
+          "peak_memory_kb": 85.296875,
+          "runtime_ms": 17.90380859375
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 5717.209999999999,
+          "path_length": 12,
+          "nodes_expanded": 12,
+          "nodes_created": 174,
+          "peak_memory_kb": 25.1015625,
+          "runtime_ms": 0.994140625
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 4847.179999999999,
+          "path_length": 16,
+          "nodes_expanded": 855,
+          "nodes_created": 12734,
+          "peak_memory_kb": 127.1796875,
+          "runtime_ms": 44.912109375
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 4847.179999999999,
+          "path_length": 16,
+          "nodes_expanded": 2700,
+          "nodes_created": 341,
+          "peak_memory_kb": 251.47265625,
+          "runtime_ms": 22.286865234375
+        }
+      }
+    },
+    "5000": {
+      "graph_5000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 17030.66,
+          "path_length": 25,
+          "nodes_expanded": 3387,
+          "nodes_created": 51064,
+          "peak_memory_kb": 260.03515625,
+          "runtime_ms": 553.417724609375
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 685617.5700000011,
+          "path_length": 1378,
+          "nodes_expanded": 1378,
+          "nodes_created": 20542,
+          "peak_memory_kb": 2910.06640625,
+          "runtime_ms": 47.23388671875
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 12595.329999999998,
+          "path_length": 32,
+          "nodes_expanded": 1021,
+          "nodes_created": 15411,
+          "peak_memory_kb": 251.33984375,
+          "runtime_ms": 91.380859375
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 16034.43,
+          "path_length": 28,
+          "nodes_expanded": 28,
+          "nodes_created": 409,
+          "peak_memory_kb": 64.53515625,
+          "runtime_ms": 2.609130859375
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 12595.329999999998,
+          "path_length": 32,
+          "nodes_expanded": 3523,
+          "nodes_created": 53036,
+          "peak_memory_kb": 358.09765625,
+          "runtime_ms": 199.692626953125
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 12595.329999999998,
+          "path_length": 32,
+          "nodes_expanded": 14273,
+          "nodes_created": 1253,
+          "peak_memory_kb": 736.81640625,
+          "runtime_ms": 124.467041015625
+        }
+      },
+      "graph_5000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 10388.76,
+          "path_length": 16,
+          "nodes_expanded": 1334,
+          "nodes_created": 19907,
+          "peak_memory_kb": 244.6015625,
+          "runtime_ms": 186.16796875
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 1727784.5199999951,
+          "path_length": 3434,
+          "nodes_expanded": 7009,
+          "nodes_created": 104635,
+          "peak_memory_kb": 5890.44140625,
+          "runtime_ms": 235.611083984375
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 8044.450000000001,
+          "path_length": 23,
+          "nodes_expanded": 384,
+          "nodes_created": 5694,
+          "peak_memory_kb": 130.03515625,
+          "runtime_ms": 30.488037109375
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 10610.13,
+          "path_length": 17,
+          "nodes_expanded": 17,
+          "nodes_created": 235,
+          "peak_memory_kb": 33.1171875,
+          "runtime_ms": 1.000732421875
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 8044.450000000001,
+          "path_length": 23,
+          "nodes_expanded": 1343,
+          "nodes_created": 20047,
+          "peak_memory_kb": 295.78125,
+          "runtime_ms": 67.58056640625
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 8044.450000000001,
+          "path_length": 23,
+          "nodes_expanded": 5132,
+          "nodes_created": 502,
+          "peak_memory_kb": 351.29296875,
+          "runtime_ms": 45.64501953125
+        }
+      },
+      "graph_5000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 9967.03,
+          "path_length": 14,
+          "nodes_expanded": 1597,
+          "nodes_created": 23889,
+          "peak_memory_kb": 267.375,
+          "runtime_ms": 321.5703125
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 524280.98999999947,
+          "path_length": 1060,
+          "nodes_expanded": 1081,
+          "nodes_created": 16140,
+          "peak_memory_kb": 2250.86328125,
+          "runtime_ms": 35.01220703125
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 7218.4800000000005,
+          "path_length": 22,
+          "nodes_expanded": 325,
+          "nodes_created": 4794,
+          "peak_memory_kb": 137.32421875,
+          "runtime_ms": 26.456298828125
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 9830.050000000001,
+          "path_length": 17,
+          "nodes_expanded": 17,
+          "nodes_created": 245,
+          "peak_memory_kb": 35.0078125,
+          "runtime_ms": 2.2646484375
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 7218.4800000000005,
+          "path_length": 22,
+          "nodes_expanded": 1958,
+          "nodes_created": 29177,
+          "peak_memory_kb": 369.43359375,
+          "runtime_ms": 104.51953125
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 7218.4800000000005,
+          "path_length": 22,
+          "nodes_expanded": 4183,
+          "nodes_created": 470,
+          "peak_memory_kb": 342.47265625,
+          "runtime_ms": 34.39794921875
+        }
+      }
+    },
+    "8000": {
+      "graph_8000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 19191.489999999998,
+          "path_length": 23,
+          "nodes_expanded": 4844,
+          "nodes_created": 72675,
+          "peak_memory_kb": 361.06640625,
+          "runtime_ms": 1422.7470703125
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 937608.1699999999,
+          "path_length": 1493,
+          "nodes_expanded": 1498,
+          "nodes_created": 22392,
+          "peak_memory_kb": 3023.62890625,
+          "runtime_ms": 59.185546875
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 14674.890000000001,
+          "path_length": 32,
+          "nodes_expanded": 773,
+          "nodes_created": 11614,
+          "peak_memory_kb": 221.8984375,
+          "runtime_ms": 63.90185546875
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 19587.83,
+          "path_length": 24,
+          "nodes_expanded": 24,
+          "nodes_created": 339,
+          "peak_memory_kb": 56.87890625,
+          "runtime_ms": 2.32421875
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 14674.890000000001,
+          "path_length": 32,
+          "nodes_expanded": 4974,
+          "nodes_created": 74631,
+          "peak_memory_kb": 1007.4140625,
+          "runtime_ms": 284.085205078125
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 14674.890000000001,
+          "path_length": 32,
+          "nodes_expanded": 10585,
+          "nodes_created": 997,
+          "peak_memory_kb": 706.8984375,
+          "runtime_ms": 89.5087890625
+        }
+      },
+      "graph_8000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 17985.670000000002,
+          "path_length": 21,
+          "nodes_expanded": 2984,
+          "nodes_created": 45096,
+          "peak_memory_kb": 283.05078125,
+          "runtime_ms": 569.3486328125
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 2040119.5700000033,
+          "path_length": 3187,
+          "nodes_expanded": 27517,
+          "nodes_created": 413382,
+          "peak_memory_kb": 10149.23828125,
+          "runtime_ms": 872.336181640625
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 15033.66,
+          "path_length": 31,
+          "nodes_expanded": 732,
+          "nodes_created": 10963,
+          "peak_memory_kb": 184.8828125,
+          "runtime_ms": 69.028076171875
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 19419.989999999998,
+          "path_length": 23,
+          "nodes_expanded": 23,
+          "nodes_created": 356,
+          "peak_memory_kb": 56.94921875,
+          "runtime_ms": 2.0185546875
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 15033.66,
+          "path_length": 31,
+          "nodes_expanded": 3717,
+          "nodes_created": 56155,
+          "peak_memory_kb": 452.14453125,
+          "runtime_ms": 202.349609375
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 15033.66,
+          "path_length": 31,
+          "nodes_expanded": 10136,
+          "nodes_created": 912,
+          "peak_memory_kb": 601.5234375,
+          "runtime_ms": 83.510986328125
+        }
+      },
+      "graph_8000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 30718.540000000005,
+          "path_length": 37,
+          "nodes_expanded": 5774,
+          "nodes_created": 86611,
+          "peak_memory_kb": 808.9921875,
+          "runtime_ms": 1040.578369140625
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 2771301.400000009,
+          "path_length": 4310,
+          "nodes_expanded": 4586,
+          "nodes_created": 68839,
+          "peak_memory_kb": 7809.67578125,
+          "runtime_ms": 177.47021484375
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 24356.91,
+          "path_length": 51,
+          "nodes_expanded": 2205,
+          "nodes_created": 33139,
+          "peak_memory_kb": 432.03125,
+          "runtime_ms": 189.126953125
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 31898.820000000003,
+          "path_length": 43,
+          "nodes_expanded": 43,
+          "nodes_created": 581,
+          "peak_memory_kb": 93.35546875,
+          "runtime_ms": 4.050537109375
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 24356.91,
+          "path_length": 51,
+          "nodes_expanded": 5702,
+          "nodes_created": 85535,
+          "peak_memory_kb": 919.0234375,
+          "runtime_ms": 320.841796875
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 24356.91,
+          "path_length": 51,
+          "nodes_expanded": 31689,
+          "nodes_created": 2512,
+          "peak_memory_kb": 1319.98046875,
+          "runtime_ms": 318.753173828125
+        }
+      }
+    },
+    "10000": {
+      "graph_10000_1": {
+        "BFS": {
+          "success": true,
+          "path_cost": 16710.540000000005,
+          "path_length": 18,
+          "nodes_expanded": 2708,
+          "nodes_created": 40556,
+          "peak_memory_kb": 314.09765625,
+          "runtime_ms": 669.11376953125
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 3302567.9199999874,
+          "path_length": 4576,
+          "nodes_expanded": 32232,
+          "nodes_created": 485859,
+          "peak_memory_kb": 12577.36328125,
+          "runtime_ms": 1011.322509765625
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 13478.26,
+          "path_length": 27,
+          "nodes_expanded": 555,
+          "nodes_created": 8297,
+          "peak_memory_kb": 190.16015625,
+          "runtime_ms": 55.30615234375
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 16514.679999999997,
+          "path_length": 21,
+          "nodes_expanded": 21,
+          "nodes_created": 298,
+          "peak_memory_kb": 41.49609375,
+          "runtime_ms": 1.09033203125
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 13478.26,
+          "path_length": 27,
+          "nodes_expanded": 3382,
+          "nodes_created": 50629,
+          "peak_memory_kb": 532.15234375,
+          "runtime_ms": 208.11572265625
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 13478.26,
+          "path_length": 27,
+          "nodes_expanded": 7383,
+          "nodes_created": 745,
+          "peak_memory_kb": 583.80078125,
+          "runtime_ms": 68.978515625
+        }
+      },
+      "graph_10000_2": {
+        "BFS": {
+          "success": true,
+          "path_cost": 49188.01,
+          "path_length": 51,
+          "nodes_expanded": 8662,
+          "nodes_created": 130425,
+          "peak_memory_kb": 808.7109375,
+          "runtime_ms": 1728.490966796875
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 677556.5300000006,
+          "path_length": 916,
+          "nodes_expanded": 916,
+          "nodes_created": 13676,
+          "peak_memory_kb": 2053.78515625,
+          "runtime_ms": 44.333984375
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 39487.45000000001,
+          "path_length": 73,
+          "nodes_expanded": 4496,
+          "nodes_created": 67572,
+          "peak_memory_kb": 536.48828125,
+          "runtime_ms": 425.83740234375
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 50088.22000000001,
+          "path_length": 54,
+          "nodes_expanded": 54,
+          "nodes_created": 822,
+          "peak_memory_kb": 149.3671875,
+          "runtime_ms": 5.452392578125
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 39487.45000000001,
+          "path_length": 73,
+          "nodes_expanded": 9012,
+          "nodes_created": 135749,
+          "peak_memory_kb": 907.22265625,
+          "runtime_ms": 551.788330078125
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 39487.45000000001,
+          "path_length": 73,
+          "nodes_expanded": 65822,
+          "nodes_created": 4871,
+          "peak_memory_kb": 1881.44921875,
+          "runtime_ms": 639.052001953125
+        }
+      },
+      "graph_10000_3": {
+        "BFS": {
+          "success": true,
+          "path_cost": 23319.139999999996,
+          "path_length": 24,
+          "nodes_expanded": 3517,
+          "nodes_created": 52893,
+          "peak_memory_kb": 267.92578125,
+          "runtime_ms": 692.041015625
+        },
+        "DFS": {
+          "success": true,
+          "path_cost": 2273130.4099999918,
+          "path_length": 3220,
+          "nodes_expanded": 3265,
+          "nodes_created": 48770,
+          "peak_memory_kb": 6567.33203125,
+          "runtime_ms": 118.741943359375
+        },
+        "A*": {
+          "success": true,
+          "path_cost": 17874.81,
+          "path_length": 35,
+          "nodes_expanded": 966,
+          "nodes_created": 14464,
+          "peak_memory_kb": 241.35546875,
+          "runtime_ms": 80.373779296875
+        },
+        "Greedy": {
+          "success": true,
+          "path_cost": 22164.059999999998,
+          "path_length": 26,
+          "nodes_expanded": 26,
+          "nodes_created": 362,
+          "peak_memory_kb": 58.48828125,
+          "runtime_ms": 3.97802734375
+        },
+        "UCS": {
+          "success": true,
+          "path_cost": 17874.81,
+          "path_length": 35,
+          "nodes_expanded": 3663,
+          "nodes_created": 55089,
+          "peak_memory_kb": 394.17578125,
+          "runtime_ms": 207.81640625
+        },
+        "BULB": {
+          "success": true,
+          "path_cost": 17874.81,
+          "path_length": 35,
+          "nodes_expanded": 13263,
+          "nodes_created": 1230,
+          "peak_memory_kb": 767.08203125,
+          "runtime_ms": 126.674560546875
+        }
+      }
+    }
+  }
+}

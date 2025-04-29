@@ -1,0 +1,38 @@
+2025-04-13 17:46:04,302 - analyze_results - INFO - Logs will be saved to: logs\20250413_174510\analyze_results.log
+2025-04-13 17:46:04,302 - analyze_results - INFO - Analysis started at: 2025-04-13 17:46:04
+2025-04-13 17:46:04,302 - analyze_results - INFO - Command line arguments: ['C:\\Users\\Admin\\Desktop\\COS30019---Intro-to-AI\\Assignment_1\\src\\experiment\\analyze_results.py', '--log-scale', '--metrics', 'path_cost', 'path_length', 'nodes_expanded', 'runtime_ms', 'peak_memory_kb', '--log-dir', 'logs', '--timestamp', '20250413_174510']
+2025-04-13 17:46:04,303 - analyze_results - INFO - Analysis base directory: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis
+2025-04-13 17:46:04,303 - analyze_results - INFO - Created analysis checkpoint directory: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis\20250413_174510
+2025-04-13 17:46:04,303 - analyze_results - INFO - Results base directory: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\results
+2025-04-13 17:46:04,305 - analyze_results - INFO - Found most recent checkpoint directory: 20250413_174510
+2025-04-13 17:46:04,305 - analyze_results - INFO - Using results checkpoint: 20250413_174510
+2025-04-13 17:46:04,305 - analyze_results - INFO - Found results files: ['C:\\Users\\Admin\\Desktop\\COS30019---Intro-to-AI\\Assignment_1\\data\\results\\20250413_174510\\search_results.json']
+2025-04-13 17:46:04,305 - analyze_results - INFO - Analysis results will be saved to checkpoint: 20250413_174510
+2025-04-13 17:46:04,305 - analyze_results - INFO - Analyzing results file: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\results\20250413_174510\search_results.json
+2025-04-13 17:46:04,317 - analyze_results - INFO - Successfully loaded results from C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\results\20250413_174510\search_results.json
+2025-04-13 17:46:04,317 - analyze_results - INFO - Results metadata: {'timestamp': '20250413_174510', 'graphs_checkpoint': '20250405_234841', 'node_counts': [1000, 3000, 5000, 8000, 10000], 'graphs_per_size': 3}
+2025-04-13 17:46:04,317 - analyze_results - INFO - Calculating means across graphs of the same size
+2025-04-13 17:46:04,317 - analyze_results - INFO - Processing node count: 1000
+2025-04-13 17:46:04,318 - analyze_results - INFO - Processing node count: 3000
+2025-04-13 17:46:04,319 - analyze_results - INFO - Processing node count: 5000
+2025-04-13 17:46:04,319 - analyze_results - INFO - Processing node count: 8000
+2025-04-13 17:46:04,321 - analyze_results - INFO - Processing node count: 10000
+2025-04-13 17:46:04,321 - analyze_results - INFO - Generating charts for metrics: ['path_cost', 'path_length', 'nodes_expanded', 'runtime_ms', 'peak_memory_kb']
+2025-04-13 17:46:04,322 - analyze_results - INFO - Using log scale: True
+2025-04-13 17:46:04,323 - analyze_results - INFO - Generating chart for metric: path_cost
+2025-04-13 17:46:06,337 - analyze_results - INFO - Saved chart: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis\20250413_174510\chart_path_cost.png
+2025-04-13 17:46:06,337 - analyze_results - INFO - Generating chart for metric: path_length
+2025-04-13 17:46:07,117 - analyze_results - INFO - Saved chart: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis\20250413_174510\chart_path_length.png
+2025-04-13 17:46:07,117 - analyze_results - INFO - Generating chart for metric: nodes_expanded
+2025-04-13 17:46:08,083 - analyze_results - INFO - Saved chart: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis\20250413_174510\chart_nodes_expanded.png
+2025-04-13 17:46:08,083 - analyze_results - INFO - Generating chart for metric: runtime_ms
+2025-04-13 17:46:08,906 - analyze_results - INFO - Saved chart: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis\20250413_174510\chart_runtime_ms.png
+2025-04-13 17:46:08,906 - analyze_results - INFO - Generating chart for metric: peak_memory_kb
+2025-04-13 17:46:09,704 - analyze_results - INFO - Saved chart: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis\20250413_174510\chart_peak_memory_kb.png
+2025-04-13 17:46:09,704 - analyze_results - INFO - Generating success rate chart
+2025-04-13 17:46:10,272 - analyze_results - INFO - Saved chart: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis\20250413_174510\chart_success_rate.png
+2025-04-13 17:46:10,275 - analyze_results - INFO - Saved means to: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis\20250413_174510\means.json
+2025-04-13 17:46:10,276 - analyze_results - INFO - Saved source info to: C:\Users\Admin\Desktop\COS30019---Intro-to-AI\Assignment_1\data\analysis\20250413_174510\source_info.json
+2025-04-13 17:46:10,276 - analyze_results - INFO - 
+Analysis completed successfully!
+2025-04-13 17:46:10,276 - analyze_results - INFO - Analysis checkpoint created: 20250413_174510
