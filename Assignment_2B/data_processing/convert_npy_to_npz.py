@@ -65,7 +65,7 @@ def convert_npy_to_npz(input_dir="processed_data", output_dir=None):
 if __name__ == "__main__":
     # You can specify your directories here
     input_directory = "processed_data"
-    output_directory = "processed_data_compressed"
+    output_directory = "processed_data"
 
     convert_npy_to_npz(input_directory, output_directory)
 

@@ -355,7 +355,6 @@ def load_processed_data(input_dir="processed_data"):
     y_train = np.load(os.path.join(input_dir, "y_train.npz"))["data"]
     y_test = np.load(os.path.join(input_dir, "y_test.npz"))["data"]
 
-    # Rest of your code remains the same
     # Load metadata
     meta_train = pd.read_csv(os.path.join(input_dir, "meta_train.csv"))
     meta_test = pd.read_csv(os.path.join(input_dir, "meta_test.csv"))
@@ -372,11 +371,18 @@ def load_processed_data(input_dir="processed_data"):
     with open(os.path.join(input_dir, "location_to_idx.pkl"), "rb") as f:
         location_to_idx = pickle.load(f)
 
+    # Prepare embedding inputs (regenerate these from the loaded X data)
+    X_train_inputs = prepare_embedding_inputs(X_train, feature_cols)
+    X_test_inputs = prepare_embedding_inputs(X_test, feature_cols)
+
     print("Loaded all processed data successfully!")
 
+    # Return complete dictionary with all data items
     return {
         "X_train": X_train,
         "X_test": X_test,
+        "X_train_inputs": X_train_inputs,
+        "X_test_inputs": X_test_inputs,
         "y_train": y_train,
         "y_test": y_test,
         "meta_train": meta_train,
@@ -384,6 +390,8 @@ def load_processed_data(input_dir="processed_data"):
         "scaler": scaler,
         "feature_cols": feature_cols,
         "location_to_idx": location_to_idx,
+        "n_locations": len(location_to_idx),
+        "n_features": X_train.shape[2] - 1,  # Excluding location_idx
     }
 
 
