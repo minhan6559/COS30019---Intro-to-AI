@@ -14,6 +14,12 @@ import argparse
 from collections import defaultdict
 import time
 
+# If tensorflow version is lower than 2.15, raise an error
+if tf.__version__ < "2.15":
+    raise ImportError(
+        "TensorFlow version 2.15 or higher is required to use trained keras file. Please update your TensorFlow installation."
+    )
+
 # Setup argparse for command line arguments
 parser = argparse.ArgumentParser(
     description="Batch rolling predictions for SCATS traffic data"
