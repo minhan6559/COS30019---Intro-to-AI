@@ -33,7 +33,7 @@ def load_and_prepare_data(file_path):
     df = pd.read_csv(file_path)
 
     # Convert Date to datetime
-    df["Date"] = pd.to_datetime(df["Date"])
+    df["Date"] = pd.to_datetime(df["Date"]).dt.normalize()
 
     # Check data dimensions
     print(f"Data dimensions: {df.shape}")
@@ -108,7 +108,7 @@ def reshape_data(df, volume_cols):
     return long_df
 
 
-def analyze_scats_to_location_relationship(df):
+def analyze_scats_to_location_relationship(df, visualize_output_dir="figures"):
     """
     Analyze the relationship between SCATS Numbers and Locations
 
@@ -157,7 +157,9 @@ def analyze_scats_to_location_relationship(df):
     plt.xlabel("Number of Locations")
     plt.ylabel("Number of SCATS Numbers")
     plt.grid(True, alpha=0.3, axis="y")
-    plt.savefig("locations_per_scats_histogram.png", dpi=300)
+
+    save_path = os.path.join(visualize_output_dir, "locations_per_scats_histogram.png")
+    plt.savefig(save_path, dpi=300)
     plt.close()
 
     return {
@@ -457,7 +459,9 @@ def visualize_intersection_approaches(df, output_dir="figures"):
         plt.close()
 
 
-def process_data(file_path, output_dir="processed_data"):
+def process_data(
+    file_path, output_dir="processed_data", visualize_output_dir="figures"
+):
     """
     Complete data processing workflow
 
@@ -468,17 +472,23 @@ def process_data(file_path, output_dir="processed_data"):
     Returns:
         Processed DataFrame
     """
+    # Create output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(visualize_output_dir, exist_ok=True)
+
     # Load and prepare data
     df, volume_cols = load_and_prepare_data(file_path)
 
     # Analyze SCATS Number to Location relationship
-    scats_location_analysis = analyze_scats_to_location_relationship(df)
+    scats_location_analysis = analyze_scats_to_location_relationship(
+        df, visualize_output_dir
+    )
 
     # Reshape data
     df_long = reshape_data(df, volume_cols)
 
     # Visualize intersection approaches
-    visualize_intersection_approaches(df_long)
+    visualize_intersection_approaches(df_long, visualize_output_dir)
 
     # Clean problematic locations
     df_clean = clean_problematic_locations(df_long)
@@ -487,10 +497,7 @@ def process_data(file_path, output_dir="processed_data"):
     analysis_results = analyze_data_patterns(df_clean)
 
     # Visualize data patterns
-    visualize_data_patterns(df_clean, analysis_results)
-
-    # Create output directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True)
+    visualize_data_patterns(df_clean, analysis_results, visualize_output_dir)
 
     # Save processed data
     df_clean.to_csv(os.path.join(output_dir, "cleaned_data.csv"), index=False)
@@ -502,4 +509,8 @@ def process_data(file_path, output_dir="processed_data"):
 
 if __name__ == "__main__":
     # Process data
-    df = process_data("data/Scats Data October 2006.csv")
+    df = process_data(
+        "data_preprocessing/raw_data/Scats Data October 2006.csv",
+        output_dir="processed_data",
+        visualize_output_dir="data_preprocessing/eda_figures",
+    )
