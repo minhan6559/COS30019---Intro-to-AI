@@ -11,7 +11,5 @@ sys.path.insert(0, os.getcwd())
 # Import after changing directory so relative imports work
 from app import TBRGSApp
 
-# Run the application
-if __name__ == "__main__":
-    app = TBRGSApp("processed_data/preprocessed_data/sites_metadata.json")
-    app.run()
+app = TBRGSApp("processed_data/preprocessed_data/sites_metadata.json")
+app.run()
