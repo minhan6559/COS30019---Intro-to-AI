@@ -14,7 +14,7 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils import plot_traffic_heatmap
+from src.utils.utils import plot_traffic_heatmap
 
 
 def load_and_prepare_data(file_path):
@@ -510,7 +510,7 @@ def process_data(
 if __name__ == "__main__":
     # Process data
     df = process_data(
-        "data_preprocessing/raw_data/Scats Data October 2006.csv",
-        output_dir="processed_data",
-        visualize_output_dir="data_preprocessing/eda_figures",
+        file_path="data_preprocessing/raw_data/Scats Data October 2006.csv",
+        output_dir="processed_data/preprocessed_data",
+        visualize_output_dir="data_preprocessing/eda_insights",
     )

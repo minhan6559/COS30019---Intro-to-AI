@@ -19,7 +19,7 @@ from keras.optimizers import Adam
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from my_models.model_architecture import create_model
+from src.train_and_evaluate.model_architecture import create_model
 
 
 def train_model(

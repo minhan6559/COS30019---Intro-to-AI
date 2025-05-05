@@ -460,5 +460,6 @@ if __name__ == "__main__":
     # Convert Date column to datetime
     df["Date"] = pd.to_datetime(df["Date"])
 
+    output_dir = "processed_data/preprocessed_data"
     # Run feature engineering
-    processed_data = run_feature_engineering(df)
+    processed_data = run_feature_engineering(df, output_dir=output_dir)
