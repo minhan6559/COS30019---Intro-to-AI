@@ -1,0 +1,12 @@
+category_encoders==2.8.1
+folium
+haversine
+matplotlib
+numpy
+openpyxl
+pandas
+pillow
+scikit-learn==1.6.1
+seaborn
+streamlit
+streamlit_folium
