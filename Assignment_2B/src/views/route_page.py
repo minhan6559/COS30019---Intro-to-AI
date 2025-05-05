@@ -199,6 +199,7 @@ class RoutePage(BasePage):
                             "To Site": step["to_id"],
                             "Road": step["road"],
                             "Distance (km)": f"{step['distance']:.2f}",
+                            "Traffic Flow (veh/hr)": int(step["traffic_volume"]),
                             "Travel Time (min)": f"{step['travel_time']:.2f}",
                         }
                         for j, step in enumerate(route["route_info"])

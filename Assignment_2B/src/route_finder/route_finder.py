@@ -142,7 +142,9 @@ class RouteFinder:
 
             graph_dict[from_id][to_id] = travel_time
 
-        return VicRoadsGraphProblem(origin, destination, Graph(graph_dict), locations)
+        return traffic_volume_lookup, VicRoadsGraphProblem(
+            origin, destination, Graph(graph_dict), locations
+        )
 
     def _calculate_travel_time(self, distance, traffic_volume):
         """
@@ -178,7 +180,7 @@ class RouteFinder:
             selected_algorithms = all_algorithms
 
         # Create the graph ONCE for all algorithms
-        self.graph_problem = self._create_search_graph(
+        traffic_volume_lookup, self.graph_problem = self._create_search_graph(
             origin_id, destination_id, prediction_model, datetime_str
         )
 
@@ -187,7 +189,9 @@ class RouteFinder:
         # Run each selected algorithm
         for alg_name in selected_algorithms:
             # Now use the already created graph, don't create a new one
-            path, total_cost, route_info = self.find_best_route(alg_name)
+            path, total_cost, route_info = self.find_best_route(
+                alg_name, traffic_volume_lookup
+            )
 
             if path:
                 routes.append(
@@ -223,7 +227,7 @@ class RouteFinder:
         # Limit to at most 5 routes
         return routes[:5]
 
-    def find_best_route(self, algorithm):
+    def find_best_route(self, algorithm, traffic_volume_lookup):
         """
         Find the best route using an already created graph
         """
@@ -243,9 +247,9 @@ class RouteFinder:
         path = dest_node.path_states()
 
         # Calculate route information
-        return path, *self._calculate_route_details(path)
+        return path, *self._calculate_route_details(path, traffic_volume_lookup)
 
-    def _calculate_route_details(self, path):
+    def _calculate_route_details(self, path, traffic_volume_lookup):
         """
         Calculate total travel time and create a list of steps for a path
         """
@@ -263,6 +267,8 @@ class RouteFinder:
                 # Get the actual travel time from the graph
                 # (This already includes traffic and intersection delay)
                 travel_time = self.graph_problem.graph.get(from_id, to_id)
+                location = connection.get("approach_location", "").strip()
+                traffic_volume = traffic_volume_lookup.get(location, 0)
 
                 # Add to total cost
                 total_cost += travel_time
@@ -279,6 +285,7 @@ class RouteFinder:
                         "from_lng": connection["from_lng"],
                         "to_lat": connection["to_lat"],
                         "to_lng": connection["to_lng"],
+                        "traffic_volume": traffic_volume,
                     }
                 )
 
