@@ -210,22 +210,23 @@ class RouteFinder:
         routes.sort(key=lambda x: x["total_cost"])
 
         # Assign colors based on relative performance (best to worst)
-        route_colors = ["green", "yellow", "orange", "red", "darkred"]
+        route_colors = ["aqua", "blue", "green", "orange", "red", "darkred"]
         route_descriptions = [
             "Best route",
             "Second best",
             "Third best",
             "Fourth best",
             "Fifth best",
+            "Worst route",
         ]
 
-        for i, route in enumerate(routes[:5]):
+        for i, route in enumerate(routes[:6]):
             color_index = min(i, len(route_colors) - 1)
             route["traffic_level"] = route_colors[color_index]
             route["route_rank"] = route_descriptions[color_index]
 
-        # Limit to at most 5 routes
-        return routes[:5]
+        # Limit to at most 6 routes
+        return routes[:6]
 
     def find_best_route(self, algorithm, traffic_volume_lookup):
         """
