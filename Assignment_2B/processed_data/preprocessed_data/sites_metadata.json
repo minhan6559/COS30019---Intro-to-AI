@@ -1,0 +1,588 @@
+{
+  "970": {
+    "site_id": 970,
+    "latitude": -37.86703,
+    "longitude": 145.09159,
+    "locations": [
+      "HIGH STREET_RD E of WARRIGAL_RD",
+      "HIGH STREET_RD W of WARRIGAL_RD",
+      "WARRIGAL_RD N of HIGH STREET_RD",
+      "WARRIGAL_RD S of HIGH STREET_RD"
+    ],
+    "connected_roads": [
+      "HIGH STREET_RD",
+      "WARRIGAL_RD"
+    ]
+  },
+  "2000": {
+    "site_id": 2000,
+    "latitude": -37.8516827,
+    "longitude": 145.0943457,
+    "locations": [
+      "BURWOOD_HWY E of WARRIGAL_RD",
+      "TOORAK_RD W of WARRIGAL_RD",
+      "WARRIGAL_RD N of TOORAK_RD",
+      "WARRIGAL_RD S of BURWOOD_HWY"
+    ],
+    "connected_roads": [
+      "TOORAK_RD",
+      "WARRIGAL_RD",
+      "BURWOOD_HWY"
+    ]
+  },
+  "2200": {
+    "site_id": 2200,
+    "latitude": -37.81631,
+    "longitude": 145.09812,
+    "locations": [
+      "MAROONDAH_HWY E of UNION_RD",
+      "MAROONDAH_HWY W of UNION_RD",
+      "UNION_RD N of MAROONDAH_HWY",
+      "UNION_RD S of MAROONDAH_HWY"
+    ],
+    "connected_roads": [
+      "UNION_RD",
+      "MAROONDAH_HWY"
+    ]
+  },
+  "2820": {
+    "site_id": 2820,
+    "latitude": -37.79477,
+    "longitude": 145.03077,
+    "locations": [
+      "EARL_ST SE of PRINCESS_ST",
+      "PRINCESS_ST S of CHANDLER_HWY"
+    ],
+    "connected_roads": [
+      "EARL_ST",
+      "CHANDLER_HWY",
+      "PRINCESS_ST"
+    ]
+  },
+  "2825": {
+    "site_id": 2825,
+    "latitude": -37.78661,
+    "longitude": 145.06202,
+    "locations": [
+      "BURKE_RD S of EASTERN_FWY"
+    ],
+    "connected_roads": [
+      "EASTERN_FWY",
+      "BURKE_RD"
+    ]
+  },
+  "2827": {
+    "site_id": 2827,
+    "latitude": -37.78093,
+    "longitude": 145.07733,
+    "locations": [
+      "BULLEEN_RD N of THOMPSONS_RD",
+      "BULLEEN_RD S of EASTERN_FWY_W_BD_RAMPS",
+      "OFFRAMP_EASTERN_FWY E of BULLEEN_RD",
+      "OFFRAMP_EASTERN_FWY W of BULLEEN_RD"
+    ],
+    "connected_roads": [
+      "EASTERN_FWY_W_BD_RAMPS",
+      "OFFRAMP_EASTERN_FWY",
+      "BULLEEN_RD",
+      "THOMPSONS_RD"
+    ]
+  },
+  "2846": {
+    "site_id": 2846,
+    "latitude": -37.8612671,
+    "longitude": 145.058038,
+    "locations": [
+      "HIGH_ST E OF S.E.ARTERIAL",
+      "HIGH_ST W OF WILLS_ST",
+      "S.E.ARTERIAL N OF HIGH_ST",
+      "WILLS_ST NW OF HIGH_ST"
+    ],
+    "connected_roads": [
+      "WILLS_ST",
+      "HIGH_ST"
+    ]
+  },
+  "3001": {
+    "site_id": 3001,
+    "latitude": -37.81441,
+    "longitude": 145.02243,
+    "locations": [
+      "BARKERS_RD E of HIGH_ST",
+      "BARKERS_RD W of CHURCH_ST",
+      "HIGH_ST NE of BARKERS_RD"
+    ],
+    "connected_roads": [
+      "CHURCH_ST",
+      "BARKERS_RD",
+      "HIGH_ST"
+    ]
+  },
+  "3002": {
+    "site_id": 3002,
+    "latitude": -37.81489,
+    "longitude": 145.02663,
+    "locations": [
+      "BARKERS_RD E of DENMARK_ST",
+      "BARKERS_RD W of DENMARK_ST",
+      "DENMARK_ST N of BARKERS_RD",
+      "POWER_ST S of BARKERS_RD"
+    ],
+    "connected_roads": [
+      "BARKERS_RD",
+      "POWER_ST",
+      "DENMARK_ST"
+    ]
+  },
+  "3120": {
+    "site_id": 3120,
+    "latitude": -37.82264,
+    "longitude": 145.05734,
+    "locations": [
+      "BURKE_RD N of CANTERBURY_RD",
+      "BURKE_RD S of CANTERBURY_RD",
+      "CANTERBURY_RD E of BURKE_RD",
+      "RATHMINES_RD W of BURKE_RD"
+    ],
+    "connected_roads": [
+      "RATHMINES_RD",
+      "BURKE_RD",
+      "CANTERBURY_RD"
+    ]
+  },
+  "3122": {
+    "site_id": 3122,
+    "latitude": -37.82379,
+    "longitude": 145.06466,
+    "locations": [
+      "CANTERBURY_RD E of STANHOPE_GV",
+      "CANTERBURY_RD W of STANHOPE_GV",
+      "STANHOPE_GV S of CANTERBURY_RD"
+    ],
+    "connected_roads": [
+      "STANHOPE_GV",
+      "CANTERBURY_RD"
+    ]
+  },
+  "3126": {
+    "site_id": 3126,
+    "latitude": -37.82778,
+    "longitude": 145.09885,
+    "locations": [
+      "CANTERBURY_RD E of WARRIGAL_RD",
+      "CANTERBURY_RD W of WARRIGAL_RD",
+      "WARRIGAL_RD S of CANTERBURY_RD"
+    ],
+    "connected_roads": [
+      "WARRIGAL_RD",
+      "CANTERBURY_RD"
+    ]
+  },
+  "3127": {
+    "site_id": 3127,
+    "latitude": -37.82506,
+    "longitude": 145.078,
+    "locations": [
+      "BALWYN_RD N of CANTERBURY_RD",
+      "CANTERBURY_RD E of BALWYN_RD",
+      "CANTERBURY_RD W of BALWYN_RD"
+    ],
+    "connected_roads": [
+      "BALWYN_RD",
+      "CANTERBURY_RD"
+    ]
+  },
+  "3180": {
+    "site_id": 3180,
+    "latitude": -37.79611,
+    "longitude": 145.08372,
+    "locations": [
+      "BALWYN_RD S of DONCASTER_RD",
+      "DONCASTER_RD E of BALWYN_RD",
+      "DONCASTER_RD W of BALWYN_RD"
+    ],
+    "connected_roads": [
+      "BALWYN_RD",
+      "DONCASTER_RD"
+    ]
+  },
+  "3662": {
+    "site_id": 3662,
+    "latitude": -37.80876,
+    "longitude": 145.02757,
+    "locations": [
+      "HIGH_ST NE of PRINCESS_ST",
+      "HIGH_ST SW of DENMARK_ST",
+      "PRINCESS_ST N of HIGH_ST",
+      "STUDLEY PARK_RD W of PRINCESS_ST"
+    ],
+    "connected_roads": [
+      "STUDLEY PARK_RD",
+      "DENMARK_ST",
+      "HIGH_ST",
+      "PRINCESS_ST"
+    ]
+  },
+  "3682": {
+    "site_id": 3682,
+    "latitude": -37.83695,
+    "longitude": 145.09699,
+    "locations": [
+      "RIVERSDALE_RD E OF WARRIGAL_RD",
+      "RIVERSDALE_RD W OF WARRIGAL_RD",
+      "WARRIGAL_RD N OF RIVERSDALE_RD",
+      "WARRIGAL_RD S OF RIVERSDALE_RD"
+    ],
+    "connected_roads": [
+      "WARRIGAL_RD",
+      "RIVERSDALE_RD"
+    ]
+  },
+  "3685": {
+    "site_id": 3685,
+    "latitude": -37.85467,
+    "longitude": 145.09384,
+    "locations": [
+      "HIGHBURY_RD E of WARRIGAL_RD",
+      "WARRIGAL_RD N of HIGHBURY_RD",
+      "WARRIGAL_RD S of HIGHBURY_RD"
+    ],
+    "connected_roads": [
+      "WARRIGAL_RD",
+      "HIGHBURY_RD"
+    ]
+  },
+  "3804": {
+    "site_id": 3804,
+    "latitude": -37.83331,
+    "longitude": 145.06247,
+    "locations": [
+      "RIVERSDALE_RD E of TRAFALGAR_RD",
+      "RIVERSDALE_RD W of TRAFALGAR_RD",
+      "TRAFALGAR_RD N of RIVERSDALE_RD",
+      "TRAFALGAR_RD S of RIVERSDALE_RD"
+    ],
+    "connected_roads": [
+      "RIVERSDALE_RD",
+      "TRAFALGAR_RD"
+    ]
+  },
+  "3812": {
+    "site_id": 3812,
+    "latitude": -37.83738,
+    "longitude": 145.06119,
+    "locations": [
+      "CAMBERWELL_RD NW of TRAFALGAR_RD",
+      "CAMBERWELL_RD SE of TRAFALGAR_RD",
+      "SEYMOUR_GV W of CAMBERWELL_RD",
+      "TRAFALGAR_RD NE of CAMBERWELL_RD"
+    ],
+    "connected_roads": [
+      "SEYMOUR_GV",
+      "CAMBERWELL_RD",
+      "TRAFALGAR_RD"
+    ]
+  },
+  "4030": {
+    "site_id": 4030,
+    "latitude": -37.79561,
+    "longitude": 145.06251,
+    "locations": [
+      "BURKE_RD S of DONCASTER_RD",
+      "HIGH_ST SW of BURKE_RD",
+      "KILBY_RD W of BURKE_RD"
+    ],
+    "connected_roads": [
+      "DONCASTER_RD",
+      "BURKE_RD",
+      "HIGH_ST",
+      "KILBY_RD"
+    ]
+  },
+  "4032": {
+    "site_id": 4032,
+    "latitude": -37.80202,
+    "longitude": 145.06127,
+    "locations": [
+      "BELMORE_RD E of BURKE_RD",
+      "BURKE_RD N of HARP_RD",
+      "BURKE_RD S of HARP_RD",
+      "HARP_RD W of BURKE_RD"
+    ],
+    "connected_roads": [
+      "BELMORE_RD",
+      "BURKE_RD",
+      "HARP_RD"
+    ]
+  },
+  "4034": {
+    "site_id": 4034,
+    "latitude": -37.81147,
+    "longitude": 145.05946,
+    "locations": [
+      "BURKE_RD N OF WHITEHORSE_RD",
+      "BURKE_RD S OF WHITEHORSE_RD",
+      "COTHAM_RD W OF BURKE_RD",
+      "WHITEHORSE_RD E OF BURKE_RD"
+    ],
+    "connected_roads": [
+      "WHITEHORSE_RD",
+      "COTHAM_RD",
+      "BURKE_RD"
+    ]
+  },
+  "4035": {
+    "site_id": 4035,
+    "latitude": -37.8172654,
+    "longitude": 145.0583603,
+    "locations": [
+      "BARKERS_RD W of BURKE_RD",
+      "BURKE_RD N of MONT ALBERT_RD",
+      "BURKE_RD S of BARKERS_RD",
+      "MONT ALBERT_RD E of BURKE_RD"
+    ],
+    "connected_roads": [
+      "MONT ALBERT_RD",
+      "BARKERS_RD",
+      "BURKE_RD"
+    ]
+  },
+  "4040": {
+    "site_id": 4040,
+    "latitude": -37.83256,
+    "longitude": 145.05545,
+    "locations": [
+      "BURKE_RD N of RIVERSDALE_RD",
+      "BURKE_RD S of RIVERSDALE_RD",
+      "CAMBERWELL_RD NW of BURKE_RD",
+      "CAMBERWELL_RD SE of BURKE_RD",
+      "RIVERSDALE_RD E of BURKE_RD",
+      "RIVERSDALE_RD W of BURKE_RD"
+    ],
+    "connected_roads": [
+      "CAMBERWELL_RD",
+      "BURKE_RD",
+      "RIVERSDALE_RD"
+    ]
+  },
+  "4043": {
+    "site_id": 4043,
+    "latitude": -37.84683,
+    "longitude": 145.05275,
+    "locations": [
+      "BURKE_RD N of TOORAK_RD",
+      "BURKE_RD S of TOORAK_RD",
+      "TOORAK_RD E of BURKE_RD",
+      "TOORAK_RD W OF BURKE_RD"
+    ],
+    "connected_roads": [
+      "TOORAK_RD",
+      "BURKE_RD"
+    ]
+  },
+  "4051": {
+    "site_id": 4051,
+    "latitude": -37.79419,
+    "longitude": 145.0696,
+    "locations": [
+      "DONCASTER_RD E of BULLEEN_RD",
+      "DONCASTER_RD SW of SEVERN_ST",
+      "SEVERN_ST S of DONCASTER_RD"
+    ],
+    "connected_roads": [
+      "DONCASTER_RD",
+      "SEVERN_ST",
+      "BULLEEN_RD"
+    ]
+  },
+  "4057": {
+    "site_id": 4057,
+    "latitude": -37.80431,
+    "longitude": 145.08197,
+    "locations": [
+      "BALWYN_RD N OF BELMORE_RD",
+      "BALWYN_RD S OF BELMORE_RD",
+      "BELMORE_RD E OF BALWYN_RD",
+      "BELMORE_RD W OF BALWYN_RD"
+    ],
+    "connected_roads": [
+      "BALWYN_RD",
+      "BELMORE_RD"
+    ]
+  },
+  "4063": {
+    "site_id": 4063,
+    "latitude": -37.81404,
+    "longitude": 145.0801,
+    "locations": [
+      "BALWYN_RD N OF WHITEHORSE_RD",
+      "BALWYN_RD S OF WHITEHORSE_RD",
+      "WHITEHORSE_RD E OF BALWYN_RD",
+      "WHITEHORSE_RD W OF BALWYN_RD"
+    ],
+    "connected_roads": [
+      "WHITEHORSE_RD",
+      "BALWYN_RD"
+    ]
+  },
+  "4262": {
+    "site_id": 4262,
+    "latitude": -37.82155,
+    "longitude": 145.01503,
+    "locations": [
+      "BRIDGE_RD SW of BURWOOD_RD"
+    ],
+    "connected_roads": [
+      "BURWOOD_RD",
+      "BRIDGE_RD"
+    ]
+  },
+  "4263": {
+    "site_id": 4263,
+    "latitude": -37.8228462,
+    "longitude": 145.0251292,
+    "locations": [
+      "BURWOOD_RD E of POWER_ST",
+      "BURWOOD_RD W of POWER_ST",
+      "POWER_ST N of BURWOOD_RD",
+      "POWER_ST S of BURWOOD_RD"
+    ],
+    "connected_roads": [
+      "BURWOOD_RD",
+      "POWER_ST"
+    ]
+  },
+  "4264": {
+    "site_id": 4264,
+    "latitude": -37.82389,
+    "longitude": 145.03409,
+    "locations": [
+      "BURWOOD_RD E of GLENFERRIE_RD",
+      "BURWOOD_RD W of GLENFERRIE_RD",
+      "GLENFERRIE_RD N of BURWOOD_RD",
+      "GLENFERRIE_RD S of BURWOOD_RD"
+    ],
+    "connected_roads": [
+      "BURWOOD_RD",
+      "GLENFERRIE_RD"
+    ]
+  },
+  "4266": {
+    "site_id": 4266,
+    "latitude": -37.82529,
+    "longitude": 145.04387,
+    "locations": [
+      "AUBURN_RD N of BURWOOD_RD",
+      "AUBURN_RD S of BURWOOD_RD",
+      "BURWOOD_RD E of AUBURN_RD",
+      "BURWOOD_RD W of AUBURN_RD"
+    ],
+    "connected_roads": [
+      "AUBURN_RD",
+      "BURWOOD_RD"
+    ]
+  },
+  "4270": {
+    "site_id": 4270,
+    "latitude": -37.82951,
+    "longitude": 145.03304,
+    "locations": [
+      "GLENFERRIE_RD N of RIVERSDALE_RD",
+      "GLENFERRIE_RD S of RIVERSDALE_RD",
+      "RIVERSDALE_RD E of GLENFERRIE_RD",
+      "RIVERSDALE_RD W of GLENFERRIE_RD"
+    ],
+    "connected_roads": [
+      "RIVERSDALE_RD",
+      "GLENFERRIE_RD"
+    ]
+  },
+  "4272": {
+    "site_id": 4272,
+    "latitude": -37.83186,
+    "longitude": 145.04668,
+    "locations": [
+      "RIVERSDALE_RD E of TOORONGA_RD",
+      "RIVERSDALE_RD W of TOORONGA_RD",
+      "TOORONGA_RD S of RIVERSDALE_RD"
+    ],
+    "connected_roads": [
+      "RIVERSDALE_RD",
+      "TOORONGA_RD"
+    ]
+  },
+  "4273": {
+    "site_id": 4273,
+    "latitude": -37.84632,
+    "longitude": 145.04378,
+    "locations": [
+      "TOORAK_RD E of TOORONGA_RD",
+      "TOORONGA_RD N of TOORAK_RD"
+    ],
+    "connected_roads": [
+      "TOORAK_RD",
+      "TOORONGA_RD"
+    ]
+  },
+  "4321": {
+    "site_id": 4321,
+    "latitude": -37.800776,
+    "longitude": 145.0494611,
+    "locations": [
+      "HARP_RD E OF HIGH_ST",
+      "HIGH_ST NE OF HARP_ST",
+      "HIGH_ST SW OF HARP_ST",
+      "VALERIE_ST W OF HIGH_ST"
+    ],
+    "connected_roads": [
+      "HARP_ST",
+      "HARP_RD",
+      "HIGH_ST",
+      "VALERIE_ST"
+    ]
+  },
+  "4324": {
+    "site_id": 4324,
+    "latitude": -37.809274,
+    "longitude": 145.037306,
+    "locations": [
+      "COTHAM_RD E OF GLENFERRIE_RD",
+      "COTHAM_RD W OF GLENFERRIE_RD",
+      "GLENFERRIE_RD S OF COTHAM_RD"
+    ],
+    "connected_roads": [
+      "COTHAM_RD",
+      "GLENFERRIE_RD"
+    ]
+  },
+  "4812": {
+    "site_id": 4812,
+    "latitude": -37.82859,
+    "longitude": 145.01644,
+    "locations": [
+      "MADDEN_GV S OF SWAN_ST",
+      "SWAN_ST NE of MADDEN_GV",
+      "SWAN_ST SW of MADDEN_GV"
+    ],
+    "connected_roads": [
+      "SWAN_ST",
+      "MADDEN_GV"
+    ]
+  },
+  "4821": {
+    "site_id": 4821,
+    "latitude": -37.81285,
+    "longitude": 145.00849,
+    "locations": [
+      "BURNLEY_ST S OF VICTORIA_ST",
+      "VICTORIA_ST E OF BURNLEY_ST",
+      "VICTORIA_ST W OF BURNLEY_ST",
+      "WALMER_ST N OF VICTORIA_ST"
+    ],
+    "connected_roads": [
+      "BURNLEY_ST",
+      "VICTORIA_ST",
+      "WALMER_ST"
+    ]
+  }
+}

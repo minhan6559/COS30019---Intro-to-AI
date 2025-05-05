@@ -1,6 +1,3 @@
-from src.utils import *
-
-
 class Graph:
     def __init__(self, graph_dict=None):
         self.graph_dict = graph_dict or {}

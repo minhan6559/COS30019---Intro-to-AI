@@ -12,8 +12,6 @@ import seaborn as sns
 
 import sys
 import os
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.utils.utils import plot_traffic_heatmap
 
 
@@ -233,11 +231,14 @@ def analyze_data_patterns(df):
     """
     print("Analyzing data patterns...")
 
+    # Create a proper copy of the dataframe to avoid SettingWithCopyWarning
+    df_analysis = df.copy()
+
     # Check missing data patterns
     missing_dates = {}
 
     # Group by location (not SCATS Number)
-    for location, location_df in df.groupby("Location"):
+    for location, location_df in df_analysis.groupby("Location"):
         # Get unique dates for this location
         dates = location_df["Date"].dt.date.unique()
         dates = sorted(dates)
@@ -254,18 +255,18 @@ def analyze_data_patterns(df):
         if missing:
             missing_dates[location] = sorted(list(missing))
 
-    # Calculate traffic patterns by hour of day
-    df["hour"] = df["interval_id"] // 4
+    # Calculate traffic patterns by hour of day - use proper assignment
+    df_analysis.loc[:, "hour"] = df_analysis["interval_id"] // 4
     hourly_traffic = (
-        df.groupby("hour")["traffic_volume"]
+        df_analysis.groupby("hour")["traffic_volume"]
         .agg(["mean", "median", "std"])
         .reset_index()
     )
 
-    # Calculate traffic patterns by day of week
-    df["day_of_week"] = df["Date"].dt.dayofweek
+    # Calculate traffic patterns by day of week - use proper assignment
+    df_analysis.loc[:, "day_of_week"] = df_analysis["Date"].dt.dayofweek
     daily_traffic = (
-        df.groupby("day_of_week")["traffic_volume"]
+        df_analysis.groupby("day_of_week")["traffic_volume"]
         .agg(["mean", "median", "std"])
         .reset_index()
     )
@@ -281,10 +282,10 @@ def analyze_data_patterns(df):
         }
     )
 
-    # Calculate weekend vs weekday patterns
-    df["is_weekend"] = (df["day_of_week"] >= 5).astype(int)
+    # Calculate weekend vs weekday patterns - use proper assignment
+    df_analysis.loc[:, "is_weekend"] = (df_analysis["day_of_week"] >= 5).astype(int)
     weekend_traffic = (
-        df.groupby("is_weekend")["traffic_volume"]
+        df_analysis.groupby("is_weekend")["traffic_volume"]
         .agg(["mean", "median", "std"])
         .reset_index()
     )
