@@ -1,6 +1,7 @@
 """
-SCATS Traffic Prediction - Feature Engineering Module
-This module handles feature creation, sequence generation, and train-test splitting.
+SCATS Traffic Prediction - Improved Feature Engineering Module
+This module handles feature creation, sequence generation, and train-test splitting
+with enhanced lag features and proper scaling.
 """
 
 import pandas as pd
@@ -12,15 +13,90 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 
 
-def engineer_features(df):
+def lag_imputation(df_features, lag_cols):
     """
-    Engineer features for time series prediction that are effective yet easy to re-engineer
+    Apply a multi-step imputation strategy to lag features
+
+    This function applies a cascade of increasingly general imputation methods:
+    1. Forward-fill within each continuous segment (preserves trends)
+    2. Day-of-week pattern matching (same location, day of week, time)
+    3. Location-time averages (fallback)
 
     Args:
-        df: DataFrame with SCATS data
+        df_features: DataFrame with lag features
+        lag_cols: List of lag feature column names
 
     Returns:
-        DataFrame with engineered features and location mapping dictionary
+        DataFrame with imputed lag features
+    """
+    print("Applying improved imputation strategy...")
+
+    # Make a copy to avoid modifying the original
+    df = df_features.copy()
+
+    # 1. Create segment identifiers for continuous data
+    # (breaks at gaps > 1 day to avoid forward filling across large gaps)
+    df["segment_id"] = df.groupby("Location")["days_since_prev"].transform(
+        lambda x: (x > 1).cumsum()
+    )
+
+    # 2. Process each lag feature
+    for col in lag_cols:
+        print(f"  Imputing {col}...")
+        # Count missing values before imputation
+        missing_before = df[col].isna().sum()
+
+        # Step 1: Forward-fill within continuous segments
+        # This preserves recent trends rather than using averages
+        df[col] = df.groupby(["Location", "segment_id"])[col].transform(
+            lambda x: x.ffill()
+        )
+
+        # Count remaining missing values after forward-fill
+        missing_after_ffill = df[col].isna().sum()
+        filled_ffill = missing_before - missing_after_ffill
+        print(f"    Forward-fill: {filled_ffill} values filled")
+
+        # Step 2: Day-of-week pattern matching imputation
+        # For values still missing, use average from same location,
+        # same day of week, same time of day
+        dow_time_avg = df.groupby(["Location", "day_of_week", "interval_id"])[
+            "traffic_volume"
+        ].transform("mean")
+        df[col] = df[col].fillna(dow_time_avg)
+
+        # Count remaining missing values after day-of-week imputation
+        missing_after_dow = df[col].isna().sum()
+        filled_dow = missing_after_ffill - missing_after_dow
+        print(f"    Day-of-week pattern: {filled_dow} values filled")
+
+        # Step 3: Fallback to location-time averages
+        # (only if still missing, which should be rare at this point)
+        loc_time_avg = df.groupby(["Location", "interval_id"])[
+            "traffic_volume"
+        ].transform("mean")
+        df[col] = df[col].fillna(loc_time_avg)
+
+        # Count remaining missing values after final imputation
+        missing_after = df[col].isna().sum()
+        filled_final = missing_after_dow - missing_after
+        print(f"    Location-time avg: {filled_final} values filled")
+
+        # If any values are still missing (extremely unlikely), fill with global mean
+        if missing_after > 0:
+            global_mean = df["traffic_volume"].mean()
+            df[col] = df[col].fillna(global_mean)
+            print(f"    Warning: {missing_after} values filled with global mean")
+
+    # Drop the temporary segment_id column
+    df = df.drop("segment_id", axis=1)
+
+    return df
+
+
+def engineer_features(df):
+    """
+    Engineer features for time series prediction with enhanced lag features
     """
     print("Engineering features...")
 
@@ -47,47 +123,73 @@ def engineer_features(df):
 
     # 2. Gap handling features
     # Calculate days since previous observation (for each location)
-    df_features["days_since_prev"] = (
-        df_features.groupby("Location")["Date"].diff().dt.days.fillna(0)
+    df_features["days_since_prev"] = df_features.groupby("Location")["Date"].transform(
+        lambda x: x.diff().dt.days.fillna(0)
     )
 
     # Boolean flag for data after a gap
     df_features["after_gap"] = (df_features["days_since_prev"] > 1).astype(int)
 
     # 3. Create location encodings
-    # Get unique locations - Using Location field instead of SCATS Number
     locations = df_features["Location"].unique()
     location_to_idx = {loc: idx for idx, loc in enumerate(locations)}
-
-    # Add location index
     df_features["location_idx"] = df_features["Location"].map(location_to_idx)
 
     # 4. Create lag features (grouped by location)
-    # Create lag features within each location group - Using Location field now
-    grouped = df_features.groupby("Location")
-
+    # --- ORIGINAL LAG FEATURES ---
     # Previous interval (15 min ago)
-    df_features["traffic_lag_1"] = grouped["traffic_volume"].shift(1)
+    # df_features["traffic_lag_1"] = df_features.groupby("Location")[
+    #     "traffic_volume"
+    # ].transform(lambda x: x.shift(1))
 
     # Previous hour (4 intervals ago)
-    df_features["traffic_lag_4"] = grouped["traffic_volume"].shift(4)
+    df_features["traffic_lag_4"] = df_features.groupby("Location")[
+        "traffic_volume"
+    ].transform(lambda x: x.shift(4))
 
     # Same time yesterday (96 intervals ago)
-    df_features["traffic_lag_96"] = grouped["traffic_volume"].shift(96)
+    df_features["traffic_lag_96"] = df_features.groupby("Location")[
+        "traffic_volume"
+    ].transform(lambda x: x.shift(96))
+
+    # --- ENHANCED LAG FEATURES ---
+    # 2 hours ago (helps capture medium-term patterns)
+    # df_features["traffic_lag_8"] = df_features.groupby("Location")[
+    #     "traffic_volume"
+    # ].transform(lambda x: x.shift(8))
+
+    # # Add weekly seasonality if data allows (same time one week ago)
+    # df_features["traffic_lag_672"] = df_features.groupby("Location")[
+    #     "traffic_volume"
+    # ].transform(lambda x: x.shift(96 * 7))
+
+    # Rolling statistics (average of last hour of traffic)
+    df_features["rolling_mean_4"] = df_features.groupby("Location")[
+        "traffic_volume"
+    ].transform(lambda x: x.rolling(4).mean().shift(1))
+
+    # Traffic acceleration (rate of change)
+    df_features["traffic_acceleration"] = df_features.groupby("Location")[
+        "traffic_volume"
+    ].transform(lambda x: x.diff().fillna(0))
 
     # Average traffic at this time of day for this location
-    # This captures the typical pattern for each location and interval
-    time_means = df_features.groupby(["Location", "interval_id"])[
-        "traffic_volume"
-    ].transform("mean")
-    df_features["avg_traffic_this_timeofday"] = time_means
+    df_features["avg_traffic_this_timeofday"] = df_features.groupby(
+        ["Location", "interval_id"]
+    )["traffic_volume"].transform("mean")
 
     # Fill missing lag values with meaningful defaults
-    lag_cols = ["traffic_lag_1", "traffic_lag_4", "traffic_lag_96"]
-    for col in lag_cols:
-        # Fill with the average traffic at this time of day for this location
-        df_features[col].fillna(df_features["avg_traffic_this_timeofday"], inplace=True)
+    lag_cols = [
+        # "traffic_lag_1",
+        "traffic_lag_4",
+        # "traffic_lag_8",
+        "traffic_lag_96",
+        # "traffic_lag_672",
+        "rolling_mean_4",
+    ]
 
+    # Apply the improved imputation strategy
+    df_features = lag_imputation(df_features, lag_cols)
     return df_features, location_to_idx
 
 
@@ -115,9 +217,13 @@ def create_sequences(df, seq_length=24):
         "after_gap",
         "days_since_prev",
         "location_idx",
-        "traffic_lag_1",
+        # "traffic_lag_1",
         "traffic_lag_4",
+        # "traffic_lag_8",  # Added new lag feature
         "traffic_lag_96",
+        # "traffic_lag_672",  # Added weekly lag
+        "rolling_mean_4",  # Added rolling mean
+        "traffic_acceleration",  # Added traffic acceleration
         "avg_traffic_this_timeofday",
     ]
 
@@ -239,38 +345,104 @@ def sequence_based_split(X, y, metadata_df, test_ratio=0.2):
     return X_train, X_test, y_train, y_test, meta_train, meta_test
 
 
-def normalize_data(X_train, X_test):
+def normalize_data(X_train, X_test, feature_cols):
     """
-    Normalize the data using StandardScaler
+    Normalize the data properly, keeping categorical and binary features unchanged
 
     Args:
         X_train: Training data
         X_test: Testing data
+        feature_cols: List of feature column names
 
     Returns:
-        X_train_scaled, X_test_scaled, scaler: Normalized data and scaler
+        X_train_scaled, X_test_scaled, scaler_dict: Normalized data and scalers
     """
-    print("Normalizing data...")
+    print("Normalizing data with type-appropriate scaling...")
 
-    # Number of features
-    n_features = X_train.shape[2]
+    # Define feature types
+    categorical_features = ["location_idx"]
+    binary_features = ["is_weekend", "after_gap"]
+    cyclical_features = ["dow_sin", "dow_cos", "tod_sin", "tod_cos"]
 
-    # Reshape for scaling
-    X_train_reshaped = X_train.reshape(-1, n_features)
-    X_test_reshaped = X_test.reshape(-1, n_features)
+    # Identify indices for each feature type
+    categorical_indices = [
+        feature_cols.index(f) for f in categorical_features if f in feature_cols
+    ]
+    binary_indices = [
+        feature_cols.index(f) for f in binary_features if f in feature_cols
+    ]
+    cyclical_indices = [
+        feature_cols.index(f) for f in cyclical_features if f in feature_cols
+    ]
 
-    # Initialize and fit scaler on training data
-    scaler = StandardScaler()
-    X_train_scaled_reshaped = scaler.fit_transform(X_train_reshaped)
+    # All other indices are assumed to be continuous features that should be scaled
+    all_indices = set(range(len(feature_cols)))
+    do_not_scale_indices = set(categorical_indices + binary_indices + cyclical_indices)
+    scale_indices = list(all_indices - do_not_scale_indices)
 
-    # Transform test data
-    X_test_scaled_reshaped = scaler.transform(X_test_reshaped)
+    print(f"Features to scale: {[feature_cols[i] for i in scale_indices]}")
+    print(f"Features NOT to scale: {[feature_cols[i] for i in do_not_scale_indices]}")
 
-    # Reshape back
-    X_train_scaled = X_train_scaled_reshaped.reshape(X_train.shape)
-    X_test_scaled = X_test_scaled_reshaped.reshape(X_test.shape)
+    # Create copies of input arrays to avoid modifying original data
+    X_train_scaled = X_train.copy()
+    X_test_scaled = X_test.copy()
 
-    return X_train_scaled, X_test_scaled, scaler
+    # Dictionary to store scalers for each feature
+    scaler_dict = {}
+
+    # Scale each continuous feature individually
+    for idx in scale_indices:
+        feature_name = feature_cols[idx]
+        # Extract this feature from all sequences
+        train_feature = X_train[:, :, idx].reshape(-1, 1)
+        test_feature = X_test[:, :, idx].reshape(-1, 1)
+
+        # Create and fit scaler
+        scaler = StandardScaler()
+        train_feature_scaled = scaler.fit_transform(train_feature)
+        test_feature_scaled = scaler.transform(test_feature)
+
+        # Store scaler
+        scaler_dict[feature_name] = scaler
+
+        # Put scaled features back
+        X_train_scaled[:, :, idx] = train_feature_scaled.reshape(
+            X_train.shape[0], X_train.shape[1]
+        )
+        X_test_scaled[:, :, idx] = test_feature_scaled.reshape(
+            X_test.shape[0], X_test.shape[1]
+        )
+
+    # No scaling for categorical features - ensure they're integers
+    for idx in categorical_indices:
+        X_train_scaled[:, :, idx] = X_train[:, :, idx].astype(int)
+        X_test_scaled[:, :, idx] = X_test[:, :, idx].astype(int)
+
+    return X_train_scaled, X_test_scaled, scaler_dict
+
+
+def normalize_target_variable(y_train, y_test, scaler_dict=None):
+    """
+    Normalize target variables for better model training
+
+    Args:
+        y_train: Training target values
+        y_test: Testing target values
+        scaler_dict: Dictionary to store the scaler
+
+    Returns:
+        y_train_scaled, y_test_scaled, y_scaler: Scaled targets and scaler
+    """
+    # Create and fit scaler on training data
+    y_scaler = StandardScaler()
+    y_train_scaled = y_scaler.fit_transform(y_train.reshape(-1, 1)).flatten()
+    y_test_scaled = y_scaler.transform(y_test.reshape(-1, 1)).flatten()
+
+    # Add to scaler_dict if provided
+    if scaler_dict is not None:
+        scaler_dict["y_scaler"] = y_scaler
+
+    return y_train_scaled, y_test_scaled, y_scaler
 
 
 def prepare_embedding_inputs(X, feature_cols):
@@ -287,7 +459,7 @@ def prepare_embedding_inputs(X, feature_cols):
     # Find the index of 'location_idx' in feature_cols
     loc_idx = feature_cols.index("location_idx")
 
-    # Extract location indices
+    # Extract location indices - ensure they're integers
     location_input = X[:, :, loc_idx].astype(int)
 
     # Create feature input without location_idx
@@ -320,6 +492,17 @@ def save_processed_data(processed_data, output_dir="processed_data"):
         os.path.join(output_dir, "y_test.npz"), data=processed_data["y_test"]
     )
 
+    # Save original y values if they exist
+    if "y_original_train" in processed_data:
+        np.savez_compressed(
+            os.path.join(output_dir, "y_original_train.npz"),
+            data=processed_data["y_original_train"],
+        )
+        np.savez_compressed(
+            os.path.join(output_dir, "y_original_test.npz"),
+            data=processed_data["y_original_test"],
+        )
+
     # Save metadata
     processed_data["meta_train"].to_csv(
         os.path.join(output_dir, "meta_train.csv"), index=False
@@ -328,9 +511,9 @@ def save_processed_data(processed_data, output_dir="processed_data"):
         os.path.join(output_dir, "meta_test.csv"), index=False
     )
 
-    # Save scaler
-    with open(os.path.join(output_dir, "scaler.pkl"), "wb") as f:
-        pickle.dump(processed_data["scaler"], f)
+    # Save scaler dictionary
+    with open(os.path.join(output_dir, "scaler_dict.pkl"), "wb") as f:
+        pickle.dump(processed_data["scaler_dict"], f)
 
     # Save feature columns
     with open(os.path.join(output_dir, "feature_cols.pkl"), "wb") as f:
@@ -355,62 +538,85 @@ def load_processed_data(input_dir="processed_data"):
     y_train = np.load(os.path.join(input_dir, "y_train.npz"))["data"]
     y_test = np.load(os.path.join(input_dir, "y_test.npz"))["data"]
 
+    # Create result dictionary
+    result = {
+        "X_train": X_train,
+        "X_test": X_test,
+        "y_train": y_train,
+        "y_test": y_test,
+    }
+
+    # Load original y values if they exist
+    try:
+        y_original_train = np.load(os.path.join(input_dir, "y_original_train.npz"))[
+            "data"
+        ]
+        y_original_test = np.load(os.path.join(input_dir, "y_original_test.npz"))[
+            "data"
+        ]
+        result["y_original_train"] = y_original_train
+        result["y_original_test"] = y_original_test
+    except FileNotFoundError:
+        print(
+            "Note: Original y values not found (target normalization may not have been used)"
+        )
+
     # Load metadata
     meta_train = pd.read_csv(os.path.join(input_dir, "meta_train.csv"))
     meta_test = pd.read_csv(os.path.join(input_dir, "meta_test.csv"))
+    result["meta_train"] = meta_train
+    result["meta_test"] = meta_test
 
-    # Load scaler
-    with open(os.path.join(input_dir, "scaler.pkl"), "rb") as f:
-        scaler = pickle.load(f)
+    # Load scaler dictionary
+    with open(os.path.join(input_dir, "scaler_dict.pkl"), "rb") as f:
+        scaler_dict = pickle.load(f)
+    result["scaler_dict"] = scaler_dict
 
     # Load feature columns
     with open(os.path.join(input_dir, "feature_cols.pkl"), "rb") as f:
         feature_cols = pickle.load(f)
+    result["feature_cols"] = feature_cols
 
     # Load location mapping
     with open(os.path.join(input_dir, "location_to_idx.pkl"), "rb") as f:
         location_to_idx = pickle.load(f)
+    result["location_to_idx"] = location_to_idx
 
-    # Prepare embedding inputs (regenerate these from the loaded X data)
+    # Prepare embedding inputs
     X_train_inputs = prepare_embedding_inputs(X_train, feature_cols)
     X_test_inputs = prepare_embedding_inputs(X_test, feature_cols)
+    result["X_train_inputs"] = X_train_inputs
+    result["X_test_inputs"] = X_test_inputs
+
+    # Add computed values
+    result["n_locations"] = len(location_to_idx)
+    result["n_features"] = X_train.shape[2] - 1  # Excluding location_idx
 
     print("Loaded all processed data successfully!")
-
-    # Return complete dictionary with all data items
-    return {
-        "X_train": X_train,
-        "X_test": X_test,
-        "X_train_inputs": X_train_inputs,
-        "X_test_inputs": X_test_inputs,
-        "y_train": y_train,
-        "y_test": y_test,
-        "meta_train": meta_train,
-        "meta_test": meta_test,
-        "scaler": scaler,
-        "feature_cols": feature_cols,
-        "location_to_idx": location_to_idx,
-        "n_locations": len(location_to_idx),
-        "n_features": X_train.shape[2] - 1,  # Excluding location_idx
-    }
+    return result
 
 
 def run_feature_engineering(
-    df, seq_length=24, test_ratio=0.2, output_dir="processed_data"
+    df,
+    seq_length=24,
+    test_ratio=0.2,
+    normalize_target=True,
+    output_dir="processed_data",
 ):
     """
-    Run the complete feature engineering pipeline
+    Run the complete improved feature engineering pipeline
 
     Args:
-        df: DataFrame with SCATS data
+        df: DataFrame with SCATS data (already cleaned)
         seq_length: Length of input sequences
         test_ratio: Proportion of data to use for testing
+        normalize_target: Whether to normalize the target variable
         output_dir: Directory to save processed data
 
     Returns:
         Dictionary with processed data
     """
-    # Engineer features
+    # Engineer features with enhanced lag features
     df_features, location_to_idx = engineer_features(df)
 
     # Create sequences
@@ -421,45 +627,61 @@ def run_feature_engineering(
         X, y, metadata_df, test_ratio
     )
 
-    # Normalize the data
-    X_train_scaled, X_test_scaled, scaler = normalize_data(X_train, X_test)
+    # Normalize the data properly, respecting feature types
+    X_train_scaled, X_test_scaled, scaler_dict = normalize_data(
+        X_train, X_test, feature_cols
+    )
+
+    # Initialize processed data dictionary
+    processed_data = {
+        "X_train": X_train_scaled,
+        "X_test": X_test_scaled,
+        "meta_train": meta_train,
+        "meta_test": meta_test,
+        "scaler_dict": scaler_dict,
+        "feature_cols": feature_cols,
+        "location_to_idx": location_to_idx,
+    }
+
+    # Normalize target variable if requested
+    if normalize_target:
+        y_train_scaled, y_test_scaled, _ = normalize_target_variable(
+            y_train, y_test, scaler_dict
+        )
+        processed_data["y_train"] = y_train_scaled
+        processed_data["y_test"] = y_test_scaled
+        processed_data["y_original_train"] = y_train
+        processed_data["y_original_test"] = y_test
+    else:
+        processed_data["y_train"] = y_train
+        processed_data["y_test"] = y_test
 
     # Prepare data for embedding model
     X_train_inputs = prepare_embedding_inputs(X_train_scaled, feature_cols)
     X_test_inputs = prepare_embedding_inputs(X_test_scaled, feature_cols)
 
-    # Create processed data dictionary
-    processed_data = {
-        "X_train": X_train_scaled,
-        "X_test": X_test_scaled,
-        "X_train_inputs": X_train_inputs,
-        "X_test_inputs": X_test_inputs,
-        "y_train": y_train,
-        "y_test": y_test,
-        "meta_train": meta_train,
-        "meta_test": meta_test,
-        "scaler": scaler,
-        "feature_cols": feature_cols,
-        "location_to_idx": location_to_idx,
-        "n_locations": len(location_to_idx),
-        "n_features": X_train_scaled.shape[2] - 1,  # Excluding location_idx
-    }
+    # Add to processed data dictionary
+    processed_data["X_train_inputs"] = X_train_inputs
+    processed_data["X_test_inputs"] = X_test_inputs
+    processed_data["n_locations"] = len(location_to_idx)
+    processed_data["n_features"] = X_train_scaled.shape[2] - 1  # Excluding location_idx
 
     # Save processed data
     save_processed_data(processed_data, output_dir)
 
-    print("Feature engineering completed successfully!")
+    print("Improved feature engineering completed successfully!")
 
     return processed_data
 
 
 if __name__ == "__main__":
-    # Load processed data from data_processing.py
+    # Load already cleaned data
+    print("Loading cleaned data...")
     df = pd.read_csv("processed_data/cleaned_data.csv")
+    df["Date"] = pd.to_datetime(df["Date"]).dt.normalize()  # Ensure date is datetime
 
-    # Convert Date column to datetime
-    df["Date"] = pd.to_datetime(df["Date"])
-
-    output_dir = "processed_data/preprocessed_data"
-    # Run feature engineering
-    processed_data = run_feature_engineering(df, output_dir=output_dir)
+    # Run improved feature engineering
+    output_dir = "processed_data/improved_preprocessed"
+    processed_data = run_feature_engineering(
+        df, seq_length=24, test_ratio=0.2, normalize_target=True, output_dir=output_dir
+    )
