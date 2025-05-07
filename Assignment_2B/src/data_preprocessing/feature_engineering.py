@@ -13,87 +13,6 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 
 
-def lag_imputation(df_features, lag_cols):
-    """
-    Apply a multi-step imputation strategy to lag features
-
-    This function applies a cascade of increasingly general imputation methods:
-    1. Forward-fill within each continuous segment (preserves trends)
-    2. Day-of-week pattern matching (same location, day of week, time)
-    3. Location-time averages (fallback)
-
-    Args:
-        df_features: DataFrame with lag features
-        lag_cols: List of lag feature column names
-
-    Returns:
-        DataFrame with imputed lag features
-    """
-    print("Applying improved imputation strategy...")
-
-    # Make a copy to avoid modifying the original
-    df = df_features.copy()
-
-    # 1. Create segment identifiers for continuous data
-    # (breaks at gaps > 1 day to avoid forward filling across large gaps)
-    df["segment_id"] = df.groupby("Location")["days_since_prev"].transform(
-        lambda x: (x > 1).cumsum()
-    )
-
-    # 2. Process each lag feature
-    for col in lag_cols:
-        print(f"  Imputing {col}...")
-        # Count missing values before imputation
-        missing_before = df[col].isna().sum()
-
-        # Step 1: Forward-fill within continuous segments
-        # This preserves recent trends rather than using averages
-        df[col] = df.groupby(["Location", "segment_id"])[col].transform(
-            lambda x: x.ffill()
-        )
-
-        # Count remaining missing values after forward-fill
-        missing_after_ffill = df[col].isna().sum()
-        filled_ffill = missing_before - missing_after_ffill
-        print(f"    Forward-fill: {filled_ffill} values filled")
-
-        # Step 2: Day-of-week pattern matching imputation
-        # For values still missing, use average from same location,
-        # same day of week, same time of day
-        dow_time_avg = df.groupby(["Location", "day_of_week", "interval_id"])[
-            "traffic_volume"
-        ].transform("mean")
-        df[col] = df[col].fillna(dow_time_avg)
-
-        # Count remaining missing values after day-of-week imputation
-        missing_after_dow = df[col].isna().sum()
-        filled_dow = missing_after_ffill - missing_after_dow
-        print(f"    Day-of-week pattern: {filled_dow} values filled")
-
-        # Step 3: Fallback to location-time averages
-        # (only if still missing, which should be rare at this point)
-        loc_time_avg = df.groupby(["Location", "interval_id"])[
-            "traffic_volume"
-        ].transform("mean")
-        df[col] = df[col].fillna(loc_time_avg)
-
-        # Count remaining missing values after final imputation
-        missing_after = df[col].isna().sum()
-        filled_final = missing_after_dow - missing_after
-        print(f"    Location-time avg: {filled_final} values filled")
-
-        # If any values are still missing (extremely unlikely), fill with global mean
-        if missing_after > 0:
-            global_mean = df["traffic_volume"].mean()
-            df[col] = df[col].fillna(global_mean)
-            print(f"    Warning: {missing_after} values filled with global mean")
-
-    # Drop the temporary segment_id column
-    df = df.drop("segment_id", axis=1)
-
-    return df
-
-
 def engineer_features(df):
     """
     Engineer features for time series prediction with enhanced lag features
@@ -137,10 +56,6 @@ def engineer_features(df):
 
     # 4. Create lag features (grouped by location)
     # --- ORIGINAL LAG FEATURES ---
-    # Previous interval (15 min ago)
-    # df_features["traffic_lag_1"] = df_features.groupby("Location")[
-    #     "traffic_volume"
-    # ].transform(lambda x: x.shift(1))
 
     # Previous hour (4 intervals ago)
     df_features["traffic_lag_4"] = df_features.groupby("Location")[
@@ -154,14 +69,9 @@ def engineer_features(df):
 
     # --- ENHANCED LAG FEATURES ---
     # 2 hours ago (helps capture medium-term patterns)
-    # df_features["traffic_lag_8"] = df_features.groupby("Location")[
-    #     "traffic_volume"
-    # ].transform(lambda x: x.shift(8))
-
-    # # Add weekly seasonality if data allows (same time one week ago)
-    # df_features["traffic_lag_672"] = df_features.groupby("Location")[
-    #     "traffic_volume"
-    # ].transform(lambda x: x.shift(96 * 7))
+    df_features["traffic_lag_8"] = df_features.groupby("Location")[
+        "traffic_volume"
+    ].transform(lambda x: x.shift(8))
 
     # Rolling statistics (average of last hour of traffic)
     df_features["rolling_mean_4"] = df_features.groupby("Location")[
@@ -178,18 +88,41 @@ def engineer_features(df):
         ["Location", "interval_id"]
     )["traffic_volume"].transform("mean")
 
-    # Fill missing lag values with meaningful defaults
-    lag_cols = [
-        # "traffic_lag_1",
-        "traffic_lag_4",
-        # "traffic_lag_8",
-        "traffic_lag_96",
-        # "traffic_lag_672",
-        "rolling_mean_4",
+    # Where rolling_mean_4 is missing, use the current traffic value
+    missing_rolling_mask = df_features["rolling_mean_4"].isna()
+    df_features.loc[missing_rolling_mask, "rolling_mean_4"] = df_features.loc[
+        missing_rolling_mask, "traffic_volume"
     ]
 
-    # Apply the improved imputation strategy
-    df_features = lag_imputation(df_features, lag_cols)
+    # Fill missing lag values with meaningful defaults
+    # First, create a dictionary to store averages by location and time of day
+    avg_by_loc_tod = {}
+    for loc in df_features["Location"].unique():
+        loc_data = df_features[df_features["Location"] == loc]
+        for tod in range(96):  # 96 intervals in a day
+            avg_by_loc_tod[(loc, tod)] = loc_data[loc_data["interval_id"] == tod][
+                "traffic_volume"
+            ].mean()
+
+    # For each lag feature
+    for lag in [4, 8, 96]:
+        lag_col = f"traffic_lag_{lag}"
+        # Find missing values
+        missing_mask = df_features[lag_col].isna()
+
+        # For each missing value, impute with the average for the correct lagged interval
+        for idx in df_features[missing_mask].index:
+            loc = df_features.loc[idx, "Location"]
+            current_tod = df_features.loc[idx, "interval_id"]
+
+            # The time of day for the lagged interval
+            lagged_tod = (current_tod - lag) % 96
+
+            # Impute with the average for the location and lagged time of day
+            df_features.loc[idx, lag_col] = avg_by_loc_tod.get(
+                (loc, lagged_tod), df_features.loc[idx, "avg_traffic_this_timeofday"]
+            )
+
     return df_features, location_to_idx
 
 
@@ -217,11 +150,9 @@ def create_sequences(df, seq_length=24):
         "after_gap",
         "days_since_prev",
         "location_idx",
-        # "traffic_lag_1",
         "traffic_lag_4",
-        # "traffic_lag_8",  # Added new lag feature
+        "traffic_lag_8",  # Added new lag feature
         "traffic_lag_96",
-        # "traffic_lag_672",  # Added weekly lag
         "rolling_mean_4",  # Added rolling mean
         "traffic_acceleration",  # Added traffic acceleration
         "avg_traffic_this_timeofday",
