@@ -32,22 +32,28 @@ def create_lstm_model(
     seq_length,
     n_features,
     n_locations,
-    embedding_dim=16,
-    lstm_units=64,
-    dropout_rate=0.2,
-    use_attention=False,
+    embedding_dim=12,
+    lstm_units=48,
+    dense_units_list=[32, 16],  # List of units for dense layers
+    dropout_rate=0.3,
+    l2_reg=0.001,
+    recurrent_l2=0.001,
+    activation="relu",
 ):
     """
-    Create a model with LSTM architecture and location embedding
+    Create an enhanced LSTM model with configurable dense layers and regularization
 
     Args:
         seq_length: Length of input sequences
-        n_features: Number of features (excluding location_idx)
+        n_features: Number of features
         n_locations: Number of unique locations
         embedding_dim: Dimension of location embedding
         lstm_units: Number of units in LSTM layer
+        dense_units_list: List of units for each dense layer
         dropout_rate: Dropout rate
-        use_attention: Whether to use attention mechanism
+        l2_reg: L2 regularization factor
+        recurrent_l2: L2 regularization factor for recurrent weights
+        activation: Activation function for dense layers
 
     Returns:
         Keras model
@@ -56,34 +62,49 @@ def create_lstm_model(
     feature_input = Input(shape=(seq_length, n_features), name="feature_input")
     location_input = Input(shape=(seq_length,), dtype="int32", name="location_input")
 
-    # Location embedding
+    # Location embedding with regularization
     location_embedding = Embedding(
-        input_dim=n_locations, output_dim=embedding_dim, name="location_embedding"
+        input_dim=n_locations,
+        output_dim=embedding_dim,
+        embeddings_regularizer=l2(l2_reg),
+        name="location_embedding",
     )(location_input)
 
     # Combine feature input with location embedding
     combined_input = Concatenate(axis=2)([feature_input, location_embedding])
 
-    # LSTM layer
+    # Add BatchNormalization before LSTM
+    normalized_input = BatchNormalization(name="input_normalization")(combined_input)
+
+    # LSTM layer with regularization
     lstm_layer = LSTM(
         units=lstm_units,
-        return_sequences=use_attention,
+        return_sequences=False,
         dropout=dropout_rate,
         recurrent_dropout=dropout_rate,
+        kernel_regularizer=l2(l2_reg),
+        recurrent_regularizer=l2(recurrent_l2),
+        activity_regularizer=l2(l2_reg / 10),
         name="lstm_layer",
-    )(combined_input)
+    )(normalized_input)
 
-    # Add attention if requested
-    if use_attention:
-        # Simple self-attention
-        attention_layer = tf.keras.layers.Attention()([lstm_layer, lstm_layer])
-        # Global pooling to get a fixed-size output
-        lstm_output = GlobalAveragePooling1D()(attention_layer)
-    else:
-        lstm_output = lstm_layer
+    # Apply dropout and batch normalization to LSTM output
+    x = Dropout(dropout_rate)(lstm_layer)
+    x = BatchNormalization(name="lstm_output_norm")(x)
+
+    # Dynamically create dense layers based on the dense_units_list
+    for i, units in enumerate(dense_units_list):
+        x = Dense(
+            units,
+            activation=activation,
+            kernel_regularizer=l2(l2_reg),
+            name=f"dense_layer_{i+1}",
+        )(x)
+        x = BatchNormalization(name=f"dense_norm_{i+1}")(x)
+        x = Dropout(dropout_rate)(x)
 
     # Output layer
-    output = Dense(1, activation="linear", name="output")(lstm_output)
+    output = Dense(1, activation="linear", name="output")(x)
 
     # Create model
     model = Model(inputs=[feature_input, location_input], outputs=output)
@@ -95,21 +116,29 @@ def create_bidirectional_lstm_model(
     seq_length,
     n_features,
     n_locations,
-    embedding_dim=16,
-    lstm_units=64,
-    dropout_rate=0.2,
+    embedding_dim=12,
+    lstm_units=48,
+    dense_units_list=[32, 16],  # List of units for dense layers
+    dropout_rate=0.3,
+    l2_reg=0.001,
+    recurrent_l2=0.001,
+    activation="relu",
     use_attention=False,
 ):
     """
-    Create a model with Bidirectional LSTM architecture and location embedding
+    Create an enhanced Bidirectional LSTM model with configurable dense layers and regularization
 
     Args:
         seq_length: Length of input sequences
-        n_features: Number of features (excluding location_idx)
+        n_features: Number of features
         n_locations: Number of unique locations
         embedding_dim: Dimension of location embedding
         lstm_units: Number of units in LSTM layer
+        dense_units_list: List of units for each dense layer
         dropout_rate: Dropout rate
+        l2_reg: L2 regularization factor
+        recurrent_l2: L2 regularization factor for recurrent weights
+        activation: Activation function for dense layers
         use_attention: Whether to use attention mechanism
 
     Returns:
@@ -119,44 +148,61 @@ def create_bidirectional_lstm_model(
     feature_input = Input(shape=(seq_length, n_features), name="feature_input")
     location_input = Input(shape=(seq_length,), dtype="int32", name="location_input")
 
-    # Location embedding
+    # Location embedding with regularization
     location_embedding = Embedding(
-        input_dim=n_locations, output_dim=embedding_dim, name="location_embedding"
+        input_dim=n_locations,
+        output_dim=embedding_dim,
+        embeddings_regularizer=l2(l2_reg),
+        name="location_embedding",
     )(location_input)
 
     # Combine feature input with location embedding
     combined_input = Concatenate(axis=2)([feature_input, location_embedding])
 
-    # Bidirectional LSTM layer
+    # Add BatchNormalization before BiLSTM
+    normalized_input = BatchNormalization(name="input_normalization")(combined_input)
+
+    # Bidirectional LSTM layer with regularization
     bilstm_layer = Bidirectional(
         LSTM(
             units=lstm_units,
             return_sequences=use_attention,
             dropout=dropout_rate,
             recurrent_dropout=dropout_rate,
+            kernel_regularizer=l2(l2_reg),
+            recurrent_regularizer=l2(recurrent_l2),
+            activity_regularizer=l2(l2_reg / 10),
             name="lstm_layer",
         ),
         name="bidirectional_wrapper",
-    )(combined_input)
+    )(normalized_input)
 
     # Add attention if requested
     if use_attention:
-        # Simple self-attention
+        # Self-attention mechanism
         attention_layer = tf.keras.layers.Attention()([bilstm_layer, bilstm_layer])
         # Global pooling to get a fixed-size output
-        bilstm_output = GlobalAveragePooling1D()(attention_layer)
+        x = GlobalAveragePooling1D()(attention_layer)
     else:
-        bilstm_output = bilstm_layer
+        x = bilstm_layer
 
-    # Batch normalization
-    normalized = BatchNormalization(name="batch_norm")(bilstm_output)
+    # Apply dropout and batch normalization to BiLSTM output
+    x = Dropout(dropout_rate)(x)
+    x = BatchNormalization(name="bilstm_output_norm")(x)
 
-    # Dense layers
-    dense1 = Dense(32, activation="relu", name="dense1")(normalized)
-    dense1 = Dropout(dropout_rate)(dense1)
+    # Dynamically create dense layers based on the dense_units_list
+    for i, units in enumerate(dense_units_list):
+        x = Dense(
+            units,
+            activation=activation,
+            kernel_regularizer=l2(l2_reg),
+            name=f"dense_layer_{i+1}",
+        )(x)
+        x = BatchNormalization(name=f"dense_norm_{i+1}")(x)
+        x = Dropout(dropout_rate)(x)
 
     # Output layer
-    output = Dense(1, activation="linear", name="output")(dense1)
+    output = Dense(1, activation="linear", name="output")(x)
 
     # Create model
     model = Model(inputs=[feature_input, location_input], outputs=output)
@@ -168,22 +214,28 @@ def create_gru_model(
     seq_length,
     n_features,
     n_locations,
-    embedding_dim=16,
-    gru_units=64,
-    dropout_rate=0.2,
-    use_attention=False,
+    embedding_dim=12,
+    gru_units=48,
+    dense_units_list=[32, 16],  # List of units for dense layers
+    dropout_rate=0.3,
+    l2_reg=0.001,
+    recurrent_l2=0.001,
+    activation="relu",
 ):
     """
-    Create a model with GRU architecture and location embedding
+    Create an enhanced GRU model with configurable dense layers and regularization
 
     Args:
         seq_length: Length of input sequences
-        n_features: Number of features (excluding location_idx)
+        n_features: Number of features
         n_locations: Number of unique locations
         embedding_dim: Dimension of location embedding
         gru_units: Number of units in GRU layer
+        dense_units_list: List of units for each dense layer
         dropout_rate: Dropout rate
-        use_attention: Whether to use attention mechanism
+        l2_reg: L2 regularization factor
+        recurrent_l2: L2 regularization factor for recurrent weights
+        activation: Activation function for dense layers
 
     Returns:
         Keras model
@@ -192,34 +244,49 @@ def create_gru_model(
     feature_input = Input(shape=(seq_length, n_features), name="feature_input")
     location_input = Input(shape=(seq_length,), dtype="int32", name="location_input")
 
-    # Location embedding
+    # Location embedding with regularization
     location_embedding = Embedding(
-        input_dim=n_locations, output_dim=embedding_dim, name="location_embedding"
+        input_dim=n_locations,
+        output_dim=embedding_dim,
+        embeddings_regularizer=l2(l2_reg),
+        name="location_embedding",
     )(location_input)
 
     # Combine feature input with location embedding
     combined_input = Concatenate(axis=2)([feature_input, location_embedding])
 
-    # GRU layer
+    # Add BatchNormalization before GRU
+    normalized_input = BatchNormalization(name="input_normalization")(combined_input)
+
+    # GRU layer with regularization
     gru_layer = GRU(
         units=gru_units,
-        return_sequences=use_attention,
+        return_sequences=False,
         dropout=dropout_rate,
         recurrent_dropout=dropout_rate,
+        kernel_regularizer=l2(l2_reg),
+        recurrent_regularizer=l2(recurrent_l2),
+        activity_regularizer=l2(l2_reg / 10),
         name="gru_layer",
-    )(combined_input)
+    )(normalized_input)
 
-    # Add attention if requested
-    if use_attention:
-        # Simple self-attention
-        attention_layer = tf.keras.layers.Attention()([gru_layer, gru_layer])
-        # Global pooling to get a fixed-size output
-        gru_output = GlobalAveragePooling1D()(attention_layer)
-    else:
-        gru_output = gru_layer
+    # Apply dropout and batch normalization to GRU output
+    x = Dropout(dropout_rate)(gru_layer)
+    x = BatchNormalization(name="gru_output_norm")(x)
+
+    # Dynamically create dense layers based on the dense_units_list
+    for i, units in enumerate(dense_units_list):
+        x = Dense(
+            units,
+            activation=activation,
+            kernel_regularizer=l2(l2_reg),
+            name=f"dense_layer_{i+1}",
+        )(x)
+        x = BatchNormalization(name=f"dense_norm_{i+1}")(x)
+        x = Dropout(dropout_rate)(x)
 
     # Output layer
-    output = Dense(1, activation="linear", name="output")(gru_output)
+    output = Dense(1, activation="linear", name="output")(x)
 
     # Create model
     model = Model(inputs=[feature_input, location_input], outputs=output)

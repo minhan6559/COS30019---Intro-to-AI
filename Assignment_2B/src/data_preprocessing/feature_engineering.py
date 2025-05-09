@@ -88,6 +88,7 @@ def engineer_features(df):
         ["Location", "interval_id"]
     )["traffic_volume"].transform("mean")
 
+    # Fill missing values
     # Where rolling_mean_4 is missing, use the current traffic value
     missing_rolling_mask = df_features["rolling_mean_4"].isna()
     df_features.loc[missing_rolling_mask, "rolling_mean_4"] = df_features.loc[

@@ -1,7 +1,6 @@
 import streamlit as st
 from src.route_finder.site_network import SiteNetwork
 from src.route_finder.route_finder import RouteFinder
-from src.visualizer.base_visualizer import BaseVisualizer
 from src.visualizer.network_visualizer import NetworkVisualizer
 from src.visualizer.route_visualizer import RouteVisualizer
 from src.views.network_page import NetworkPage
