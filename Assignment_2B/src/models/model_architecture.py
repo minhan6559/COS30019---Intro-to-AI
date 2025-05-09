@@ -33,22 +33,22 @@ def create_lstm_model(
     n_features,
     n_locations,
     embedding_dim=12,
-    lstm_units=48,
-    dense_units_list=[32, 16],  # List of units for dense layers
+    lstm_units_list=[48, 24],  # Now a list of units for multiple LSTM layers
+    dense_units_list=[32, 16],
     dropout_rate=0.3,
     l2_reg=0.001,
     recurrent_l2=0.001,
     activation="relu",
 ):
     """
-    Create an enhanced LSTM model with configurable dense layers and regularization
+    Create an enhanced stacked LSTM model with configurable recurrent and dense layers
 
     Args:
         seq_length: Length of input sequences
         n_features: Number of features
         n_locations: Number of unique locations
         embedding_dim: Dimension of location embedding
-        lstm_units: Number of units in LSTM layer
+        lstm_units_list: List of units for each LSTM layer
         dense_units_list: List of units for each dense layer
         dropout_rate: Dropout rate
         l2_reg: L2 regularization factor
@@ -58,6 +58,14 @@ def create_lstm_model(
     Returns:
         Keras model
     """
+    # Convert the LSTM units to a list if it's a single integer
+    if isinstance(lstm_units_list, int):
+        lstm_units_list = [lstm_units_list]
+
+    # Convert the dense units to a list if it's a single integer
+    if isinstance(dense_units_list, int):
+        dense_units_list = [dense_units_list]
+
     # Input layers
     feature_input = Input(shape=(seq_length, n_features), name="feature_input")
     location_input = Input(shape=(seq_length,), dtype="int32", name="location_input")
@@ -73,24 +81,35 @@ def create_lstm_model(
     # Combine feature input with location embedding
     combined_input = Concatenate(axis=2)([feature_input, location_embedding])
 
-    # Add BatchNormalization before LSTM
-    normalized_input = BatchNormalization(name="input_normalization")(combined_input)
+    # Add BatchNormalization before LSTM layers
+    x = BatchNormalization(name="input_normalization")(combined_input)
 
-    # LSTM layer with regularization
-    lstm_layer = LSTM(
-        units=lstm_units,
-        return_sequences=False,
-        dropout=dropout_rate,
-        recurrent_dropout=dropout_rate,
-        kernel_regularizer=l2(l2_reg),
-        recurrent_regularizer=l2(recurrent_l2),
-        activity_regularizer=l2(l2_reg / 10),
-        name="lstm_layer",
-    )(normalized_input)
+    # Create stacked LSTM layers
+    for i, units in enumerate(lstm_units_list):
+        # Determine whether to return sequences (all but last layer should return sequences)
+        return_sequences = i < len(lstm_units_list) - 1
 
-    # Apply dropout and batch normalization to LSTM output
-    x = Dropout(dropout_rate)(lstm_layer)
-    x = BatchNormalization(name="lstm_output_norm")(x)
+        # LSTM layer with regularization
+        x = LSTM(
+            units=units,
+            return_sequences=return_sequences,
+            dropout=dropout_rate,
+            recurrent_dropout=dropout_rate,
+            kernel_regularizer=l2(l2_reg),
+            recurrent_regularizer=l2(recurrent_l2),
+            activity_regularizer=l2(l2_reg / 10),
+            name=f"lstm_layer_{i+1}",
+        )(x)
+
+        # Add batch normalization between LSTM layers
+        x = BatchNormalization(name=f"lstm_norm_{i+1}")(x)
+
+        # Add dropout between LSTM layers
+        if return_sequences:
+            x = Dropout(dropout_rate, name=f"lstm_dropout_{i+1}")(x)
+
+    # Apply final dropout after the last LSTM layer
+    x = Dropout(dropout_rate, name="final_lstm_dropout")(x)
 
     # Dynamically create dense layers based on the dense_units_list
     for i, units in enumerate(dense_units_list):
@@ -101,7 +120,7 @@ def create_lstm_model(
             name=f"dense_layer_{i+1}",
         )(x)
         x = BatchNormalization(name=f"dense_norm_{i+1}")(x)
-        x = Dropout(dropout_rate)(x)
+        x = Dropout(dropout_rate, name=f"dense_dropout_{i+1}")(x)
 
     # Output layer
     output = Dense(1, activation="linear", name="output")(x)
@@ -215,22 +234,22 @@ def create_gru_model(
     n_features,
     n_locations,
     embedding_dim=12,
-    gru_units=48,
-    dense_units_list=[32, 16],  # List of units for dense layers
+    gru_units_list=[48],
+    dense_units_list=[32, 16],
     dropout_rate=0.3,
     l2_reg=0.001,
     recurrent_l2=0.001,
     activation="relu",
 ):
     """
-    Create an enhanced GRU model with configurable dense layers and regularization
+    Create an enhanced stacked GRU model with configurable recurrent and dense layers
 
     Args:
         seq_length: Length of input sequences
         n_features: Number of features
         n_locations: Number of unique locations
         embedding_dim: Dimension of location embedding
-        gru_units: Number of units in GRU layer
+        gru_units_list: List of units for each GRU layer
         dense_units_list: List of units for each dense layer
         dropout_rate: Dropout rate
         l2_reg: L2 regularization factor
@@ -240,6 +259,14 @@ def create_gru_model(
     Returns:
         Keras model
     """
+    # Convert the GRU units to a list if it's a single integer
+    if isinstance(gru_units_list, int):
+        gru_units_list = [gru_units_list]
+
+    # Convert the dense units to a list if it's a single integer
+    if isinstance(dense_units_list, int):
+        dense_units_list = [dense_units_list]
+
     # Input layers
     feature_input = Input(shape=(seq_length, n_features), name="feature_input")
     location_input = Input(shape=(seq_length,), dtype="int32", name="location_input")
@@ -255,24 +282,35 @@ def create_gru_model(
     # Combine feature input with location embedding
     combined_input = Concatenate(axis=2)([feature_input, location_embedding])
 
-    # Add BatchNormalization before GRU
-    normalized_input = BatchNormalization(name="input_normalization")(combined_input)
+    # Add BatchNormalization before GRU layers
+    x = BatchNormalization(name="input_normalization")(combined_input)
 
-    # GRU layer with regularization
-    gru_layer = GRU(
-        units=gru_units,
-        return_sequences=False,
-        dropout=dropout_rate,
-        recurrent_dropout=dropout_rate,
-        kernel_regularizer=l2(l2_reg),
-        recurrent_regularizer=l2(recurrent_l2),
-        activity_regularizer=l2(l2_reg / 10),
-        name="gru_layer",
-    )(normalized_input)
+    # Create stacked GRU layers
+    for i, units in enumerate(gru_units_list):
+        # Determine whether to return sequences (all but last layer should return sequences)
+        return_sequences = i < len(gru_units_list) - 1
 
-    # Apply dropout and batch normalization to GRU output
-    x = Dropout(dropout_rate)(gru_layer)
-    x = BatchNormalization(name="gru_output_norm")(x)
+        # GRU layer with regularization
+        x = GRU(
+            units=units,
+            return_sequences=return_sequences,
+            dropout=dropout_rate,
+            recurrent_dropout=dropout_rate,
+            kernel_regularizer=l2(l2_reg),
+            recurrent_regularizer=l2(recurrent_l2),
+            activity_regularizer=l2(l2_reg / 10),
+            name=f"gru_layer_{i+1}",
+        )(x)
+
+        # Add batch normalization between GRU layers
+        x = BatchNormalization(name=f"gru_norm_{i+1}")(x)
+
+        # Add dropout between GRU layers
+        if return_sequences:
+            x = Dropout(dropout_rate, name=f"gru_dropout_{i+1}")(x)
+
+    # Apply final dropout after the last GRU layer
+    x = Dropout(dropout_rate, name="final_gru_dropout")(x)
 
     # Dynamically create dense layers based on the dense_units_list
     for i, units in enumerate(dense_units_list):
@@ -283,7 +321,7 @@ def create_gru_model(
             name=f"dense_layer_{i+1}",
         )(x)
         x = BatchNormalization(name=f"dense_norm_{i+1}")(x)
-        x = Dropout(dropout_rate)(x)
+        x = Dropout(dropout_rate, name=f"dense_dropout_{i+1}")(x)
 
     # Output layer
     output = Dense(1, activation="linear", name="output")(x)
@@ -499,70 +537,6 @@ def create_transformer_model(
     return model
 
 
-def create_stacked_lstm_model(
-    seq_length,
-    n_features,
-    n_locations,
-    embedding_dim=16,
-    lstm_units_list=[64, 32],
-    dropout_rate=0.2,
-):
-    """
-    Create a stacked LSTM model with location embedding
-
-    Args:
-        seq_length: Length of input sequences
-        n_features: Number of features (excluding location_idx)
-        n_locations: Number of unique locations
-        embedding_dim: Dimension of location embedding
-        lstm_units_list: List of units for each LSTM layer
-        dropout_rate: Dropout rate
-
-    Returns:
-        Keras model
-    """
-    # Input layers
-    feature_input = Input(shape=(seq_length, n_features), name="feature_input")
-    location_input = Input(shape=(seq_length,), dtype="int32", name="location_input")
-
-    # Location embedding
-    location_embedding = Embedding(
-        input_dim=n_locations, output_dim=embedding_dim, name="location_embedding"
-    )(location_input)
-
-    # Combine feature input with location embedding
-    combined_input = Concatenate(axis=2)([feature_input, location_embedding])
-
-    # Stacked LSTM layers
-    x = combined_input
-    for i, units in enumerate(lstm_units_list):
-        return_sequences = i < len(lstm_units_list) - 1
-        x = LSTM(
-            units=units,
-            return_sequences=return_sequences,
-            dropout=dropout_rate,
-            recurrent_dropout=dropout_rate,
-            name=f"lstm_layer_{i+1}",
-        )(x)
-
-        # Add batch normalization between LSTM layers
-        if return_sequences:
-            x = BatchNormalization()(x)
-
-    # Fully connected layers
-    x = BatchNormalization()(x)
-    x = Dense(32, activation="relu")(x)
-    x = Dropout(dropout_rate)(x)
-
-    # Output layer
-    output = Dense(1, activation="linear", name="output")(x)
-
-    # Create model
-    model = Model(inputs=[feature_input, location_input], outputs=output)
-
-    return model
-
-
 # Dictionary mapping model names to their creation functions
 MODEL_REGISTRY = {
     "lstm": create_lstm_model,
@@ -571,7 +545,6 @@ MODEL_REGISTRY = {
     "bigru": create_bidirectional_gru_model,
     "cnn_lstm": create_cnn_lstm_model,
     "transformer": create_transformer_model,
-    "stacked_lstm": create_stacked_lstm_model,
 }
 
 
