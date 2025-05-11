@@ -10,7 +10,6 @@ assignment_dir = os.path.join(current_dir, "Assignment_2B")
 
 # Add paths relative to the script location
 sys.path.append(assignment_dir)
-sys.path.append(os.path.join(assignment_dir, "src"))
 
 # Change working directory to Assignment_2B for relative imports
 # This way relative paths will work as expected
