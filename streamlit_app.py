@@ -2,12 +2,26 @@ import streamlit as st
 import os
 import sys
 
-from Assignment_2B.src.route_finder.site_network import SiteNetwork
-from Assignment_2B.src.route_finder.route_finder import RouteFinder
-from Assignment_2B.src.visualizer.network_visualizer import NetworkVisualizer
-from Assignment_2B.src.visualizer.route_visualizer import RouteVisualizer
-from Assignment_2B.src.views.network_page import NetworkPage
-from Assignment_2B.src.views.route_page import RoutePage
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Store the Assignment_2B directory path
+assignment_dir = os.path.join(current_dir, "Assignment_2B")
+
+# Add paths relative to the script location
+sys.path.append(assignment_dir)
+sys.path.append(os.path.join(assignment_dir, "src"))
+
+# Change working directory to Assignment_2B for relative imports
+# This way relative paths will work as expected
+os.chdir(assignment_dir)
+
+from src.route_finder.site_network import SiteNetwork
+from src.route_finder.route_finder import RouteFinder
+from src.visualizer.network_visualizer import NetworkVisualizer
+from src.visualizer.route_visualizer import RouteVisualizer
+from src.views.network_page import NetworkPage
+from src.views.route_page import RoutePage
 
 
 class TBRGSApp:
@@ -51,17 +65,5 @@ class TBRGSApp:
 
 # Run the application if this is the main script
 if __name__ == "__main__":
-    # Get the directory of the current script
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Store the Assignment_2B directory path
-    assignment_dir = os.path.join(current_dir, "Assignment_2B")
-
-    # Add paths relative to the script location
-    sys.path.append(assignment_dir)
-
-    # Change working directory to Assignment_2B for relative imports
-    # This way relative paths will work as expected
-    os.chdir(assignment_dir)
     app = TBRGSApp("processed_data/preprocessed_data/sites_metadata.json")
     app.run()
