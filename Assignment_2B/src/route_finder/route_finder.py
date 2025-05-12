@@ -1,4 +1,6 @@
 import random
+import os
+import pickle
 
 from src.problem.vicroads_graph_problem import VicRoadsGraphProblem
 from src.search_algorithm.search_algorithm import (
@@ -25,6 +27,9 @@ class RouteFinder:
     # Class-level variable to cache the lookups across instances
     _traffic_volume_lookups_cache = None
 
+    # Path for the pickled lookup data
+    PICKLE_PATH = "processed_data/complete_csv_oct_nov_2006/traffic_volume_lookups.pkl"
+
     def __init__(self, network):
         """
         Initialize with a SiteNetwork object
@@ -34,10 +39,42 @@ class RouteFinder:
 
         # Use cached lookups if available, otherwise create them
         if RouteFinder._traffic_volume_lookups_cache is None:
-            RouteFinder._traffic_volume_lookups_cache = self._load_and_preprocess_data()
+            # Try to load from pickle file first
+            if self._load_from_pickle():
+                print("Loaded traffic volume lookups from pickle file")
+            else:
+                print("Creating traffic volume lookups for the first time")
+                RouteFinder._traffic_volume_lookups_cache = (
+                    self._load_and_preprocess_data()
+                )
+                # Save to pickle for future use
+                self._save_to_pickle()
 
         # Reference the cached lookups (no copying needed)
         self.traffic_volume_lookups = RouteFinder._traffic_volume_lookups_cache
+
+    def _load_from_pickle(self):
+        """Try to load the traffic volume lookups from pickle file"""
+        try:
+            if os.path.exists(self.PICKLE_PATH):
+                with open(self.PICKLE_PATH, "rb") as f:
+                    RouteFinder._traffic_volume_lookups_cache = pickle.load(f)
+                return True
+            return False
+        except Exception as e:
+            print(f"Error loading pickle file: {str(e)}")
+            return False
+
+    def _save_to_pickle(self):
+        """Save the traffic volume lookups to pickle file"""
+        try:
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(self.PICKLE_PATH), exist_ok=True)
+            with open(self.PICKLE_PATH, "wb") as f:
+                pickle.dump(RouteFinder._traffic_volume_lookups_cache, f)
+            print(f"Saved traffic volume lookups to {self.PICKLE_PATH}")
+        except Exception as e:
+            print(f"Error saving pickle file: {str(e)}")
 
     def _get_algorithm(self, name):
         """
