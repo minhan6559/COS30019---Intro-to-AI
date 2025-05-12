@@ -199,7 +199,7 @@ class RouteFinder:
         """
         a, b, c = -1.4648375, 93.75, -traffic_volume
         d = b * b - (4 * a * c)
-        speed = (-b + math.sqrt(d)) / (2 * a)  # km/h
+        speed = (-b - math.sqrt(d)) / (2 * a)  # km/h
         speed = min(speed, 60)  # Cap speed at 60 km/h
         speed = max(speed, 5)  # Minimum speed of 5 km/h
 

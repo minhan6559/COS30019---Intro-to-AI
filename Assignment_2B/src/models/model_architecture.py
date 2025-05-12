@@ -4,26 +4,50 @@ This module provides functions to create various deep learning model architectur
 """
 
 import tensorflow as tf
+from tensorflow import keras
 
 # Import Keras modules directly
+# Core TensorFlow and Keras imports
+import tensorflow as tf
 from keras.models import Model
 from keras.layers import (
+    # Input and basic layers
     Input,
     Dense,
+    Dropout,
+    Activation,
+    Reshape,
+    RepeatVector,
+    Lambda,
+    Concatenate,
+    Add,
+    Subtract,
+    Multiply,
+    Average,
+    # Normalization and regularization
+    BatchNormalization,
+    LayerNormalization,
+    SpatialDropout1D,
+    # Embedding layers
+    Embedding,
+    # Convolutional layers
+    Conv1D,
+    MaxPooling1D,
+    AveragePooling1D,
+    # Recurrent layers
     LSTM,
     GRU,
     Bidirectional,
-    Dropout,
-    Embedding,
-    Concatenate,
-    BatchNormalization,
-    Conv1D,
-    MaxPooling1D,
-    Attention,
-    GlobalAveragePooling1D,
-    LayerNormalization,
+    # Attention mechanisms
     MultiHeadAttention,
-    Add,
+    Attention,
+    # Pooling layers
+    GlobalAveragePooling1D,
+    GlobalMaxPooling1D,
+    # Shape operations
+    Flatten,
+    Dot,
+    Softmax,
 )
 from keras.regularizers import l2
 
