@@ -217,7 +217,7 @@ class RouteFinder:
         datetime_str is in the format like this "2006-11-30 14:15"
         """
         # Use all algorithms if none specified
-        all_algorithms = ["A*", "DFS", "BFS", "GBFS", "UCS", "BULB"]
+        all_algorithms = ["A*", "UCS", "BULB", "GBFS", "DFS", "BFS"]
         if selected_algorithms is None or "All" in selected_algorithms:
             selected_algorithms = all_algorithms
 
