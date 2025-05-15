@@ -98,10 +98,15 @@ class TBRGSApp:
         """
         # Create a sidebar for navigation
         with st.sidebar:
-            logo = Image.open("images/swinburne_logo.png")
-            st.image(
-                logo,
+            # Display the SVG logo using st.markdown to avoid PIL errors
+            with open("images/logo-long-full.svg", "r", encoding="utf-8") as svg_file:
+                svg_logo = svg_file.read()
+
+            st.markdown(
+                f'<div style="text-align:left; display: inline-block; border-radius: 10px; overflow: hidden; border: 1px solid #ddd;">{svg_logo}</div>',
+                unsafe_allow_html=True,
             )
+
             st.title("Boroondara TBRGS Navigation")
 
             # Add some space

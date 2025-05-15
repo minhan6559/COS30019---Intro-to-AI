@@ -37,7 +37,7 @@ class NetworkPage(BasePage):
                 st.markdown(
                     f"""
                 <div style='background-color: #eef7ff; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #d0e0ff;'>
-                    <h3 style='margin-top: 0;'>🚦 Total Sites</h3>
+                    <h3 style='margin-top: 0;'>🚦 Total SCATS Sites</h3>
                     <p style='font-size: 24px; font-weight: bold;'>{len(self.network.sites_data)}</p>
                     <p>SCATS Traffic Sites</p>
                 </div>

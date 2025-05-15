@@ -44,12 +44,29 @@ class RoutePage(BasePage):
             # Create two columns for origin and destination selection
             origin_id, destination_id = self._render_site_selection(site_ids)
 
-            # Create four columns for algorithm, model, date, and time selection
+            # Add space before the button
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # Create four columns for section titles
+            title_col1, title_col2, title_col3, title_col4 = st.columns(4)
+
+            with title_col1:
+                st.markdown("#### 🔍 Search Algorithms")
+
+            with title_col2:
+                st.markdown("#### 🤖 Prediction Model")
+
+            with title_col3:
+                st.markdown("#### 📅 Travel Date")
+
+            with title_col4:
+                st.markdown("#### ⏰ Start Time")
+
+            # Create four columns for the actual inputs
             col1, col2, col3, col4 = st.columns(4)
 
             with col1:
                 # Algorithm selection with better UI
-                st.markdown("#### 🔍 Search Algorithms")
                 algorithm_options = ["A*", "DFS", "BFS", "GBFS", "UCS", "All"]
                 selected_algorithms = st.multiselect(
                     "Select algorithms:",
@@ -60,7 +77,6 @@ class RoutePage(BasePage):
 
             with col2:
                 # Model selection with better UI
-                st.markdown("#### 🤖 Prediction Model")
                 model_options = ["LSTM", "GRU", "CNN_LSTM"]
                 selected_model = st.selectbox(
                     "Select model:",
@@ -79,7 +95,6 @@ class RoutePage(BasePage):
 
             with col3:
                 # Date selection with constraint
-                st.markdown("#### 📅 Travel Date")
                 selected_date = st.date_input(
                     "Select date:",
                     value=datetime(2006, 10, 1).date(),
@@ -91,9 +106,6 @@ class RoutePage(BasePage):
                 st.caption("Data available only for October-November 2006")
 
             with col4:
-                # Time selection
-                st.markdown("#### ⏰ Start Time")
-
                 # Create a container for hour and minute in one row
                 time_col1, time_col2 = st.columns(2)
 
