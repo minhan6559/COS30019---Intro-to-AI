@@ -2,10 +2,13 @@ class Node:
     # Class variable to count the total number of nodes created
     nodes_created = 0
 
-    def __init__(self, state, parent=None, path_cost=0):
+    def __init__(self, state, parent=None, path_cost=0, step_info=None):
         self.state = state
         self.parent = parent
         self.path_cost = path_cost
+        self.step_info = (
+            step_info  # Store information about the step from parent to this node
+        )
 
         # Increment the nodes created counter
         Node.nodes_created += 1
@@ -32,11 +35,15 @@ class Node:
         return children
 
     def child_node(self, problem, next_state):
-        next_node = Node(
-            next_state,
-            self,
-            problem.path_cost(self.path_cost, self.state, next_state),
-        )
+        # Calculate path cost
+        next_path_cost = problem.path_cost(self.path_cost, self.state, next_state)
+
+        # Get step info if the problem provides it
+        step_info = None
+        if hasattr(problem, "get_step_info"):
+            step_info = problem.get_step_info(self.state, next_state, self.path_cost)
+
+        next_node = Node(next_state, self, next_path_cost, step_info)
         return next_node
 
     def path_nodes(self):
@@ -50,6 +57,12 @@ class Node:
     def path_states(self):
         """Return the list of states from the root to this node."""
         return [node.state for node in self.path_nodes()]
+
+    def path_info(self):
+        """Return the list of step information from the root to this node."""
+        # Skip the first node's step_info as it doesn't have a parent
+        path_nodes = self.path_nodes()
+        return [node.step_info for node in path_nodes[1:] if node.step_info is not None]
 
     def __eq__(self, other):
         return isinstance(other, Node) and self.state == other.state

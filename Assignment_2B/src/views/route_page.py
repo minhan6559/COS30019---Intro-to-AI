@@ -60,7 +60,7 @@ class RoutePage(BasePage):
 
             with col2:
                 # Model selection with better UI
-                st.markdown("#### 🧠 Prediction Model")
+                st.markdown("#### 🤖 Prediction Model")
                 model_options = ["LSTM", "GRU", "CNN_LSTM"]
                 selected_model = st.selectbox(
                     "Select model:",

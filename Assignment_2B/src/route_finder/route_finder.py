@@ -80,19 +80,15 @@ class RouteFinder:
         """
         Get the specified search algorithm instance
         """
-        if name == "A*":
-            return AStarSearch()
-        elif name == "DFS":
-            return DepthFirstSearch()
-        elif name == "BFS":
-            return BreadthFirstSearch()
-        elif name == "GBFS":
-            return GreedyBestFirstSearch()
-        elif name == "UCS":
-            return UniformCostSearch()
-        elif name == "BULB":
-            return BULBSearch()
-        return None
+        algorithms_lookup = {
+            "A*": AStarSearch(),
+            "DFS": DepthFirstSearch(),
+            "BFS": BreadthFirstSearch(),
+            "GBFS": GreedyBestFirstSearch(),
+            "UCS": UniformCostSearch(),
+            "BULB": BULBSearch(),
+        }
+        return algorithms_lookup.get(name)
 
     def _load_and_preprocess_data(self):
         """
@@ -190,8 +186,7 @@ class RouteFinder:
             prediction_model=prediction_model,
         )
 
-        # Return a dummy traffic_volume_lookup (not used anymore) and the graph problem
-        return {}, graph_problem
+        return graph_problem
 
     def _calculate_travel_time(self, distance, traffic_volume):
         """
@@ -227,8 +222,7 @@ class RouteFinder:
             selected_algorithms = all_algorithms
 
         # Create the graph ONCE for all algorithms
-        # Note: traffic_volume_lookup is now a dummy and not used
-        _, self.graph_problem = self._create_search_graph(
+        self.graph_problem = self._create_search_graph(
             origin_id, destination_id, prediction_model, datetime_str
         )
 
@@ -237,10 +231,7 @@ class RouteFinder:
         # Run each selected algorithm
         for alg_name in selected_algorithms:
             # Use an empty dictionary as traffic_volume_lookup (not used anymore)
-            dummy_traffic_lookup = {}
-            path, total_cost, route_info = self.find_best_route(
-                alg_name, dummy_traffic_lookup
-            )
+            path, total_cost, route_info = self.find_best_route(alg_name)
 
             if path:
                 routes.append(
@@ -277,7 +268,7 @@ class RouteFinder:
         # Limit to at most 6 routes
         return routes[:6]
 
-    def find_best_route(self, algorithm, traffic_volume_lookup):
+    def find_best_route(self, algorithm):
         """
         Find the best route using an already created graph
         """
@@ -288,106 +279,14 @@ class RouteFinder:
             return None, None, None
 
         # Execute search algorithm
-        dest_node, nodes_expanded, nodes_created = search_alg.search(self.graph_problem)
+        dest_node, _, _ = search_alg.search(self.graph_problem)
 
         # If no path is found, return None
         if not dest_node:
             return None, None, None
 
         path = dest_node.path_states()
+        total_cost = dest_node.path_cost
+        route_info = dest_node.path_info()
 
-        # Calculate route information
-        return path, *self._calculate_route_details(path, traffic_volume_lookup)
-
-    def _calculate_route_details(self, path, traffic_volume_lookup):
-        """
-        Calculate total travel time and create a list of steps for a path
-        """
-        total_cost = 0
-        route_info = []
-        cumulative_time = 0
-
-        # Get the datetime object for the initial timestamp
-        datetime_str = self.graph_problem.initial_timestamp
-        if datetime_str:
-            try:
-                initial_dt = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
-            except (ValueError, TypeError):
-                initial_dt = datetime_str  # In case it's already a datetime object
-        else:
-            # Default to current time if no timestamp provided
-            initial_dt = datetime.now()
-
-        for i in range(len(path) - 1):
-            from_id = path[i]
-            to_id = path[i + 1]
-
-            # Find the connection between these sites
-            connection = self._find_connection(from_id, to_id)
-
-            if connection:
-                # Calculate the current time for this leg
-                current_time = initial_dt + timedelta(minutes=cumulative_time)
-
-                # Format for lookup
-                date_str = current_time.date().strftime("%Y-%m-%d")
-                hour = current_time.hour
-                minute = current_time.minute
-                interval_id = (hour * 4) + (minute // 15)
-
-                # Get traffic volume for this leg at the current time using the fallback mechanism
-                location = connection.get("approach_location", "").strip()
-
-                if (
-                    self.graph_problem.traffic_volume_lookups
-                    and self.graph_problem.prediction_model
-                ):
-                    traffic_volume = (
-                        self.graph_problem._get_traffic_volume_with_fallback(
-                            location, date_str, interval_id
-                        )
-                    )
-                else:
-                    # Use reasonable default if no traffic data available
-                    traffic_volume = 15
-
-                # Calculate travel time for this leg
-                distance = connection["distance"]
-                travel_time = self.graph_problem._calculate_travel_time(
-                    distance, traffic_volume
-                )
-
-                # Update cumulative time
-                cumulative_time += travel_time
-
-                # Add to total cost
-                total_cost += travel_time
-
-                # Add step info
-                route_info.append(
-                    {
-                        "from_id": from_id,
-                        "to_id": to_id,
-                        "road": connection["shared_road"],
-                        "distance": connection["distance"],
-                        "travel_time": travel_time,
-                        "from_lat": connection["from_lat"],
-                        "from_lng": connection["from_lng"],
-                        "to_lat": connection["to_lat"],
-                        "to_lng": connection["to_lng"],
-                        "traffic_volume": traffic_volume,
-                        "time_of_day": current_time.strftime("%H:%M"),
-                        "date": current_time.strftime("%Y-%m-%d"),
-                    }
-                )
-
-        return total_cost, route_info
-
-    def _find_connection(self, from_id, to_id):
-        """
-        Find a connection between two sites
-        """
-        for conn in self.network.connections:
-            if conn["from_id"] == from_id and conn["to_id"] == to_id:
-                return conn
-        return None
+        return path, total_cost, route_info

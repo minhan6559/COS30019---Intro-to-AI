@@ -273,55 +273,67 @@ class VicRoadsGraphProblem(ProblemBase):
             f"has_timestamp={has_timestamp})"
         )
 
-    @classmethod
-    def to_file(cls, problem, filepath):
+    def get_step_info(self, current_state, next_state, cost_so_far):
         """
-        Save a graph problem to a file in the standard format.
+        Calculate step information from current_state to next_state.
+        Returns a dictionary with details about this step of the journey.
 
         Args:
-            problem: MultigoalGraphProblem instance to save
-            filepath: Path to save the file
+            current_state: Current node ID
+            next_state: Next node ID
+            cost_so_far: The cost up to current_state (in minutes)
 
         Returns:
-            str: The filepath where the problem was saved
+            Dictionary with step details or None if the connection doesn't exist
         """
-        # Extract necessary components
-        graph_dict = (
-            problem.graph.graph_dict if hasattr(problem.graph, "graph_dict") else {}
+        # Get connection details
+        conn_key = (int(current_state), int(next_state))
+        connection = self.connection_lookup.get(conn_key)
+
+        if not connection:
+            return None
+
+        # Get the distance and location
+        distance = connection["distance"]  # in km
+        location = connection.get("approach_location", "").strip()
+
+        # Calculate the actual timestamp for this leg of the journey
+        if isinstance(self.initial_timestamp, str):
+            initial_dt = datetime.strptime(self.initial_timestamp, "%Y-%m-%d %H:%M")
+        else:
+            initial_dt = self.initial_timestamp or datetime.now()
+
+        # Add the accumulated cost_so_far (in minutes) to the initial timestamp
+        current_time = initial_dt + timedelta(minutes=cost_so_far)
+
+        # Format current time for lookup
+        date_str = current_time.date().strftime("%Y-%m-%d")
+        hour = current_time.hour
+        minute = current_time.minute
+        interval_id = (hour * 4) + (minute // 15)
+
+        # Get traffic volume for the current time
+        traffic_volume = (
+            self._get_traffic_volume_with_fallback(location, date_str, interval_id)
+            if self.traffic_volume_lookups and self.prediction_model
+            else 15
         )
-        locations = problem.locations
-        initial = problem.initial
-        goals = problem.goals
 
-        # Ensure all nodes in locations appear in the graph dictionary
-        for node in locations:
-            if node not in graph_dict:
-                graph_dict[node] = {}
+        # Calculate travel time for this leg
+        travel_time = self._calculate_travel_time(distance, traffic_volume)
 
-        with open(filepath, "w") as f:
-            # Write nodes section
-            f.write("Nodes:\n")
-            for node in sorted(locations.keys()):
-                x, y = locations[node]
-                f.write(f"{node}: ({x},{y})\n")
-
-            # Write edges section
-            f.write("Edges:\n")
-            for node in sorted(graph_dict.keys()):
-                for neighbor, weight in sorted(graph_dict[node].items()):
-                    # Format weight: keep as float with 2 decimal place if it has fractional part
-                    if isinstance(weight, float) and weight.is_integer():
-                        weight_str = int(weight)
-                    else:
-                        weight_str = round(float(weight), 2)
-                    f.write(f"({node},{neighbor}): {weight_str}\n")
-
-            # Write origin section
-            f.write("Origin:\n")
-            f.write(f"{initial}\n")
-
-            # Write destinations section
-            f.write("Destinations:\n")
-            f.write("; ".join(str(goal) for goal in goals))
-
-        return filepath
+        # Return step info
+        return {
+            "from_id": current_state,
+            "to_id": next_state,
+            "road": connection["shared_road"],
+            "distance": connection["distance"],
+            "travel_time": travel_time,
+            "from_lat": connection["from_lat"],
+            "from_lng": connection["from_lng"],
+            "to_lat": connection["to_lat"],
+            "to_lng": connection["to_lng"],
+            "traffic_volume": traffic_volume,
+            "time_of_day": current_time.strftime("%H:%M"),
+            "date": current_time.strftime("%Y-%m-%d"),
+        }
