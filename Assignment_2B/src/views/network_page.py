@@ -73,6 +73,8 @@ class NetworkPage(BasePage):
                     unsafe_allow_html=True,
                 )
 
+        # Add a endline
+        st.markdown("<br>", unsafe_allow_html=True)
         # Create tabs for different views
         tab1, tab2 = st.tabs(["🗺️ Network Map", "🔍 Site Search"])
 

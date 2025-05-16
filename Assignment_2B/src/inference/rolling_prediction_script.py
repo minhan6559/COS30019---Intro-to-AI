@@ -67,7 +67,7 @@ model = tf.keras.models.load_model(args.model_path)
 
 # Load processed data components
 print("Loading processed data components...")
-with open(os.path.join(args.data_path, "scaler.pkl"), "rb") as f:
+with open(os.path.join(args.data_path, "scaler_dict.pkl"), "rb") as f:
     scaler = pickle.load(f)
 
 with open(os.path.join(args.data_path, "feature_cols.pkl"), "rb") as f:
@@ -170,21 +170,38 @@ def engineer_features_batch(sequences, location_indices, avg_traffic_dict):
         # Lag features
         seq["traffic_lag_1"] = seq["traffic_volume"].shift(1)
         seq["traffic_lag_4"] = seq["traffic_volume"].shift(4)
+        seq["traffic_lag_8"] = seq["traffic_volume"].shift(8)
         seq["traffic_lag_96"] = seq["traffic_volume"].shift(96)
+
+        # Rolling mean (average of last hour of traffic)
+        seq["rolling_mean_4"] = seq["traffic_volume"].rolling(4).mean().shift(1)
+
+        # Traffic acceleration (rate of change)
+        seq["traffic_acceleration"] = seq["traffic_volume"].diff().fillna(0)
 
         # Average traffic for this interval
         seq["avg_traffic_this_timeofday"] = seq["interval_id"].map(avg_traffic)
 
-        # Fill missing lag values
-        seq["traffic_lag_1"] = seq["traffic_lag_1"].fillna(
-            seq["avg_traffic_this_timeofday"]
-        )
-        seq["traffic_lag_4"] = seq["traffic_lag_4"].fillna(
-            seq["avg_traffic_this_timeofday"]
-        )
-        seq["traffic_lag_96"] = seq["traffic_lag_96"].fillna(
-            seq["avg_traffic_this_timeofday"]
-        )
+        # Fill missing values
+        # Where rolling_mean_4 is missing, use the current traffic value
+        missing_rolling_mask = seq["rolling_mean_4"].isna()
+        seq.loc[missing_rolling_mask, "rolling_mean_4"] = seq.loc[
+            missing_rolling_mask, "avg_traffic_this_timeofday"
+        ]
+
+        # Fill missing lag values with meaningful defaults
+        for lag_col in [
+            "traffic_lag_1",
+            "traffic_lag_4",
+            "traffic_lag_8",
+            "traffic_lag_96",
+        ]:
+            missing_mask = seq[lag_col].isna()
+            # For each missing lag value, find the relevant time point and use its average
+            for idx in seq[missing_mask].index:
+                current_tod = seq.loc[idx, "interval_id"]
+                # Use average traffic for this time of day as default
+                seq.loc[idx, lag_col] = seq.loc[idx, "avg_traffic_this_timeofday"]
 
         # Gap handling features
         seq["days_since_prev"] = 0
@@ -200,11 +217,38 @@ def prepare_batch_inputs(features_batch, feature_cols):
     # Normalize features
     batch_size, seq_length, n_features = features_batch.shape
     features_reshaped = features_batch.reshape(-1, n_features)
-    features_scaled = scaler.transform(features_reshaped)
+
+    # Create scaled features array
+    features_scaled = features_reshaped.copy()
+
+    # Find the index of 'location_idx' in feature_cols
+    loc_idx_position = feature_cols.index("location_idx")
+
+    # Apply scaling to each feature individually
+    for i, feature_name in enumerate(feature_cols):
+        # Don't scale categorical features like location_idx, and binary features
+        if feature_name == "location_idx" or feature_name in [
+            "is_weekend",
+            "after_gap",
+        ]:
+            continue
+
+        # For cyclical features, they should already be scaled appropriately
+        if feature_name in ["dow_sin", "dow_cos", "tod_sin", "tod_cos"]:
+            continue
+
+        # For other features, apply the appropriate scaler if available
+        if feature_name in scaler:
+            features_scaled[:, i] = (
+                scaler[feature_name]
+                .transform(features_reshaped[:, i].reshape(-1, 1))
+                .flatten()
+            )
+
+    # Reshape back to original shape
     features_scaled = features_scaled.reshape(batch_size, seq_length, n_features)
 
     # Separate location index from other features
-    loc_idx_position = feature_cols.index("location_idx")
     location_input = features_scaled[:, :, loc_idx_position].astype(int)
     feature_input = np.delete(features_scaled, loc_idx_position, axis=2)
 
