@@ -8,7 +8,9 @@ class SiteNetwork:
     Class for representing the network of SCATS sites and their connections
     """
 
-    def __init__(self, metadata_file="data/sites_metadata.json"):
+    def __init__(
+        self, metadata_file="processed_data/preprocessed_data/sites_metadata.json"
+    ):
         """
         Initialize the network with data from a metadata file
         """

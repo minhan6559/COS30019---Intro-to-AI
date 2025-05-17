@@ -17,6 +17,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import math
+from src.search_algorithm.yens_algorithm import YensKShortestPaths
+import inspect
 
 
 class RouteFinder:
@@ -250,23 +252,34 @@ class RouteFinder:
         routes.sort(key=lambda x: x["total_cost"])
 
         # Assign colors based on relative performance (best to worst)
-        route_colors = ["aqua", "blue", "green", "orange", "red", "darkred"]
+        route_colors = [
+            "aqua",
+            "blue",
+            "green",
+            "orange",
+            "red",
+            "darkred",
+            "purple",
+            "pink",
+        ]
         route_descriptions = [
             "Best route",
             "Second best",
             "Third best",
             "Fourth best",
             "Fifth best",
-            "Worst route",
+            "Sixth best",
+            "Seventh best",
+            "Eighth best",
         ]
 
-        for i, route in enumerate(routes[:6]):
+        for i, route in enumerate(routes[:8]):
             color_index = min(i, len(route_colors) - 1)
             route["traffic_level"] = route_colors[color_index]
             route["route_rank"] = route_descriptions[color_index]
 
-        # Limit to at most 6 routes
-        return routes[:6]
+        # Limit to at most 8 routes
+        return routes[:8]
 
     def find_best_route(self, algorithm):
         """
@@ -290,3 +303,83 @@ class RouteFinder:
         route_info = dest_node.path_info()
 
         return path, total_cost, route_info
+
+    def find_top_k_routes(
+        self,
+        origin_id,
+        destination_id,
+        k=5,
+        prediction_model="LSTM",
+        datetime_str=None,
+    ):
+        """
+        Find the top K shortest paths from origin to destination using Yen's algorithm.
+
+        Args:
+            origin_id: ID of the origin node
+            destination_id: ID of the destination node
+            k: Number of paths to find (default 5)
+            prediction_model: Traffic prediction model to use (default "LSTM")
+            datetime_str: Date and time string in format "YYYY-MM-DD HH:MM"
+
+        Returns:
+            List of routes with their details, sorted by cost (fastest first)
+        """
+        # Create the graph for search
+        self.graph_problem = self._create_search_graph(
+            origin_id, destination_id, prediction_model, datetime_str
+        )
+
+        # Create Yen's algorithm instance
+        yens_algorithm = YensKShortestPaths()
+
+        # Find k shortest paths
+        shortest_paths = yens_algorithm.find_k_shortest_paths(self.graph_problem, k)
+
+        # Convert to the same format as find_multiple_routes
+        routes = []
+        for i, (path, total_cost, route_info) in enumerate(shortest_paths):
+            routes.append(
+                {
+                    "algorithm": f"Yen-{i+1}",
+                    "path": path,
+                    "total_cost": total_cost,
+                    "route_info": route_info,
+                    "traffic_level": "",
+                    "prediction_model": prediction_model,
+                    "datetime": datetime_str,
+                }
+            )
+
+        # Sort routes by total cost (travel time)
+        routes.sort(key=lambda x: x["total_cost"])
+
+        # Assign colors based on relative performance (best to worst)
+        route_colors = [
+            "aqua",
+            "blue",
+            "green",
+            "orange",
+            "red",
+            "darkred",
+            "purple",
+            "pink",
+        ]
+        route_descriptions = [
+            "Best route",
+            "Second best",
+            "Third best",
+            "Fourth best",
+            "Fifth best",
+            "Sixth best",
+            "Seventh best",
+            "Eighth best",
+        ]
+
+        for i, route in enumerate(routes[:8]):
+            color_index = min(i, len(route_colors) - 1)
+            route["traffic_level"] = route_colors[color_index]
+            route["route_rank"] = route_descriptions[color_index]
+
+        # Limit to at most 8 routes
+        return routes[: min(k, 8)]

@@ -41,41 +41,21 @@ class RoutePage(BasePage):
             # Get sorted list of site IDs for dropdowns
             site_ids = sorted(list(map(int, self.network.sites_data.keys())))
 
-            # Create two columns for origin and destination selection
-            origin_id, destination_id = self._render_site_selection(site_ids)
+            # Create row with origin, destination, and search method
+            origin_id, destination_id, search_method, selected_algorithms, k_value = (
+                self._render_site_selection(site_ids)
+            )
 
             # Add space before the button
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # Create four columns for section titles
-            title_col1, title_col2, title_col3, title_col4 = st.columns(4)
-
-            with title_col1:
-                st.markdown("#### 🔍 Search Algorithms")
-
-            with title_col2:
-                st.markdown("#### 🤖 Prediction Model")
-
-            with title_col3:
-                st.markdown("#### 📅 Travel Date")
-
-            with title_col4:
-                st.markdown("#### ⏰ Start Time")
-
-            # Create four columns for the actual inputs
-            col1, col2, col3, col4 = st.columns(4)
+            # Create three columns for the inputs
+            col1, col2, col3 = st.columns(3)
 
             with col1:
-                # Algorithm selection with better UI
-                algorithm_options = ["A*", "DFS", "BFS", "GBFS", "UCS", "All"]
-                selected_algorithms = st.multiselect(
-                    "Select algorithms:",
-                    options=algorithm_options,
-                    default=["All"],
-                    help="Select one or more algorithms or 'All' to compare them",
-                )
+                # Model section title and selection
+                st.markdown("#### 🤖 Model")
 
-            with col2:
                 # Model selection with better UI
                 model_options = ["LSTM", "GRU", "CNN_LSTM"]
                 selected_model = st.selectbox(
@@ -93,7 +73,10 @@ class RoutePage(BasePage):
                 }
                 st.caption(model_descriptions[selected_model])
 
-            with col3:
+            with col2:
+                # Date section title and selection
+                st.markdown("#### 📅 Travel Date")
+
                 # Date selection with constraint
                 selected_date = st.date_input(
                     "Select date:",
@@ -105,7 +88,10 @@ class RoutePage(BasePage):
                 # Add note about data availability
                 st.caption("Data available only for October-November 2006")
 
-            with col4:
+            with col3:
+                # Time section title and selection
+                st.markdown("#### ⏰ Start Time")
+
                 # Create a container for hour and minute in one row
                 time_col1, time_col2 = st.columns(2)
 
@@ -115,7 +101,7 @@ class RoutePage(BasePage):
                         "Hour:",
                         options=list(range(24)),
                         format_func=lambda x: f"{x:02d}",
-                        index=8,  # Default to 8:00
+                        index=8,  # Default to 08:08
                     )
 
                 with time_col2:
@@ -124,7 +110,7 @@ class RoutePage(BasePage):
                         "Minute:",
                         options=list(range(60)),  # Full range of minutes
                         format_func=lambda x: f"{x:02d}",
-                        index=0,  # Default to 8:00
+                        index=8,  # Default to 08:08
                     )
 
                 # Combine hour and minute into time object
@@ -145,7 +131,7 @@ class RoutePage(BasePage):
 
             # Find route button
             if find_routes:
-                if not selected_algorithms:
+                if search_method == "Traditional Search" and not selected_algorithms:
                     st.warning("⚠️ Please select at least one algorithm")
                 elif origin_id == destination_id:
                     st.error("❌ Origin and destination cannot be the same")
@@ -158,13 +144,18 @@ class RoutePage(BasePage):
                         selected_algorithms,
                         selected_model,
                         datetime_str,
+                        search_method,
+                        k_value,
                     )
+
+            # Show implementation notes at the bottom of the page
+            self._render_implementation_notes()
 
     def _render_site_selection(self, site_ids):
         """
-        Render the origin and destination selection UI
+        Render the origin and destination selection UI and search method
         """
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
 
         with col1:
             st.markdown("### 🚩 Origin")
@@ -210,7 +201,40 @@ class RoutePage(BasePage):
                         unsafe_allow_html=True,
                     )
 
-        return origin_id, destination_id
+        with col3:
+            st.markdown("### 🔍 Search Method")
+            # Method selection: Yen's K-Shortest or traditional algorithms
+            search_method = st.radio(
+                "Select search method:",
+                options=["K-Shortest", "Traditional Search"],
+                index=0,  # Default to Yen's
+                help="Choose whether to use Yen's k-shortest paths algorithm or traditional search algorithms",
+                horizontal=True,  # Display radio buttons horizontally
+            )
+
+            if search_method == "K-Shortest":
+                # K selection slider
+                k_value = st.slider(
+                    "Number of paths (k):",
+                    min_value=1,
+                    max_value=8,
+                    value=5,
+                    step=1,
+                    help="Select how many alternative paths to find",
+                )
+                selected_algorithms = None  # Not used with Yen's
+            else:
+                # Traditional algorithm selection with better UI
+                algorithm_options = ["All", "A*", "DFS", "BFS", "GBFS", "UCS"]
+                selected_algorithms = st.multiselect(
+                    "Select algorithms:",
+                    options=algorithm_options,
+                    default=["All"],
+                    help="Select one or more algorithms or 'All' to compare them",
+                )
+                k_value = None  # Not used with traditional algorithms
+
+        return origin_id, destination_id, search_method, selected_algorithms, k_value
 
     def _display_route_results(self, origin_id, destination_id, routes, selected_model):
         """
@@ -250,11 +274,11 @@ class RoutePage(BasePage):
         # Create route summary cards in a grid
         st.subheader("🔍 Route Summary")
 
-        # Create a grid of cards using columns
-        cols = st.columns(min(3, len(routes)))
+        # Create a grid of cards using columns (4 columns)
+        cols = st.columns(4)
 
         for i, route in enumerate(routes):
-            with cols[i % 3]:
+            with cols[i % 4]:
                 # Create a card-like container
                 traffic_color = route["traffic_level"].lower()
                 card_bg_color = {
@@ -264,6 +288,10 @@ class RoutePage(BasePage):
                     "orange": "#fff7e6",
                     "red": "#ffe6e6",
                     "darkred": "#ffcccc",
+                    "purple": "#f3e6ff",
+                    "pink": "#ffe6f7",
+                    "black": "#f0f0f0",
+                    "gray": "#f5f5f5",
                 }.get(traffic_color, "#f0f0f0")
 
                 st.markdown(
@@ -271,7 +299,7 @@ class RoutePage(BasePage):
                 <div style='background-color: {card_bg_color}; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #ddd;'>
                     <h4 style='margin-top: 0;'>Route {i+1}: {route['algorithm']}</h4>
                     <p><strong>Travel Time:</strong> {route['total_cost']:.2f} min</p>
-                    <p><strong>Traffic Level:</strong> {route['traffic_level'].capitalize()}</p>
+                    <p><strong>Path Color:</strong> {route['traffic_level'].capitalize()}</p>
                     <p><strong>Intermediate Sites:</strong> {len(route['path']) - 2}</p>
                 </div>
                 """,
@@ -319,7 +347,7 @@ class RoutePage(BasePage):
                     st.markdown(f"**Algorithm:** {route['algorithm']}")
                     st.markdown(f"**Travel Time:** {route['total_cost']:.2f} minutes")
                     st.markdown(
-                        f"**Traffic Level:** {route['traffic_level'].capitalize()}"
+                        f"**Path Color:** {route['traffic_level'].capitalize()}"
                     )
                     st.markdown(f"**Model Used:** {selected_model}")
 
@@ -380,14 +408,18 @@ class RoutePage(BasePage):
         selected_algorithms,
         selected_model,
         datetime_str,
+        search_method,
+        k_value,
     ):
         """
-        Find and display routes between origin and destination using selected algorithms
+        Find and display routes between origin and destination using selected search method
         """
         # Create a progress bar with better styling
-        progress_text = (
-            f"Finding optimal routes using {selected_model} model for {datetime_str}..."
-        )
+        if search_method == "K-Shortest":
+            progress_text = f"Finding {k_value} shortest paths using Yen's algorithm with {selected_model} model for {datetime_str}..."
+        else:
+            progress_text = f"Finding optimal routes using {selected_model} model for {datetime_str}..."
+
         progress_bar = st.progress(0)
 
         # Display a spinner with a better message
@@ -399,20 +431,35 @@ class RoutePage(BasePage):
                 # Smaller sleep for faster response
                 time_module.sleep(0.01)
 
-            # Find routes using selected algorithms
-            routes = self.route_finder.find_multiple_routes(
-                origin_id,
-                destination_id,
-                selected_algorithms,
-                selected_model,
-                datetime_str,
-            )
+            # Find routes using the selected search method
+            if search_method == "K-Shortest":
+                routes = self.route_finder.find_top_k_routes(
+                    origin_id,
+                    destination_id,
+                    k=k_value,
+                    prediction_model=selected_model,
+                    datetime_str=datetime_str,
+                )
+            else:
+                # Traditional algorithms
+                routes = self.route_finder.find_multiple_routes(
+                    origin_id,
+                    destination_id,
+                    selected_algorithms,
+                    selected_model,
+                    datetime_str,
+                )
 
             # Check if routes were found
             if not routes:
-                st.error(
-                    f"No route found from Site {origin_id} to Site {destination_id}. Try different sites or algorithms."
-                )
+                if search_method == "K-Shortest":
+                    st.error(
+                        f"No route found from Site {origin_id} to Site {destination_id} using Yen's algorithm. Try different sites."
+                    )
+                else:
+                    st.error(
+                        f"No route found from Site {origin_id} to Site {destination_id}. Try different sites or algorithms."
+                    )
                 return
 
             # Display routes
@@ -432,16 +479,23 @@ class RoutePage(BasePage):
                 """
             **Current Implementation Notes:**
             
-            - The route finder uses multiple search algorithms:
-              * A* (A-star): Optimal path finding using distance heuristic
-              * DFS (Depth-First Search): Explores as far as possible along each branch
-              * BFS (Breadth-First Search): Explores all neighbors at current depth before moving deeper
-              * GBFS (Greedy Best-First Search): Always moves toward the goal using heuristic
-              * UCS (Uniform Cost Search): Explores paths in order of increasing cost
+            - The route finder supports two approaches:
+              1. **Yen's K-Shortest Paths Algorithm**: 
+                 * Finds the k shortest paths from origin to destination
+                 * Uses A* as the underlying search algorithm
+                 * Excellent for finding alternative routes with similar efficiency
+                 * Provides more diverse routing options
+
+              2. **Traditional Search Algorithms**:
+                 * A* (A-star): Optimal path finding using distance heuristic
+                 * DFS (Depth-First Search): Explores as far as possible along each branch
+                 * BFS (Breadth-First Search): Explores all neighbors at current depth before moving deeper
+                 * GBFS (Greedy Best-First Search): Always moves toward the goal using heuristic
+                 * UCS (Uniform Cost Search): Explores paths in order of increasing cost
             
-            - Travel time is currently estimated based on distance with a random traffic factor (1.1-1.5) to simulate varying traffic conditions
-            - Route colors indicate traffic conditions: Green (low traffic), Yellow (medium traffic), Red (high traffic)
+            - Travel time is calculated based on distance and predicted traffic volumes
+            - Different colors are used to distinguish between routes (aqua, blue, green, orange, red, etc.)
             - A 30-second delay is added for each intersection as per the assignment requirements
-            - In the future, the travel time estimation will be replaced with predictions from machine learning models (LSTM and GRU)
+            - Three prediction models (LSTM, GRU, CNN-LSTM) are available for traffic prediction
             """
             )
