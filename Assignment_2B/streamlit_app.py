@@ -13,7 +13,7 @@ class TBRGSApp:
     Main Streamlit application class for the Traffic-Based Route Guidance System
     """
 
-    def __init__(self, metadata_file="data/sites_metadata.json"):
+    def __init__(self, metadata_file):
         """
         Initialize the application
         """
