@@ -1,3 +1,0 @@
-All BFS, DFS, AS, and GBFS tests passed!
-
-Note: CUS1 and CUS2 algorithms were not automatically compared.
