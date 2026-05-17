@@ -155,6 +155,7 @@ def compare_solutions(solution_file, student_file, output_file):
     # Only compare BFS, DFS, AS, and GBFS
     methods_to_compare = ["BFS", "DFS", "AS", "GBFS"]
     differences = []
+    diff_methods = set()
 
     for key in solution_results:
         test_file, method = key
@@ -169,6 +170,7 @@ def compare_solutions(solution_file, student_file, output_file):
             differences.append(
                 f"MISSING: Test {test_file} - Method {method} is missing from student output\n\n----"
             )
+            diff_methods.add(method)
             continue
 
         student = student_results[key]
@@ -180,6 +182,7 @@ def compare_solutions(solution_file, student_file, output_file):
                 f"  Student implementation exceeded timeout limit\n\n----",
             ]
             differences.append("\n".join(diff))
+            diff_methods.add(method)
             continue
 
         # Compare solution status
@@ -190,6 +193,7 @@ def compare_solutions(solution_file, student_file, output_file):
                 f"  Got: {student['status']}\n\n----",
             ]
             differences.append("\n".join(diff))
+            diff_methods.add(method)
             continue
 
         # If both found no solution, that's fine
@@ -204,6 +208,7 @@ def compare_solutions(solution_file, student_file, output_file):
                 f"  Got: {student['goal']}",
             ]
             differences.append("\n".join(diff))
+            diff_methods.add(method)
 
         # Compare path
         if solution["path"] != student["path"]:
@@ -213,6 +218,7 @@ def compare_solutions(solution_file, student_file, output_file):
                 f"  Got: {student['path']}",
             ]
             differences.append("\n".join(diff))
+            diff_methods.add(method)
 
         # Add separator at the end of each test case with differences
         if solution["goal"] != student["goal"] or solution["path"] != student["path"]:
@@ -222,6 +228,10 @@ def compare_solutions(solution_file, student_file, output_file):
     with open(output_file, "w") as f:
         if differences:
             f.write("DIFFERENCES FOUND:\n\n")
+            if diff_methods:
+                f.write(
+                    f"Methods with differences: {', '.join(sorted(diff_methods))}\n\n"
+                )
             f.write("\n\n".join(differences))
             f.write(
                 "\n\nNote: CUS1 and CUS2 algorithms were not automatically compared.\n"
@@ -232,7 +242,9 @@ def compare_solutions(solution_file, student_file, output_file):
                 "\nNote: CUS1 and CUS2 algorithms were not automatically compared.\n"
             )
 
-    return len(differences) == 0  # Return True if no differences
+    return len(differences) == 0, sorted(
+        diff_methods
+    )  # (passed, methods_with_differences)
 
 
 def main():
@@ -247,14 +259,19 @@ def main():
 
     print(f"Comparing student output with solution...")
     if os.path.exists(solution_file):
-        passed = compare_solutions(solution_file, student_output_file, output_file)
+        passed, diff_methods = compare_solutions(
+            solution_file, student_output_file, output_file
+        )
         if passed:
             print(
                 f"All BFS, DFS, AS, and GBFS tests passed! See {output_file} for details."
             )
         else:
+            methods_str = (
+                ", ".join(diff_methods) if diff_methods else "BFS, DFS, AS, or GBFS"
+            )
             print(
-                f"Differences found in BFS, DFS, AS, or GBFS tests. See {output_file} for details."
+                f"Differences found in {methods_str} tests. See {output_file} for details."
             )
     else:
         print(f"Error: Solution file '{solution_file}' not found")
