@@ -1,0 +1,310 @@
+You are marking COS30019 Assignment 2B – Machine Learning and Software Integration / Traffic-Based Route Guidance System (TBRGS).
+
+You have access to the student submission code.
+
+Your task is to inspect the student code and mark only these implementation sections:
+
+* Data Processing: /9
+* LSTM: /7
+* GRU: /7
+* CUS / chosen third ML model: /7
+* TBRGS Integration: /15
+
+Do not mark Evaluation, Testing, Report, or Research in detail. I will mark those myself. Still give a short comment about whether the evaluation code is reasonable.
+
+Total code score: /45.
+
+The dataset contains 24-hour traffic volume for 40 SCATS sites in Boroondara from 1st October 2006 to 31st October 2006, with data every 15 minutes.
+
+Be fair and reasonable. Do not require a specific model architecture, optimiser, train/test ratio, or GUI layout. Penalise missing required features, fake/placeholder models, hardcoded outputs, data leakage, static path costs, and code that does not actually integrate ML predictions with routing.
+
+You dont need to run the code and verify, just based on the implementation.
+
+============================================================
+CRITICAL CHECKS
+===============
+
+Check these carefully:
+
+1. Time-series handling:
+
+   * Data should be split chronologically.
+   * Do not accept random shuffled train-test split for time-series data without penalty.
+
+2. Normalisation:
+
+   * Data and/or metrics should be normalised so high-volume SCATS sites do not dominate the results.
+
+3. Prediction horizon:
+
+   * Predictions should be at most one month after the October 2006 cutoff.
+   * Testing/evaluation should only reasonably cover October and November 2006.
+
+4. First-day boundary:
+
+   * If the model needs previous-day flow for early 1st October time slots, it should use 31st October flow as the previous-day reference.
+   * Dropping the first few samples is a minor issue if documented and the rest works.
+   * Crashing or using invalid missing values is a bigger issue.
+
+5. November recursive prediction:
+
+   * For November, the model must not use real November traffic data.
+   * To predict 2nd November, it should first predict 1st November, then use predicted 1st November flow as input.
+   * If the code requires actual November data, penalise heavily.
+
+6. Part A integration:
+
+   * TBRGS should integrate the search algorithms from A2A, not just a separate ML demo.
+   * If only one search algorithm is integrated, deduct under TBRGS.
+
+7. Dynamic time-aware pathfinding:
+
+   * Do not accept fixed static edge costs computed only once at departure time.
+   * Travel time should update as the route progresses.
+   * Example: if route is A -> B -> C, start is 9:00, and arrival at B is 9:30, then cost from B -> C should use traffic prediction around 9:30, not still 9:00.
+
+8. Traffic flow to travel time:
+
+   * Route cost should use predicted traffic flow, distance, and intersection delay.
+   * The assignment allows simplified assumptions such as 60 km/h speed and 30 seconds intersection delay.
+   * If routing uses only distance, hop count, or hardcoded costs, penalise heavily.
+
+============================================================
+DATA PROCESSING /9
+==================
+
+Expected:
+
+* Loads and parses the SCATS dataset correctly.
+* Handles 40 sites, dates, days, times, and 15-minute intervals.
+* Creates suitable time-series samples/windows/lag features.
+* Preserves chronological order.
+* Normalises/scales data appropriately.
+* Handles missing/invalid values.
+* Handles 1st October boundary reasonably.
+* Avoids future-data leakage.
+* Uses reusable functions/classes.
+
+Scoring guide:
+
+* 8-9: Strong complete pipeline.
+* 6-7: Mostly correct with minor issues.
+* 4-5: Basic processing works but weak time-series handling or scaling.
+* 2-3: Very limited processing.
+* 0-1: Missing, hardcoded, broken, or cannot run.
+
+Common deductions:
+
+* Random shuffled split: -2 to -3.
+* No normalisation: -1 to -2.
+* Poor SCATS/time handling: -1 to -3.
+* Future-data leakage: -3 or more.
+
+============================================================
+LSTM /7
+=======
+
+Expected:
+
+* Real LSTM model using PyTorch/TensorFlow/Keras/etc.
+* Trains on processed traffic time-series data.
+* Uses suitable sequence input and target.
+* Uses scaling where appropriate.
+* Has usable train/predict functions.
+* Can be used by the TBRGS or shared prediction module.
+* No hardcoded predictions.
+
+Scoring guide:
+
+* 7: Correct and integrated LSTM.
+* 5-6: Mostly correct with minor issues.
+* 3-4: Exists but weak, incomplete, or poorly integrated.
+* 1-2: Mostly placeholder.
+* 0: Missing, wrong model type, fake, broken, or hardcoded.
+
+============================================================
+GRU /7
+======
+
+Expected:
+
+* Real GRU model.
+* Trains on the processed time-series data.
+* Uses suitable sequence input.
+* Uses chronological split and scaling.
+* Produces usable traffic predictions.
+* Has a prediction interface.
+* Can be compared fairly with LSTM and CUS.
+
+Scoring guide:
+
+* 7: Correct and integrated GRU.
+* 5-6: Mostly correct with minor issues.
+* 3-4: Exists but weak or poorly integrated.
+* 1-2: Mostly placeholder.
+* 0: Missing, wrong model type, fake, broken, or hardcoded.
+
+Note:
+
+* If GRU is just a renamed/copy-pasted LSTM with no GRU layer, mark very low or 0.
+
+============================================================
+CUS / THIRD ML MODEL /7
+=======================
+
+The third model can be any reasonable ML/time-series model, such as Random Forest, XGBoost, SVR, MLP, CNN, ARIMA, Transformer, Linear/Ridge regression, etc.
+
+Expected:
+
+* Real third model, distinct from LSTM and GRU.
+* Trained on comparable processed data.
+* Has a usable prediction interface.
+* Suitable for traffic flow prediction.
+* Can be fairly compared with LSTM and GRU.
+* No hardcoded predictions or future-data leakage.
+
+Scoring guide:
+
+* 7: Strong, distinct, trained, and usable.
+* 5-6: Mostly correct.
+* 3-4: Exists but weak, incomplete, or poorly integrated.
+* 1-2: Superficial/placeholder.
+* 0: Missing, fake, hardcoded, or just a renamed LSTM/GRU.
+
+============================================================
+TBRGS INTEGRATION /15
+=====================
+
+Expected:
+
+* Uses SCATS sites/intersections as graph nodes.
+* Allows origin and destination SCATS input.
+* Uses predicted traffic flow to estimate edge travel time.
+* Uses distance and intersection delay.
+* Integrates search algorithms from assignment 2A. 4 to 6 search algos.
+* Returns up to 5 routes with estimated travel times.
+* Uses dynamic time-aware costs as the route progresses.
+* Provides usable GUI/CLI/config workflow.
+* Supports future/recursive prediction for November.
+
+Suggested sub-marking:
+
+* SCATS graph and origin/destination handling: /2
+* Traffic-flow-to-travel-time conversion: /3
+* Dynamic time-aware path costs: /4
+* Part A search algorithm integration: /3
+* Top-k route output and usable UI/CLI/config: /2
+* General end-to-end robustness: /1
+
+Scoring guide:
+
+* 13-15: Strong end-to-end system.
+* 10-12: Mostly complete with minor limitations.
+* 7-9: Basic integration but important weaknesses.
+* 4-6: Routing exists but ML/dynamic traffic integration is weak.
+* 1-3: ML and search mostly separate.
+* 0: No meaningful TBRGS integration.
+
+Common deductions:
+
+* Static edge costs fixed at start: -3 to -5.
+* Routing ignores predicted traffic: -4 or more.
+* Uses only distance/hop count: major deduction.
+* Only one A2A algorithm integrated: -2 to -4.
+* No top-k routes: -1 to -2.
+* No usable origin/destination input: -1 to -2.
+* ML models not used in routing: large deduction.
+* No November recursive support: -1 to -3.
+* Hardcoded demo route: large deduction.
+
+============================================================
+EVALUATION CODE QUICK COMMENT ONLY
+==================================
+
+Do not give an evaluation score unless asked.
+
+Briefly comment on:
+
+* Whether evaluation code exists.
+* Whether split is chronological.
+* Whether metrics are normalised/comparable across sites.
+* Whether all three models are evaluated fairly.
+* Whether evaluation avoids future-data leakage.
+
+============================================================
+GENERAL RULES
+=============
+
+* Do not double-penalise the same root issue too harshly.
+* If code does not run, inspect the design and mark what can be assessed.
+* If a model is only in the report but not code, mark it as missing or very low.
+* Accept notebooks if they are clear, runnable, and contain the required implementation.
+* Penalise hardcoded predictions, hardcoded routes, fake metrics, or placeholder ML heavily.
+* Apply code quality deductions only where relevant.
+
+Possible overall code deductions:
+
+* Poor structure or messy duplicated code: up to -3.
+* Hardcoded local paths: up to -2.
+* Missing requirements/instructions: up to -1.
+* No clear entry point: up to -2.
+* GUI/CLI/config unusable: up to -2.
+* Runtime errors affecting whole system: up to -5.
+* No OOP/bad code practice (all code in 1 big file), etc.: -2
+
+============================================================
+REQUIRED RESPONSE FORMAT
+========================
+
+Use concise bullet points in this order:
+
+* Data Processing: X/9
+
+  * What works:
+  * Issues:
+  * Deductions:
+
+* LSTM: X/7
+
+  * What works:
+  * Issues:
+  * Deductions:
+
+* GRU: X/7
+
+  * What works:
+  * Issues:
+  * Deductions:
+
+* CUS: X/7
+
+  * What works:
+  * Issues:
+  * Deductions:
+
+* TBRGS Integration: X/15
+
+  * Predicted traffic flow used:
+  * Dynamic time-aware edge costs:
+  * Part A algorithms integrated:
+  * Top-k routes:
+  * What works:
+  * Issues:
+  * Deductions:
+
+- Evaluation Code Quick Comment:
+    - Comment:
+    - Suggestion amount of deduction. dont be too strict
+- Overall Deductions (not include evaluation):
+    - Deduction:
+    - Reason:
+
+- Pasteable Marker Comment:
+[Provide a concise feedback paragraph summarising the strengths of the implementation, the main issues affecting marks, and the overall quality of the solution. It needs to be natural, sounds like a professor provide feedback to student]
+Detail marking:
+Data Processing: X
+LSTM: X
+GRU: X
+CUS: X
+TBRGS Integration: X
+Overall deductions: -Y
